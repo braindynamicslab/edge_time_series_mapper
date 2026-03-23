@@ -1,0 +1,227 @@
+# ============================================================================
+# WHAT IS .gitignore?
+# ============================================================================
+# This file tells Git which files and folders to NOT track in version control.
+# Files matching these patterns will be ignored by Git - they won't be:
+#   - Committed to the repository
+#   - Shown in "git status" as untracked
+#   - Pushed to remote repositories (GitHub, GitLab, etc.)
+#
+# WHY USE .gitignore?
+#   - Prevent committing large data files
+#   - Avoid committing sensitive information (passwords, local paths)
+#   - Keep temporary/cache files out of version control
+#   - Reduce repo clutter (autosave files, OS files)
+#
+# ============================================================================
+# HOW TO CUSTOMIZE THIS FILE
+# ============================================================================
+# 
+# ADD FILES/FOLDERS TO IGNORE:
+#   Scroll to the bottom section "PROJECT-SPECIFIC ADDITIONS"
+#   Add patterns for files you want to ignore, for example:
+#     my_secret_data.csv
+#     preliminary_results/
+#     *.xyz
+#
+# ADD EXCEPTIONS (force Git to track specific files):
+#   Use the ! prefix to make exceptions to ignore patterns
+#   Add to the "EXCEPTIONS" section or at the bottom:
+#     !important_file.mat          # Track this .mat file despite *.mat rule
+#     !data_pipeline/key_result/*  # Track everything in this folder
+#
+# COMMON PATTERNS:
+#     *.ext        Ignore all files with .ext extension
+#     folder/      Ignore entire folder and its contents
+#     folder/*     Ignore contents but keep the folder itself
+#     !file.txt    Exception: DO track this file
+#     **/*.log     Ignore .log files in all subdirectories
+#
+# TEST YOUR PATTERNS:
+#     git check-ignore -v filename    # Check if a file would be ignored
+#     git status                       # See what's currently untracked
+#
+# ============================================================================
+# CONSERVATIVE PHILOSOPHY
+# ============================================================================
+# This .gitignore follows a conservative "when in doubt, don't ignore" approach.
+# Only clearly temporary, generated, or sensitive files are ignored.
+# You can always move files to *_gitignore/ folders if they shouldn't be tracked.
+#
+# ============================================================================
+
+# ============================================================================
+# EXPLICIT GITIGNORE FOLDERS
+# ============================================================================
+# These folders are DESIGNED to contain gitignored content
+# Put large/sensitive files here instead of adding many individual patterns
+data_raw_gitignore/
+data_pipeline_gitignore/
+
+# ============================================================================
+# SLURM OUTPUTS (if they exist in repo)
+# ============================================================================
+# For this project, outputs are on scratch drive
+# But include defensively in case someone runs locally
+slurm_out/
+slurm_err/
+slurm-*.out
+slurm-*.err
+*.o[0-9]*
+*.e[0-9]*
+
+# ============================================================================
+# LOCAL CONFIGURATION (sensitive/machine-specific)
+# ============================================================================
+# Local paths and credentials that differ between machines/users
+*_local.*
+config/*_local.*
+.env
+.env.local
+
+# Machine-specific paths (if users create these)
+paths_local.m
+paths_local.py
+paths_local.R
+
+# ============================================================================
+# MATLAB - Temporary/autosave files only
+# ============================================================================
+*.asv              # Autosave
+*.m~               # Backup
+*.autosave         # Autosave
+
+# MATLAB compiled (rarely used in research, but ignore if generated)
+*.mex*
+*.p
+
+# NOTE: We DO commit .mat files for config/data by default
+# Only ignore if they end up in *_gitignore folders
+
+# ============================================================================
+# Python - Generated/cache files only
+# ============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual environments (never commit)
+venv/
+env/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# IDE settings (personal preferences)
+.idea/
+.vscode/
+.spyproject/
+.spyderproject/
+
+# ============================================================================
+# R - Session/history files only
+# ============================================================================
+.Rhistory
+.RData
+.Rapp.history
+.Rproj.user/
+
+# R environment library (managed dependencies)
+renv/library/
+renv/local/
+renv/staging/
+
+# NOTE: Keep renv.lock for reproducibility
+
+# ============================================================================
+# OS-SPECIFIC FILES
+# ============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================================================
+# TEMPORARY & CACHE
+# ============================================================================
+tmp/
+temp/
+cache/
+.cache/
+*.tmp
+*.temp
+
+# ============================================================================
+# NEUROIMAGING SOFTWARE TEMPORARY OUTPUTS
+# ============================================================================
+# FSL FEAT directories (large, regenerable)
+*.feat/
+*.gfeat/
+*.ica/
+
+# SPM temporary files
+spm_*.ps
+
+# ============================================================================
+# NOTES & DOCUMENTATION
+# ============================================================================
+# Scratch/draft space within notes
+note_and_report/scratch/
+note_and_report/draft/
+note_and_report/private/      # For private repos sharing with collaborators
+
+# ============================================================================
+# EXCEPTIONS - Explicitly INCLUDE these despite patterns above
+# ============================================================================
+# Sometimes you want to track files that match ignore patterns above.
+# Use ! to create exceptions.
+
+# Keep .gitkeep files to preserve empty directories
+!.gitkeep
+
+# Keep all README files
+!README.md
+!**/README.md
+
+# Keep template files
+!*_template.*
+!*.template.*
+
+# ============================================================================
+# PROJECT-SPECIFIC ADDITIONS
+# ============================================================================
+# Add your custom ignore patterns below this line.
+# Examples:
+#   my_large_file.csv
+#   exploratory_analysis/
+#   *_backup.mat
+#
+# Add exceptions (files to track despite patterns above):
+#   !important_result.mat
+#   !data_pipeline/critical_output.csv
+
+# --- Add your patterns here ---
