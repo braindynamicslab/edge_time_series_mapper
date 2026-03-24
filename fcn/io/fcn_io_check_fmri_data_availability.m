@@ -38,11 +38,12 @@ function fcn_io_check_fmri_data_availability()
     %% Configuration
     
     % Get repository root from config
-    config = fcn_utilsConfig_get_config();
+    config = fcn_utils_get_config();
     
     % Parameters
     PARCELLATION = "schaefer100x7";
-    OUTPUT_FILENAME = "fmri_data_availability.csv";
+    OUTPUT_DIR = fullfile(config.repo_root, "data_pipeline/data_cohort/");
+    OUTPUT_FILENAME = "fmri_data_availability_by_subject.csv";
     
     % Paths
     BATCH_TABLE_PATH = config.batch_table_path;
@@ -136,21 +137,25 @@ end
 %% Helper functions
 
 function combos = build_task_session_combinations(tasks, task_sessions, rest_sessions)
-    % Build all task-session combination strings (vectorized)
+    % Build all task-session combination strings
     
     % Separate REST from other tasks
     rest_idx = strcmp(tasks, "REST");
     other_tasks = tasks(~rest_idx);
     
-    % Build combinations for non-REST tasks (vectorized)
+    % Build combinations for non-REST tasks
     num_other_tasks = numel(other_tasks);
     num_task_sessions = numel(task_sessions);
     
     [task_grid, session_grid] = ndgrid(1:num_other_tasks, 1:num_task_sessions);
     other_combos = strcat(other_tasks(task_grid(:)), ",", task_sessions(session_grid(:)));
     
-    % Build combinations for REST (vectorized)
+    % Build combinations for REST
     rest_combos = strcat("REST,", rest_sessions(:));
+    
+    % Ensure both are column vectors before concatenating
+    other_combos = other_combos(:);
+    rest_combos = rest_combos(:);
     
     % Combine all
     combos = [other_combos; rest_combos];

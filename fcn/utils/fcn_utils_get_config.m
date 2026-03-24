@@ -29,7 +29,7 @@ function config = fcn_utils_get_config()
     % Sherlock nodes have hostnames like:
     %   - Login: "sherlock.stanford.edu", "login.sherlock.stanford.edu"
     %   - Compute: "sh-101-58", "sh-102-12", etc.
-    if contains(hostname, "sherlock") || contains(hostname, "sh-")
+    if contains(hostname, "sherlock") || contains(hostname, "sh")
         config = config_sherlock();
     else
         config = config_local();
