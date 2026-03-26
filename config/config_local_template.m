@@ -7,7 +7,7 @@ function config = config_local()
     %   config - Configuration struct with local machine paths
     
     % Detect repository root
-    config.repo_root = fcn_utilsConfig_detect_repo_root();
+    config.repo_root = fcn_utils_detect_repo_root();
     
     % HCP fMRI data paths (assumes Oak is mounted)
     config.hcp_fmri_dir = "/oak/stanford/groups/saggar/hcp_processed/xcpengine_2025_out";
