@@ -117,7 +117,6 @@ project/
 fcn/io/          # Short, clear
 fcn/stats/       # Short, clear
 fcn/tabViz/      # camelCase for clarity (table visualization)
-fcn/utilsConfig/ # camelCase for clarity (config utilities)
 ```
 
 **Functions:** Prefix with module name
@@ -129,7 +128,7 @@ Examples:
 fcn/io/fcn_io_load_subject.m
 fcn/stats/fcn_stats_compute_correlation.m
 fcn/tabViz/fcn_tabViz_format_for_publication.m
-fcn/utilsConfig/fcn_utilsConfig_get_config.m
+fcn/utils/fcn_utils_get_config.m
 ```
 
 **Rationale:** camelCase in module name (e.g., `tabViz`) makes it easier to visually
@@ -243,7 +242,46 @@ ALPHA = 0.05;
 MAX_ITERATIONS = 100;
 ```
 
----
+### Plural for Arrays
+
+**Use plural form for arrays/collections, singular for scalar values or loop variables.**
+
+```matlab
+% Correct - Plural for arrays
+subjects = [100206, 100307, 100408];
+tasks = ["REST", "WM", "MOTOR"];
+filepaths = ["file1.mat", "file2.mat"];
+
+for subject_idx = 1:numel(subjects)
+    subject = subjects(subject_idx);  % Singular extracted from plural
+    process(subject);
+end
+
+% Avoid - Inconsistent naming
+subject_list = [...];  % Should be 'subjects'
+task_array = [...];    % Should be 'tasks'
+
+### Domain-Specific Conventions
+
+**Subject naming:**
+- `subject` - The subject ID number (e.g., 100206)
+- `subject_idx` - Loop index when iterating over subjects (1, 2, 3...)
+
+We use `subject` instead of `subject_id` because subjects are only identified by 
+their ID number. Adding `_id` suffix creates confusion with `subject_idx`.
+
+```matlab
+% Correct
+for subject_idx = 1:num_subjects
+    subject = subjects(subject_idx);
+    data = load_data(subject);
+end
+
+% Avoid - Redundant and confusing
+for subject_idx = 1:num_subjects
+    subject_id = subject_id_list(subject_idx);  // subject_id vs subject_idx?
+end
+```
 
 ## String Conventions
 
@@ -528,6 +566,41 @@ subject_ids = {"sub-01", "sub-02", "sub-03"};  % Should be string array
 
 % Avoid - Use struct instead
 data = {subject_id, age, sex};  % Hard to remember element order
+```
+
+### MAT File Format and Loading
+
+**Always save MAT files with version 7.3 format** to enable partial loading:
+
+```matlab
+% Correct - Always use v7.3
+save('results.mat', 'data', 'metadata', '-v7.3');
+
+% Avoid - Default format doesn't support partial loading
+save('results.mat', 'data', 'metadata');
+```
+Always use partial loading with matfile() unless you need all variables:
+
+```matlab
+% Correct - Partial loading (memory efficient)
+m = matfile('results.mat');
+metadata = m.metadata;              % Load only metadata
+data_subset = m.data(1:100, :);     % Load only subset of data
+
+% Only load fully when necessary
+loaded = load('results.mat');       % Loads everything into memory
+```
+
+**Rationale**: Version 7.3 uses HDF5 format, allowing MATLAB to read specific variables or array subsets without loading the entire file into memory. This is critical for:
+* Large datasets that exceed available RAM
+* Quick access to metadata or configuration without loading results
+* Processing subsets of data iteratively
+
+**Exception**: Load entire file when you know you need all variables and the file is small enough to fit in memory comfortably.
+
+```matlab
+% Exception - Small file, need everything
+config = load('config.mat');  % OK if file is small and all data needed
 ```
 
 ---
@@ -835,6 +908,124 @@ for roi_idx = 1:num_rois
 end
 ```
 
+### Use Named Constants Instead of Repeated `size()` Calls
+
+**Avoid repeatedly calling `size()` on the same array.** Instead, extract dimensions into descriptive variables at the beginning of a code section. This improves readability, makes intent clear, and can prevent errors if array dimensions change during processing.
+
+**Why This Matters**
+
+```matlab
+% Hard to interpret - what do these dimensions represent?
+if target_num_features > size(data, 2)
+    target_num_features = size(data, 2);
+end
+for feature_idx = 1:size(data, 2)
+    process_feature(data(:, feature_idx));
+end
+fprintf('Processing %d features\n', size(data, 2));
+```
+
+**Problems:**
+- Reader must mentally track what dimension 2 means
+- Repeated function calls (minor performance cost)
+- Easy to accidentally use wrong dimension number
+- Intent unclear: are these the same "features" or different quantities?
+
+**Better Approach**
+
+```matlab
+% Clear - dimensions have meaningful names
+[num_timepoints, num_features] = size(data);
+
+if target_num_features > num_features
+    target_num_features = num_features;
+end
+for feature_idx = 1:num_features
+    process_feature(data(:, feature_idx));
+end
+fprintf('Processing %d features\n', num_features);
+```
+
+**Benefits:**
+- Self-documenting code
+- Single source of truth for each dimension
+- Catches errors: using `num_features` instead of `num_timepoints` is obvious
+- Easier to refactor if data structure changes
+
+**Recommended Pattern**
+
+At the start of each processing section, extract dimensions:
+
+```matlab
+%% Preprocess data
+[num_timepoints, num_rois] = size(concatenated_data);
+fprintf('Data: %d timepoints x %d ROIs\n', num_timepoints, num_rois);
+
+% ... processing using num_timepoints and num_rois
+
+%% Generate features
+[num_timepoints, num_higher_features] = size(data_higher_features);
+fprintf('Generated %d higher-order features\n', num_higher_features);
+
+% ... processing using num_higher_features
+
+%% Dimension reduction
+if target_num_features > num_higher_features
+    actual_num_features = num_higher_features;
+else
+    actual_num_features = target_num_features;
+end
+```
+
+**When to Extract Dimensions**
+
+Always extract when:
+- Dimension is used more than once
+- Code section spans multiple logical operations
+- Dimension meaning is not immediately obvious
+
+Can skip when:
+- Used exactly once in a very simple operation
+- Meaning is completely obvious from context
+  ```matlab
+  % OK - used once, meaning clear
+  num_subjects = numel(subject_list);
+  ```
+
+**Example: Before and After**
+
+Before:
+```matlab
+function process_data(data)
+    for i = 1:size(data, 1)
+        for j = 1:size(data, 2)
+            if data(i, j) > threshold
+                result(i, j) = process(data(i, j));
+            end
+        end
+    end
+    fprintf('Processed %d x %d matrix\n', size(data, 1), size(data, 2));
+end
+```
+
+After:
+```matlab
+function process_data(data)
+    [num_observations, num_features] = size(data);
+    
+    for obs_idx = 1:num_observations
+        for feature_idx = 1:num_features
+            if data(obs_idx, feature_idx) > threshold
+                result(obs_idx, feature_idx) = process(data(obs_idx, feature_idx));
+            end
+        end
+    end
+    fprintf('Processed %d observations x %d features\n', num_observations, num_features);
+end
+```
+
+**The intent is immediately clear, and the code is more maintainable.**
+
 ### Semicolons
 
 **Always use semicolons to suppress output:**
@@ -932,6 +1123,199 @@ if ~exist(config.output_dir, 'dir')
 end
 ```
 
+### Informative Error and Warning Messages
+
+**Always provide sufficient context in error and warning messages** to help users diagnose and fix problems without needing to inspect code.
+
+**Error messages should include:**
+- What went wrong (the problem)
+- What was expected vs. what was received
+- Relevant variable values (IDs, paths, parameter values)
+- Suggestions for how to fix it when appropriate
+
+```matlab
+% Good - Specific and actionable
+error('File not found: %s\nCheck that preprocessing has been run for subject %d', ...
+      filepath, subject_id);
+
+assert(threshold >= 0 && threshold <= 1, ...
+    'Threshold must be in [0, 1], got %.2f', threshold);
+
+assert(strcmp(method, "pearson") || strcmp(method, "spearman"), ...
+    'Method must be "pearson" or "spearman", got "%s"', method);
+
+% Bad - Too vague
+error('File not found');
+assert(valid_threshold, 'Invalid threshold');
+error('Wrong method');
+```
+
+**Warning messages should include:**
+- Subject/item identifier being processed
+- Specific file paths or parameters involved
+- What data is missing or problematic
+
+```matlab
+% Good - Complete diagnostic information
+warning('File not found: %s', filepath);
+warning('Batch not found for subject %d, task %s, session %s', subject_id, task, session);
+warning('Subject %d excluded: mean FD = %.3f exceeds threshold %.3f', ...
+        subject_id, mean_fd, threshold);
+
+% Bad - Missing context
+warning('File not found');
+warning('Missing data for subject %d', subject_id);  % Which file? Which task?
+warning('Subject excluded');  % Why? Which subject?
+```
+
+**For parameter validation, show both expected and received:**
+
+```matlab
+% Good - Shows what was expected and what was received
+assert(isnumeric(data), 'Data must be numeric, got %s', class(data));
+assert(ismatrix(data), 'Data must be 2D matrix, got %d dimensions', ndims(data));
+assert(size(data, 1) > size(data, 2), ...
+    'Data should be [observations x variables], got [%d x %d]', ...
+    size(data, 1), size(data, 2));
+```
+
+**Use formatting to make values clear:**
+
+```matlab
+% Use appropriate formatting for different data types
+error('Subject %d not found', subject_id);           % %d for integers
+error('Correlation = %.3f out of range [-1, 1]', r); % %.3f for floats
+error('Method "%s" not recognized', method);          % %s for strings
+error('File not found: %s', filepath);                % %s for paths
+```
+
+**Multi-line messages for complex errors:**
+
+```matlab
+error(['Configuration incomplete.\n', ...
+       'Required fields: data_dir, output_dir, batch_table_path\n', ...
+       'Missing: %s'], strjoin(missing_fields, ', '));
+```
+
+**Rationale:** Good error messages save debugging time. When processing hundreds of subjects on HPC, you need to know exactly which subject failed and why, without re-running or reading code. Assume the user seeing the error doesn't have access to variable values or code context.
+
+### Error Handling: Errors vs. Flags
+
+**Use `error()` or `assert()` when:**
+- The problem makes continuation impossible or dangerous
+- Called function is used interactively or in single-item scripts
+- Caller cannot reasonably handle the failure
+- Data corruption or invalid results would occur if execution continued
+
+```matlab
+% Correct - Configuration errors should halt execution
+assert(isfield(config, 'data_dir'), 'Config must have data_dir field');
+
+% Correct - File corruption is unrecoverable
+if corrupted_data
+    error('Data file is corrupted: %s', filepath);
+end
+```
+
+**Use error flags when:**
+- Processing multiple independent items (subjects, sessions, files, trials)
+- Each item can succeed or fail independently
+- Failure of one item should not prevent processing others
+- Missing data is expected for some items
+- You want to collect all results, including which items failed
+
+**Common pattern:** Looping over subjects where some subjects may have missing data.
+
+```matlab
+% Correct - Allow loop to continue with other subjects
+function [data, missing_flag] = load_subject_data(subject_id)
+    missing_flag = 0;
+    
+    if ~isfile(filepath)
+        warning('File not found for subject %d', subject_id);
+        missing_flag = 1;
+        return;
+    end
+    
+    data = load(filepath);
+end
+
+% Usage in loop - process all subjects, skip those with missing data
+for subject_idx = 1:num_subjects
+    [data, missing] = load_subject_data(subjects(subject_idx));
+    
+    if missing
+        continue;  % Skip to next subject
+    end
+    
+    results{subject_idx} = process(data);
+end
+```
+
+**Key principle:** If items are independent (one subject's failure doesn't affect another), use flags so the loop can continue. If items are dependent (like sequential pipeline steps), use errors to halt immediately.
+
+**Extension:** When writing a function, you don't know whether it will be called once or many times in a loop. Therefore, prefer error flags and / or warnings by default, and only throw errors for fundamental problems that indicate programming mistakes (wrong data type, missing required configuration, violated function contracts). This makes functions robust in both interactive and batch processing contexts.
+
+```matlab
+% Throw error - indicates programming mistake (wrong type)
+function results = process_subject(subject_id, config)
+    assert(isnumeric(subject_id), 'subject_id must be numeric, got %s', class(subject_id));
+    assert(isstruct(config), 'config must be struct, got %s', class(config));
+    
+    % Return flag - data-dependent issue (some subjects may have missing data)
+    error_flag = 0;
+    if ~isfile(data_path)
+        warning('Data not found for subject %d', subject_id);
+        error_flag = 1;
+        return;
+    end
+    
+    results = process(data);
+end
+```
+
+**Flag naming convention:**
+- Use `<condition>_flag` pattern: `missing_data_flag`, `error_flag`, `success_flag`
+- Return as output argument, not as global variable
+- Document clearly in function header
+- Always initialize to default value (typically 0 for "no error")
+
+**Combine with warnings:**
+- Set flag AND issue warning to inform user
+- Warning provides context, flag enables graceful continuation
+
+```matlab
+if problem_detected
+    warning('Problem with subject %d: %s', subject_id, description);
+    error_flag = 1;
+    return;
+end
+```
+
+**When to use both:**
+- Validate critical parameters with `assert()` at function start (these failures indicate programming errors)
+- Use flags for data-dependent failures during processing (these are expected in real data)
+
+```matlab
+function [results, error_flag] = process_subject(subject_id, config)
+    % Validate inputs - these should never fail in correct usage
+    assert(isnumeric(subject_id), 'subject_id must be numeric');
+    assert(isstruct(config), 'config must be a struct');
+    
+    error_flag = 0;
+    
+    % Data loading might fail for some subjects - use flag
+    if ~data_exists(subject_id)
+        warning('No data for subject %d', subject_id);
+        error_flag = 1;
+        return;
+    end
+    
+    results = process(data);
+end
+```
+
+**Note:** This pattern applies across programming languages, not just MATLAB. The specific syntax (`error()`, `assert()`, return values) varies, but the principle of "flags for independent items, errors for critical failures" is universal.
 ---
 
 ## Path Management
@@ -949,13 +1333,40 @@ output_path = fullfile(config.output_dir, "results", "figures", "plot.png");
 filepath = strcat(config.data_dir, "/", subject_id, ".mat");
 ```
 
+### Separating Path Components
+
+**Always separate path components - avoid hardcoded slashes or backslashes**
+
+```matlab
+% Correct - Each component separated
+filepath = fullfile(config.repo_root, "data_pipeline", "results", "internal", filename);
+filepath = fullfile(base_dir, batch_dir, scan_id, "fcon", parcellation, filename);
+
+% Avoid - Hardcoded separators (even though it works)
+filepath = fullfile(config.repo_root, "data_pipeline/results/internal", filename);
+filepath = fullfile(base_dir, "fcon/schaefer100x7", filename);
+```
+
+Rationale: While MATLAB's fullfile() normalizes all separators and both styles work identically across platforms, always separating components:
+
+Makes the structure explicit and uniform
+Avoids confusion about which separator to use (/ vs \)
+
+Exception: When passing a complete path from external source (e.g., command output, config file), keep as-is and let fullfile() normalize it.
+
+```matlab
+% OK - External path passed through
+external_path = get_path_from_config();  % Might contain / or \
+filepath = fullfile(base_dir, external_path);
+```
+
 ### Relative vs Absolute Paths
 
 **Use relative paths for portability:**
 
 ```matlab
 % Good - Relative to repository root
-repo_root = fcn_utilsConfig_detect_repo_root();
+repo_root = fcn_utils_detect_repo_root();
 data_dir = fullfile(repo_root, 'data_raw', 'examples');
 
 % Avoid - Hardcoded absolute paths
@@ -1743,7 +2154,7 @@ end
 clear; close all; clc;
 
 % Load configuration
-config = fcn_utilsConfig_get_config();
+config = fcn_utils_get_config();
 
 % Analysis parameters
 CORRELATION_METHOD = "pearson";
