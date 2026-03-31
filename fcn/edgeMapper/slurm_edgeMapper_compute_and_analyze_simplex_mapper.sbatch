@@ -48,7 +48,7 @@ LOCKFILE="${SUMMARY_DIRECTORY}summary.lock"
 # Load subject from cohort list
 SUBJECT_IDX=$SLURM_ARRAY_TASK_ID
 LINE_NUM=$((SUBJECT_IDX+1)) # The first line is the header line "Subject".
-SUBJECT=$(awk "NR==$LINE_NUM" /home/users/siuc/brain_HOI/edge_time_series_mapper/data_pipeline/data_cohort/cohort_${COHORT}_session_${SESSION}.csv) # get the corresponding line, which is a list of input arguments of my Matlab function, separated by commas
+SUBJECT=$(awk "NR==$LINE_NUM" /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/cohort_${COHORT}_session_${SESSION}.csv) # get the corresponding line, which is a list of input arguments of my Matlab function, separated by commas
 echo $SUBJECT
 
 # Fix experimental parameters
