@@ -1,13 +1,9 @@
-function fcn_io_generate_cohort_subject_lists()
+function fcn_io_generate_cohort_subject_lists_noNAcheck()
     % Generate subject lists for each cohort and session combination
     %
     % Creates CSV files containing subject IDs that have complete data
     % for specified cohort and session combinations. Filters subjects
     % based on cohort membership and data availability.
-    %
-    % Now filters based on data validity proportion: only includes subjects
-    % with proportion == 1.0 (fully valid, no NA values). Fractional
-    % proportions (partial NA contamination) are rejected.
     %
     % Outputs:
     %   Creates CSV files in data_pipeline/data_cohort/:
@@ -44,10 +40,10 @@ function fcn_io_generate_cohort_subject_lists()
     
     %% Load input data
     
-    % Load data validity proportion table (from fcn_io_check_fmri_data_valid_proportion)
-    data_validity_filename = fullfile(config.repo_root, "data_pipeline", ...
-        "data_cohort", "fmri_data_valid_proportion_by_subject.csv");
-    data_validity = readtable(data_validity_filename, ...
+    % Load data availability table (from previous script output)
+    data_availability_filename = fullfile(config.repo_root, "data_pipeline", ...
+        "data_cohort", "fmri_data_availability_by_subject.csv");
+    data_availability = readtable(data_availability_filename, ...
         "VariableNamingRule", "preserve");
     
     % Load cohort definitions from raw data
@@ -60,25 +56,25 @@ function fcn_io_generate_cohort_subject_lists()
         "VariableNamingRule", "preserve");
     
     % Extract subject ID columns (preserve original ordering)
-    cohort_one_subjects = cohort_one_subjects.Subject;
-    cohort_two_subjects = cohort_two_subjects.Subject;
-    all_subjects = data_validity.Subject;
+    cohort_one_subject_ids = cohort_one_subjects.Subject;
+    cohort_two_subject_ids = cohort_two_subjects.Subject;
+    all_subjects = data_availability.Subject;
     
     %% Process each cohort and session combination
     
     for cohort = cohorts
         
         % Get subjects in this cohort (in original order)
-        cohort_subjects = get_cohort_subjects(cohort, ...
-            cohort_one_subjects, cohort_two_subjects, all_subjects);
+        cohort_subject_ids = get_cohort_subjects(cohort, ...
+            cohort_one_subject_ids, cohort_two_subject_ids, all_subjects);
         
-        % Filter data_validity to only subjects in this cohort
+        % Filter data_availability to only subjects in this cohort
         % Use ismember to preserve original cohort ordering
-        [is_in_cohort, idx_in_validity] = ismember(cohort_subjects, ...
-            data_validity.Subject);
+        [is_in_cohort, idx_in_availability] = ismember(cohort_subject_ids, ...
+            data_availability.Subject);
         
-        % Get rows from data_validity in cohort order
-        cohort_data = data_validity(idx_in_validity(is_in_cohort), :);
+        % Get rows from data_availability in cohort order
+        cohort_data = data_availability(idx_in_availability(is_in_cohort), :);
         
         for session = sessions
             
@@ -97,9 +93,8 @@ function fcn_io_generate_cohort_subject_lists()
                                   contains(var_names, session);
             end
             
-            % Filter subjects with fully valid data (proportion == 1.0)
-            % Only accept exact 1.0, reject any fractional values
-            subject_complete_data_rows = all(cohort_data{:, relevant_columns} == 1, 2);
+            % Filter subjects with complete data for this session
+            subject_complete_data_rows = all(cohort_data{:, relevant_columns}, 2);
             subject_complete_data_table = cohort_data(subject_complete_data_rows, "Subject");
             
             % Write output
@@ -118,39 +113,39 @@ end
 
 
 function cohort_subjects = get_cohort_subjects(cohort_name, ...
-    cohort_one_subjects, cohort_two_subjects, all_subjects)
+    cohort_one_subject_ids, cohort_two_subject_ids, all_subjects)
     % Get list of subjects belonging to specified cohort
     %
     % Returns subjects in the order they appear in the original cohort files
     %
     % Inputs:
     %   cohort_name - "one", "two", "all", "all_but_one", "all_but_one_two"
-    %   cohort_one_subjects - Subject IDs from cohort_one.csv
-    %   cohort_two_subjects - Subject IDs from cohort_two.csv
-    %   all_subjects - All subject IDs from data validity table
+    %   cohort_one_subject_ids - Subject IDs from cohort_one.csv
+    %   cohort_two_subject_ids - Subject IDs from cohort_two.csv
+    %   all_subjects - All subject IDs from data availability table
     %
     % Outputs:
     %   cohort_subjects - String array of subject IDs in the cohort
     
     switch cohort_name
         case "one"
-            cohort_subjects = cohort_one_subjects;
+            cohort_subjects = cohort_one_subject_ids;
             
         case "two"
-            cohort_subjects = cohort_two_subjects;
+            cohort_subjects = cohort_two_subject_ids;
             
         case "all"
             cohort_subjects = all_subjects;
             
         case "all_but_one"
             % All subjects except those in cohort one
-            is_not_in_one = ~ismember(all_subjects, cohort_one_subjects);
+            is_not_in_one = ~ismember(all_subjects, cohort_one_subject_ids);
             cohort_subjects = all_subjects(is_not_in_one);
             
         case "all_but_one_two"
             % All subjects except those in cohort one or two
-            is_not_in_one = ~ismember(all_subjects, cohort_one_subjects);
-            is_not_in_two = ~ismember(all_subjects, cohort_two_subjects);
+            is_not_in_one = ~ismember(all_subjects, cohort_one_subject_ids);
+            is_not_in_two = ~ismember(all_subjects, cohort_two_subject_ids);
             cohort_subjects = all_subjects(is_not_in_one & is_not_in_two);
             
         otherwise

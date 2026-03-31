@@ -1,0 +1,55 @@
+260330 20:04 ran fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+
+Submitted job 20016637: cohort=one, session=LR, simplex=node
+Submitted job 20016639: cohort=one, session=LR, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=one, session=LR
+Submitted job 20016643: cohort=all_but_one, session=LR, simplex=node (depends on previous simplex)
+Submitted job 20016646: cohort=all_but_one, session=LR, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=all_but_one, session=LR
+Submitted job 20016648: cohort=one, session=RL, simplex=node (depends on previous simplex)
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+Submitted job : cohort=one, session=RL, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=one, session=RL
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+Submitted job : cohort=all_but_one, session=RL, simplex=node
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+Submitted job : cohort=all_but_one, session=RL, simplex=edge
+  Finished chain for cohort=all_but_one, session=RL
+
+260330 20:37 debugged by renaming the cohort file, ran the same script, without LR.
+
+Submitted job 20020299: cohort=one, session=LR, simplex=node
+Submitted job 20020300: cohort=one, session=LR, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=one, session=LR
+Submitted job 20020302: cohort=all_but_one, session=LR, simplex=node (depends on previous simplex)
+Submitted job 20020304: cohort=all_but_one, session=LR, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=all_but_one, session=LR
+
+All jobs submitted!
+
+260330 20:51 debugged by removing simplex_value (numeric) with just simplex ("node" or "edge")
+
+Submitted job 20021784: cohort=one, session=LR, simplex=node
+Submitted job 20021786: cohort=one, session=LR, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=one, session=LR
+Submitted job 20021787: cohort=all_but_one, session=LR, simplex=node (depends on previous simplex)
+Submitted job 20021788: cohort=all_but_one, session=LR, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=all_but_one, session=LR
+
+All jobs submitted!
+
+260331 10:35 debugged by adding quotes to $SIMPLEX in slurm script
+
+bash expt/expt_01_compute_node_edge_time_series_mapper_cohort_all_session_both_schaefer100x7.sh 
+Submitted job 20077121: cohort=one, session=LR, simplex=node
+Submitted job 20077125: cohort=one, session=LR, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=one, session=LR
+Submitted job 20077130: cohort=all_but_one, session=LR, simplex=node (depends on previous simplex)
+Submitted job 20077135: cohort=all_but_one, session=LR, simplex=edge (depends on previous simplex)
+  Finished chain for cohort=all_but_one, session=LR
+
+All jobs submitted!
+

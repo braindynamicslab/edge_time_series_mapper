@@ -16,7 +16,7 @@ parse(p, varargin{:});
 
     opt = statset('display','iter');
     if isempty(p.Results.distMat)
-        distMat = estimateDistance(data, metricType);
+        distMat = fcn_mapper_estimateDistance(data, metricType);
     else
         distMat = p.Results.distMat;
         if size(distMat, 1) ~= size(distMat, 2)
@@ -48,7 +48,7 @@ parse(p, varargin{:});
     % from mathworks
     %[~,~,bw1]=kde(y(:,1), Bandwidth='plug-in');
     %[~,~,bw2]=kde(y(:,2), Bandwidth='plug-in');
-    [~,bw,~,~]=KDE2_eff(y(:,1), y(:,2));
+    [~,bw,~,~]=fcn_mapper_KDE2_eff(y(:,1), y(:,2));
 
     %res_val = ceil(max(max(y)-min(y))./(2*max(bw1,bw2))); % (2)x bw -> overlapping next point too by 50%.
     %res_val = ceil(max(max(y)-min(y))./(2*min(bw1,bw2))); % (2)x bw -> overlapping next point too by 50%.
@@ -59,7 +59,7 @@ parse(p, varargin{:});
     gain_vals = 50:1:90;
     for gain = gain_vals
         gain
-        [~, nodeBynode, ~, ~] = mapper2d_bdl_hex_binning(distMat, y, [res_val res_val], gain, num_bin_clusters, 6);
+        [~, nodeBynode, ~, ~] = fcn_mapper_mapper2d_bdl_hex_binning(distMat, y, [res_val res_val], gain, num_bin_clusters, 6);
         G = graph(nodeBynode);
         [bins, binsizes] = conncomp(G);
         max_conn_comp = [max_conn_comp; max(binsizes)./size(nodeBynode,1)];

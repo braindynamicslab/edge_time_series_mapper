@@ -78,7 +78,7 @@ cd $REPO_ROOT
 ml load matlab
 MATLAB_COMMAND="addpath(genpath('${REPO_ROOT}')); \
 fcn_edgeMapper_compute_and_analyze_simplex_mapper(\
-${SUBJECT}, '${PARCELLATION}', '${SESSION}', ${SIMPLEX}, '${OUTPUT_DIRECTORY}', \
+${SUBJECT}, '${PARCELLATION}', '${SESSION}', '${SIMPLEX}', '${OUTPUT_DIRECTORY}', \
 'copy_data_flag', ${COPY_DATA_FLAG}, \
 'summary_csv_path', '${TMP_FILENAME}');"
 # \ means the string continues in the next line
@@ -95,6 +95,7 @@ ${SUBJECT}, '${PARCELLATION}', '${SESSION}', ${SIMPLEX}, '${OUTPUT_DIRECTORY}', 
 # when temperary files are created and garbage collection is done. 
 # You will need to modify the lines below to compile the temporary results for all calls.
 
+echo $MATLAB_COMMAND
 matlab -nodisplay -batch "$MATLAB_COMMAND"
 
 # Collect numerical output to a table

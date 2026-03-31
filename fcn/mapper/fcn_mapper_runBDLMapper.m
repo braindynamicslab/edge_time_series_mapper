@@ -83,7 +83,7 @@ parse(p, varargin{:});
     
     
     %[adja, adja_pruned, pts_in_vertex, pts_in_vertex_pruned] = mapper2d_bdl_nonmetric(distMat, filter, resolution, gain, num_bin_clusters);
-    [~, adja_pruned, ~, pts_in_vertex_pruned] = mapper2d_bdl_hex_binning(distMat, filter, resolution, gain, num_bin_clusters, 6); 
+    [~, adja_pruned, ~, pts_in_vertex_pruned] = fcn_mapper_mapper2d_bdl_hex_binning(distMat, filter, resolution, gain, num_bin_clusters, 6); 
        %using triangulation, as higher values induce too many connections
     %--End Manish Version--%
     toc
