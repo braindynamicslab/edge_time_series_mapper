@@ -1,5 +1,4 @@
-function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation, session, simplex, ...
-        task_configuration, output_dir, varargin)
+function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation, session, simplex, output_directory, varargin)
     % Compute and analyze higher-order interaction Mapper
     %
     % Complete pipeline: Load/preprocess fMRI data --> Generate features --> 
@@ -13,13 +12,10 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
     %   parcellation - Parcellation name (e.g., "schaefer100x7")
     %   session - Session identifier: "LR" or "RL"
     %   simplex - Feature type: "node", "edge", or "triangle"
-    %   task_configuration - Which tasks to include:
-    %                        "rest_5min_and_tasks" - First 5min REST + all tasks
-    %                        "rest_all_and_tasks" - Full REST + all tasks
-    %                        "tasks_only" - Tasks only (no REST)
-    %   output_dir - Directory to save results
+    %   output_directory - Directory to save results
     %
     % Optional Parameters (name-value pairs):
+    
     %   'copy_data_flag' - Export summary CSV: 1=yes, 0=no (default: 0)
     %   'summary_csv_path' - Path for summary CSV (required if copy_data_flag=1)
     %   'output_filename_prefix' - Prefix for output files (default: "simplexMapper")
@@ -28,7 +24,11 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
     %                              info, e.g. data, plot, filter, ...>
     % 
     %   'rest_session' - REST session identifier (default: "<session>_run-1")
-    %
+    %   task_configuration - Which tasks to include:
+    %                        "rest_5min_and_tasks" - First 5min REST + all
+    %                        tasks (default)
+    %                        "rest_all_and_tasks" - Full REST + all tasks
+    %                        "tasks_only" - Tasks only (no REST)
     %   'zscore_scope' - Normalization scope (default: "each_task")
     %   'feature_removal_criterion' - Feature removal logic (default: "rest_and_all_tasks")
     %   'dim_reduction_type' - Dimensionality reduction (default: "none")
@@ -44,6 +44,7 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
     %
     %   'verbose_flag' - Print progress: 1=yes, 0=no (default: 1)
     %   'debug_flag' - Save debug visualizations: 1=yes, 0=no (default: 0)
+    %   'debug_filename' - Save debug data to this file
     %
     % Outputs (no return values):
     %   Files created:
@@ -72,18 +73,18 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
     addRequired(p, 'parcellation', @(x) isStringScalar(x) || ischar(x));
     addRequired(p, 'session', @(x) isStringScalar(x) || ischar(x));
     addRequired(p, 'simplex', @(x) isStringScalar(x) || ischar(x));
-    addRequired(p, 'task_configuration', @(x) isStringScalar(x) || ischar(x));
-    addRequired(p, 'output_dir', @(x) isStringScalar(x) || ischar(x));
+    addRequired(p, 'output_directory', @(x) isStringScalar(x) || ischar(x));
     
     % Output control
     addParameter(p, 'copy_data_flag', 0, @isnumeric);
-    addParameter(p, 'summary_csv_path', '', @(x) isStringScalar(x) || ischar(x));
+    addParameter(p, 'summary_csv_path', 'rest_5min_and_tasks', @(x) isStringScalar(x) || ischar(x));
     addParameter(p, 'output_filename_prefix', 'simplexMapper', @(x) isStringScalar(x) || ischar(x));
     
     % Data parameters
     addParameter(p, 'rest_session', '', @(x) isStringScalar(x) || ischar(x));
     
     % Preprocessing parameters
+    addParameter(p, 'task_configuration', 'rest_5min_and_tasks', @(x) isStringScalar(x) || ischar(x));
     addParameter(p, 'zscore_scope', 'each_task', @(x) isStringScalar(x) || ischar(x));
     addParameter(p, 'feature_removal_criterion', 'rest_and_all_tasks', @(x) isStringScalar(x) || ischar(x));
     addParameter(p, 'sign_by_coherence_flag', 0, @isnumeric);
@@ -95,7 +96,7 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
     addParameter(p, 'target_explained_variance', 1, @isnumeric);
     
     % Mapper parameters
-    addParameter(p, 'mapper_auto_tune_flag', 0, @isnumeric);
+    addParameter(p, 'mapper_auto_tune_flag', 1, @isnumeric);
     addParameter(p, 'mapper_params', struct(), @isstruct);
     addParameter(p, 'metric_type', '', @(x) isStringScalar(x) || ischar(x));
     addParameter(p, 'metric_transform', 'none', @(x) isStringScalar(x) || ischar(x));
@@ -103,15 +104,16 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
     % Output parameters
     addParameter(p, 'verbose_flag', 1, @isnumeric);
     addParameter(p, 'debug_flag', 0, @isnumeric);
+    addParameter(p, 'debug_filename', "", @(x) isStringScalar(x) || ischar(x));
     
-    parse(p, subject, parcellation, session, simplex, task_configuration, output_dir, varargin{:});
+    parse(p, subject, parcellation, session, simplex, output_directory, varargin{:});
     
     % Extract parameters
     parcellation = string(p.Results.parcellation);
     session = string(p.Results.session);
     simplex = string(p.Results.simplex);
     task_configuration = string(p.Results.task_configuration);
-    output_dir = string(p.Results.output_dir);
+    output_directory = string(p.Results.output_directory);
     copy_data_flag = p.Results.copy_data_flag;
     summary_csv_path = string(p.Results.summary_csv_path);
     output_filename_prefix = string(p.Results.output_filename_prefix);
@@ -129,6 +131,7 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
     metric_transform = string(p.Results.metric_transform);
     verbose_flag = p.Results.verbose_flag;
     debug_flag = p.Results.debug_flag;
+    debug_filename = p.Results.debug_filename;
     
     % Set defaults
     if strlength(rest_session) == 0
@@ -136,8 +139,8 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
     end
     
     % Create output directory if needed
-    if ~exist(output_dir, 'dir')
-        mkdir(output_dir);
+    if ~exist(output_directory, 'dir')
+        mkdir(output_directory);
     end
     
     % Validate copy_data_flag
@@ -156,10 +159,10 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
         mapper_params.metric_type = metric_type;
     end
     
-    % Build output filenames with format: <simplex>_<subject>_<session>_<parcellation>
+    % Build output filenames with format: <prefix>_<simplex>_<subject>_<session>_<parcellation>
     output_filename_base = sprintf("%s_%s_%d_%s_%s", output_filename_prefix, simplex, subject, session, parcellation);
-    output_data_filename = fullfile(output_dir, strcat(output_filename_base, "_data"));
-    output_mapper_filename = fullfile(output_dir, output_filename_base);
+    output_data_filename = fullfile(output_directory, strcat(output_filename_base, "_data"));
+    output_mapper_filename = fullfile(output_directory, output_filename_base);
     
     %% Print configuration
     
@@ -277,7 +280,7 @@ function fcn_edgeMapper_compute_and_analyze_simplex_mapper(subject, parcellation
                 fprintf('  Auto-tuning Mapper parameters...\n');
             end
             [mapper_param_nums_k, mapper_param_res_vals, mapper_param_gain_vals, mapper_param_nums_bin_cluster] = ...
-                hoiAux_findMapperParameters(reduced_data, mapper_params.metric_type, ...
+                fcn_mapper_findMapperParameters(reduced_data, mapper_params.metric_type, ...
                     mapper_params.ndim, mapper_params.mass_biggest_component, ...
                     'distMat', dist_mat);
         else
@@ -287,8 +290,15 @@ mapper_param_gain_vals = mapper_params.gain_val;
             mapper_param_nums_bin_cluster = mapper_params.num_bin_cluster;
         end
         
+
+        if debug_flag
+            metricType = mapper_params.metricType;
+            ndim = mapper_params.ndim;
+            save(debug_filename, "reduced_data", "metricType", "mapper_param_res_vals", "mapper_param_gain_vals", "mapper_param_nums_k", "mapper_param_nums_bin_cluster", "ndim", "dist_mat");
+        end
+
         % Run Mapper with transformed metric
-        [mapper_nodeTpMat, mapper_nodeBynode, mapper_tpMat, mapper_filter, ~] = hoiAux_runBDLMapper(...
+        [mapper_nodeTpMat, mapper_nodeBynode, mapper_tpMat, mapper_filter, ~] = fcn_mapper_runBDLMapper(...
             reduced_data, mapper_params.metric_type, mapper_param_res_vals, mapper_param_gain_vals, ...
             mapper_param_nums_k, mapper_param_nums_bin_cluster, mapper_params.ndim, 'distMat', dist_mat);
         
@@ -301,7 +311,7 @@ mapper_param_gain_vals = mapper_params.gain_val;
                 fprintf('  Auto-tuning Mapper parameters...\n');
             end
             [mapper_param_nums_k, mapper_param_res_vals, mapper_param_gain_vals, mapper_param_nums_bin_cluster] = ...
-                hoiAux_findMapperParameters(reduced_data, mapper_params.metric_type, ...
+                fcn_mapper_findMapperParameters(reduced_data, mapper_params.metric_type, ...
                     mapper_params.ndim, mapper_params.mass_biggest_component);
         else
             mapper_param_nums_k = mapper_params.num_k;
@@ -309,9 +319,16 @@ mapper_param_gain_vals = mapper_params.gain_val;
             mapper_param_gain_vals = mapper_params.gain_val;
             mapper_param_nums_bin_cluster = mapper_params.num_bin_cluster;
         end
-        
+
+        if debug_flag
+            metricType = mapper_params.metric_type;
+            ndim = mapper_params.ndim;
+            save(debug_filename, "reduced_data", "metricType", "mapper_param_res_vals", "mapper_param_gain_vals", "mapper_param_nums_k", "mapper_param_nums_bin_cluster", "ndim");
+        end
+
+
         % Run Mapper
-        [mapper_nodeTpMat, mapper_nodeBynode, mapper_tpMat, mapper_filter, ~] = hoiAux_runBDLMapper(...
+        [mapper_nodeTpMat, mapper_nodeBynode, mapper_tpMat, mapper_filter, ~] = fcn_mapper_runBDLMapper(...
             reduced_data, mapper_params.metric_type, mapper_param_res_vals, mapper_param_gain_vals, ...
             mapper_param_nums_k, mapper_param_nums_bin_cluster, mapper_params.ndim);
     end
@@ -327,7 +344,7 @@ mapper_param_gain_vals = mapper_params.gain_val;
     %% Debug: Visualize filter function
     
     if debug_flag
-        visualize_filter(mapper_filter, feature_tasks_instantwise, tasks_string, output_dir, output_filename_base);
+        visualize_filter(mapper_filter, feature_tasks_instantwise, tasks_string, output_directory, output_filename_base);
     end
     
     %% Compute node-level statistics
@@ -337,10 +354,10 @@ mapper_param_gain_vals = mapper_params.gain_val;
     end
     
     % Number of data points per node
-    num_data_points_per_mapper_nodes = full(sum(mapper_nodeTpMat, 2));
+    mapper_stat_num_data_points_per_mapper_nodes = full(sum(mapper_nodeTpMat, 2));
     
     % Nodewise amplitude (average amplitude per node)
-    amplitude_nodewise = (mapper_nodeTpMat * amplitude_framewise) ./ num_data_points_per_mapper_nodes;
+    amplitude_nodewise = (mapper_nodeTpMat * amplitude_framewise) ./ mapper_stat_num_data_points_per_mapper_nodes;
     
     % Task counts and mode task per node
     [mapper_stat_task_count_per_node, mapper_stat_mode_task_indices] = ...
@@ -348,6 +365,11 @@ mapper_param_gain_vals = mapper_params.gain_val;
     
     % Node purity (proportion of mode task in node)
     mapper_stat_node_purity = max(mapper_stat_task_count_per_node, [], 2) ./ sum(mapper_stat_task_count_per_node, 2);
+
+    % Within-task centrality
+    mapper_stat_within_task_centrallity = ...
+        fcn_edgeMapper_compute_task_specific_centrality(...
+    mapper_nodeBynode, mapper_stat_task_count_per_node, mapper_stat_mode_task_indices);
     
     %% Compute graph properties
     
@@ -355,10 +377,10 @@ mapper_param_gain_vals = mapper_params.gain_val;
         fprintf('Computing graph properties...\n');
     end
     
-    modularity = fcn_BCT_calMod(mapper_nodeBynode, mapper_stat_mode_task_indices);
+    mapper_stat_modularity = fcn_BCT_calMod(mapper_nodeBynode, mapper_stat_mode_task_indices);
     
     if verbose_flag
-        fprintf('  Modularity: %.4f\n', modularity);
+        fprintf('  Modularity: %.4f\n', mapper_stat_modularity);
         fprintf('  Mean node purity: %.4f\n', mean(mapper_stat_node_purity));
     end
     
@@ -369,30 +391,31 @@ mapper_param_gain_vals = mapper_params.gain_val;
     end
     
     save(output_data_filename, ...
-        'feature_removal_mask', feature_removal_mask, ...
-        'feature_indices', feature_indices, ...
-        'feature_tasks_instantwise', feature_tasks_instantwise, ...
-        'amplitude_framewise', amplitude_framewise, ...
-        'num_data_points_per_mapper_nodes', num_data_points_per_mapper_nodes, ...
-        'amplitude_nodewise', amplitude_nodewise, ...
-        'mapper_stat_node_purity', mapper_stat_node_purity, ...
-        'mapper_stat_task_count_per_node', mapper_stat_task_count_per_node, ...
-        'mapper_stat_mode_task_indices', mapper_stat_mode_task_indices, ...
-        'modularity', modularity, ...
-        'mapper_num_nodes', mapper_num_nodes, ...
-        'mapper_num_edges', mapper_num_edges, ...
-        'mapper_nodeTpMat', mapper_nodeTpMat, ...
-        'mapper_nodeBynode', mapper_nodeBynode, ...
-        'mapper_tpMat', mapper_tpMat, ...
-        'mapper_filter', mapper_filter, ...
-        'mapper_param_nums_k', mapper_param_nums_k, ...
-        'mapper_param_res_vals', mapper_param_res_vals, ...
-        'mapper_param_gain_vals', mapper_param_gain_vals, ...
-        'mapper_param_nums_bin_cluster', mapper_param_nums_bin_cluster, ...
-        'pca_num_features', pca_num_features, ...
-        'pca_explained_variance', pca_explained_variance, ...
-        'pca_reduction_type', pca_reduction_type, ...
-        '-v7.3');
+        'feature_removal_mask', ...
+        'feature_indices', ...
+        'feature_tasks_instantwise', ...
+        'amplitude_framewise', ...
+        'amplitude_nodewise', ...
+        'mapper_stat_num_data_points_per_mapper_nodes', ...
+        'mapper_stat_node_purity', ...
+        'mapper_stat_task_count_per_node', ...
+        'mapper_stat_mode_task_indices', ...
+        'mapper_stat_within_task_centrallity', ...
+        'mapper_stat_modularity', ...
+        'mapper_num_nodes', ...
+        'mapper_num_edges', ...
+        'mapper_nodeTpMat', ...
+        'mapper_nodeBynode', ...
+        'mapper_tpMat', ...
+        'mapper_filter', ...
+        'mapper_param_nums_k', ...
+        'mapper_param_res_vals', ...
+        'mapper_param_gain_vals', ...
+        'mapper_param_nums_bin_cluster', ...
+        'pca_num_features', ...
+        'pca_explained_variance', ...
+        'pca_reduction_type', ...
+    '-v7.3');
     
     if verbose_flag
         fprintf('  Saved: %s.mat (without mapper_nodes_positions)\n', output_data_filename);
@@ -406,7 +429,7 @@ mapper_param_gain_vals = mapper_params.gain_val;
     
     cmap = fcn_utils_get_task_coloring(tasks_string);
     
-    mapper_nodes_positions = hoiAux_drawd3graph(mapper_nodeBynode, mapper_stat_mode_task_indices, cmap, ...
+    mapper_nodes_positions = fcn_mapper_drawd3graph(mapper_nodeBynode, mapper_stat_mode_task_indices, cmap, ...
         output_mapper_filename, mapper_stat_task_count_per_node);
     
     if verbose_flag
@@ -428,11 +451,11 @@ mapper_param_gain_vals = mapper_params.gain_val;
             fprintf('  Creating summary CSV...\n');
         end
         
-        summary_table = create_summary_table(subject, modularity, mapper_num_nodes, mapper_num_edges, ...
+        summary_table = create_summary_table(subject, mapper_stat_modularity, mapper_num_nodes, mapper_num_edges, ...
             mapper_param_nums_k, mapper_param_res_vals, mapper_param_gain_vals, mapper_param_nums_bin_cluster, ...
             session, parcellation, simplex, task_configuration, zscore_scope, ...
             feature_removal_criterion, dim_reduction_type, mapper_auto_tune_flag, ...
-            mapper_params.metric_type);
+            mapper_params.metric_type, pca_num_features, pca_explained_variance);
         
         writetable(summary_table, summary_csv_path);
         
@@ -452,10 +475,11 @@ end
 
 %% Local helper functions
 
-function summary_table = create_summary_table(subject, modularity, mapper_num_nodes, mapper_num_edges, ...
+function summary_table = create_summary_table(subject, mapper_stat_modularity, mapper_num_nodes, mapper_num_edges, ...
     mapper_param_nums_k, mapper_param_res_vals, mapper_param_gain_vals, mapper_param_nums_bin_cluster, ...
     session, parcellation, simplex, task_configuration, zscore_scope, ...
-    feature_removal_criterion, dim_reduction_type, mapper_auto_tune_flag, mapper_metric)
+    feature_removal_criterion, dim_reduction_type, mapper_auto_tune_flag, mapper_metric, ...
+    pca_num_features, pca_explained_variance)
     % Create summary table with one row of results
     %
     % This function centralizes the CSV schema - easy to modify columns
@@ -481,9 +505,11 @@ function summary_table = create_summary_table(subject, modularity, mapper_num_no
     summary_table.mapper_param_nums_bin_cluster = mapper_param_nums_bin_cluster;
     
     % Numeric outputs
-    summary_table.modularity = modularity;
+    summary_table.mapper_stat_modularity = mapper_stat_modularity;
     summary_table.mapper_num_nodes = mapper_num_nodes;
     summary_table.mapper_num_edges = mapper_num_edges;
+    summary_table.pca_num_features = pca_num_features;
+    summary_table.pca_explained_variance = pca_explained_variance;
     
     % Timestamp
     summary_table.timestamp = string(datetime('now'));

@@ -49,9 +49,11 @@ function [data_cell, missing_data_flag] = fcn_io_load_fmri_data_for_subject(subj
     addRequired(p, 'parcellation', @isStringScalar);
     addRequired(p, 'config', @isstruct);
     addParameter(p, 'verbose_flag', 1, @isnumeric);
+    addParameter(p, 'load_method', "readmatrix", @isStringScalar);
     parse(p, subject, tasks, session, rest_session, parcellation, config, varargin{:});
     
     verbose_flag = p.Results.verbose_flag;
+    load_method = p.Results.load_method;
     
     %% Load data
     
@@ -101,7 +103,12 @@ function [data_cell, missing_data_flag] = fcn_io_load_fmri_data_for_subject(subj
         end
         
         % Load data
-        data_cell{task_idx} = load(filepath);
+        if strcmp(load_method, "load")
+            data_cell{task_idx} = load(filepath); % This fails if there is NA in the data
+        elseif strcmp(load_method, "readmatrix")
+            data_cell{task_idx} = readmatrix(filepath, ...
+                'FileType', 'text', 'TreatAsMissing', "NA");
+        end
         
         if verbose_flag
             fprintf('Done (%d timepoints x %d ROIs)\n', ...

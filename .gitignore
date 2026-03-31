@@ -225,3 +225,6 @@ note_and_report/private/      # For private repos sharing with collaborators
 #   !data_pipeline/critical_output.csv
 
 # --- Add your patterns here ---
+
+test/debug/
+

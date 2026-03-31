@@ -14,7 +14,7 @@
 % removal and penalized edges to construct a single connected component
 %
 %
-function [knnGraphTbl, knnGraph_dense_bin, knnGraph_dense_wtd, knnGraph_dense_bin_conn, knnGraph_dense_wtd_conn]= createPKNNG_bdl(distMat, num_k)
+function [knnGraphTbl, knnGraph_dense_bin, knnGraph_dense_wtd, knnGraph_dense_bin_conn, knnGraph_dense_wtd_conn]= fcn_mapper_createPKNNG_bdl(distMat, num_k)
    % create neighborhood graph
    knnGraphTbl = zeros(size(distMat,1), num_k);
    knnGraph_bin = zeros(size(distMat));
