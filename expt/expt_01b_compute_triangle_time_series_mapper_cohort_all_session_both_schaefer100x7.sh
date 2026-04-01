@@ -99,7 +99,7 @@ echo "Submitting ${#JOBS[@]} jobs sequentially..."
 echo ""
 
 JOB_COUNT=0
-CUMULATIVE_DELAY=0  # Track total delay from NOW for sequential scheduling
+CUMULATIVE_DELAY=480  # Track total delay from NOW for sequential scheduling
 
 for JOB_SPEC in "${JOBS[@]}"; do
     # Parse job specification

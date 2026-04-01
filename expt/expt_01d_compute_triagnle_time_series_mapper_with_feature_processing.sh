@@ -182,20 +182,14 @@ for JOB_SPEC in "${JOBS[@]}"; do
     # The VARARGIN_STR is passed as the 7th argument to the sbatch script
     if [ ${CUMULATIVE_DELAY} -eq 0 ]; then
         # First job - submit immediately
-        if [ -n "${VARARGIN_STR}" ]; then
-            SUBMIT_CMD="sbatch --array=${ARRAY_SPEC} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\" 1 \"${VARARGIN_STR}\""
-        else
-            SUBMIT_CMD="sbatch --array=${ARRAY_SPEC} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\""
-        fi
+        SUBMIT_CMD="sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=${ARRAY_SPEC} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\" 1 \"${VARARGIN_STR}\""
+        
         echo "Job $((JOB_COUNT + 1)): Submitting NOW"
     else
         # Subsequent jobs - schedule for later
         START_TIME=$(date -d "+${CUMULATIVE_DELAY} minutes" '+%Y-%m-%dT%H:%M:%S')
-        if [ -n "${VARARGIN_STR}" ]; then
-            SUBMIT_CMD="sbatch --array=${ARRAY_SPEC} --begin=${START_TIME} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\" 1 \"${VARARGIN_STR}\""
-        else
-            SUBMIT_CMD="sbatch --array=${ARRAY_SPEC} --begin=${START_TIME} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\""
-        fi
+        SUBMIT_CMD="sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=${ARRAY_SPEC} --begin=${START_TIME} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\" 1 \"${VARARGIN_STR}\""
+        
         echo "Job $((JOB_COUNT + 1)): Scheduling for ${START_TIME}"
     fi
     
