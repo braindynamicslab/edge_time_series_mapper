@@ -86,7 +86,7 @@ echo ""
 
 JOBS=(
     #"one|LR|triangle|900"
-    #"one|RL|triangle|900"
+    "one|RL|triangle|240"
     "all_but_one|LR|triangle|420"
     "all_but_one|RL|triangle|420"
 )
