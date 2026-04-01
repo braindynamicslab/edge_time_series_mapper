@@ -90,9 +90,9 @@ JOBS=(
     #"one|LR|edge|300"
     #"all_but_one|LR|node|180"
     #"all_but_one|LR|edge|450"
-    "one|RL|edge|300"
-    "all_but_one|RL|node|180"
-    "all_but_one|RL|edge|450"
+    "one|RL|edge|200"
+    "all_but_one|RL|node|200"
+    "all_but_one|RL|edge|200"
 )
 
 # ============================================
