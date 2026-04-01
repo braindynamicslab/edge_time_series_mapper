@@ -53,3 +53,62 @@ Submitted job 20077135: cohort=all_but_one, session=LR, simplex=edge (depends on
 
 All jobs submitted!
 
+260331 14:17 dependent jobs failed to launch, launched one manually
+
+sbatch fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch \
+>     "one" "RL" "node" "schaefer100x7" "test_manual"
+Submitted batch job 20103493
+[siuc@sh04-ln07 login ~/edge_time_series_mapper]$ squeue -u siuc
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+20103493_[1-400%20 saggar,no expt_com     siuc PD       0:00      1 (None)
+
+need to rename test_manual later
+============================================
+SCRIPT START
+============================================
+Script:    expt_01_compute_node_edge_time_series_mapper_cohort_all_session_both_schaefer100x7_pretty.sh
+User:      siuc
+Date:      2026-03-31 14:50:15
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: launch remaining job with manually estimated time rather than automatic dependence
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Parcellation:         schaefer100x7
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 6 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/LR/edge
+  Array: 1-394%20 (394 subjects)
+  Estimated duration: 300 min
+  Command: sbatch --array=1-394%20 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7"
+Submitted batch job 20108943
+
+Job 2: Scheduling for 2026-03-31T19:50:15
+  all_but_one/LR/node
+  Array: 1-574%20 (574 subjects)
+  Start: 300 min from now
+  Estimated duration: 180 min
+  Command: sbatch --array=1-574%20 --begin=2026-03-31T19:50:15 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_LR_node_schaefer100x7"
+Submitted batch job 20108948
+
+Job 3: Scheduling for 2026-03-31T22:50:16
+  all_but_one/LR/edge
+  Array: 1-574%20 (574 subjects)
+  Start: 480 min from now
+  Estimated duration: 450 min
+  Command: sbatch --array=1-574%20 --begin=2026-03-31T22:50:16 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_LR_edge_schaefer100x7"
+Submitted batch job 20108949
+
+Job 4: Scheduling for 2026-04-01T06:20:16
+  one/RL/edge
+  Array: 1-397%20 (397 subjects)
+  Start: 930 min from now
+  Estimated duration: 300 min
+  Command: sbatch --array=1-397%20 --begin=2026-04-01T06:20:16 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "RL" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_RL_edge_schaefer100x7"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
