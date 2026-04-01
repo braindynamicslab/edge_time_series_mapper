@@ -80,9 +80,8 @@ ml load matlab
 
 # Build MATLAB command with optional varargin
 # Process varargin, prefix with ", " if not already so
-if [[ -n "$${VARARGIN_STR}" && "$${VARARGIN_STR}" != ,* ]]; then
-        VARARGIN_STR=", ${VARARGIN_STR}";
-    fi
+if [[ -n "${VARARGIN_STR}" && "${VARARGIN_STR}" != ,* ]]; then
+    VARARGIN_STR=", ${VARARGIN_STR}"
 fi
 
 # Base command with required arguments

@@ -108,30 +108,26 @@ JOBS=(
 # Helper function to build varargin string and suffix
 # ============================================
 process_varargin() {
-    local -n varargin_array=$1  # Array of varargin values
+    # Receives array elements as individual arguments via "$@"
     local varargin_str=""
     local suffix=""
-    local idx=0
     
-    # Process varargin values until we hit "(none)" or end of array
-    while [ ${idx} -lt ${#varargin_array[@]} ]; do
-        local val="${varargin_array[${idx}]}"
-        
+    # Iterate through all arguments passed to function
+    for val in "$@"; do
         # Stop at first "(none)"
         if [ "${val}" = "(none)" ]; then
             break
         fi
         
+        # Build comma-separated varargin string (with leading ", ")
         varargin_str="${varargin_str}, ${val}"
         
-        # Add to suffix (clean version without quotes)
+        # Build filesystem-safe suffix (clean version without quotes)
         local clean_val=$(echo "${val}" | tr -d "'" | tr ' .-' '_')
         suffix="${suffix}_${clean_val}"
-        
-        idx=$((idx + 1))
     done
     
-    # Return both values (bash can only return strings, so we use echo)
+    # Return both values separated by |||
     echo "${varargin_str}|||${suffix}"
 }
 
