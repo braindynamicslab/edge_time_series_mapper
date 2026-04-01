@@ -112,3 +112,105 @@ Job 4: Scheduling for 2026-04-01T06:20:16
   Command: sbatch --array=1-397%20 --begin=2026-04-01T06:20:16 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "RL" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_RL_edge_schaefer100x7"
 sbatch: error: QOSMaxSubmitJobPerUserLimit
 sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01b_compute_triangle_time_series_mapper_cohort_all_session_both_schaefer100x7.sh
+User:      siuc
+Date:      2026-03-31 17:37:03
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: triangle Mapper
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Parcellation:         schaefer100x7
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 4 jobs sequentially...
+
+Job 1: Scheduling for 2026-04-01T05:37:03
+  one/LR/triangle
+  Array: 1-394%20 (394 subjects)
+  Start: 720 min from now
+  Estimated duration: 900 min
+  Command: sbatch --time=00:45:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-394%20 --begin=2026-04-01T05:37:03 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7"
+Submitted batch job 20128547
+
+Job 2: Scheduling for 2026-04-01T20:37:05
+  one/RL/triangle
+  Array: 1-397%20 (397 subjects)
+  Start: 1620 min from now
+  Estimated duration: 900 min
+  Command: sbatch --time=00:45:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-397%20 --begin=2026-04-01T20:37:05 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "RL" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_RL_triangle_schaefer100x7"
+Submitted batch job 20128548
+
+Job 3: Scheduling for 2026-04-02T11:37:08
+  all_but_one/LR/triangle
+  Array: 1-574%20 (574 subjects)
+  Start: 2520 min from now
+  Estimated duration: 1350 min
+  Command: sbatch --time=00:45:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-574%20 --begin=2026-04-02T11:37:08 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_LR_triangle_schaefer100x7"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01a_compute_node_edge_time_series_mapper_cohort_all_session_both_schaefer100x7.sh
+User:      siuc
+Date:      2026-04-01 11:03:02
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: remainder of schaefer100x7 raw features comptuations for node and edge
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Parcellation:         schaefer100x7
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 3 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/RL/edge
+  Array: 1-397%20 (397 subjects)
+  Estimated duration: 200 min
+  Command: sbatch --array=1-397%20 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "RL" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_RL_edge_schaefer100x7"
+Submitted batch job 20202102
+
+Job 2: Scheduling for 2026-04-01T14:23:07
+  all_but_one/RL/node
+  Array: 1-594%20 (594 subjects)
+  Start: 200 min from now
+  Estimated duration: 200 min
+  Command: sbatch --array=1-594%20 --begin=2026-04-01T14:23:07 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "RL" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_RL_node_schaefer100x7"
+Submitted batch job 20202104
+
+Job 3: Scheduling for 2026-04-01T17:43:09
+  all_but_one/RL/edge
+  Array: 1-594%20 (594 subjects)
+  Start: 400 min from now
+  Estimated duration: 200 min
+  Command: sbatch --array=1-594%20 --begin=2026-04-01T17:43:09 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "RL" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_RL_edge_schaefer100x7"
+Submitted batch job 20202107
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      3
+  Total estimated duration:  600 minutes (~10 hours 0 min)
+  Expected completion:       2026-04-01 21:03:14
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-01 11:03:14
+============================================
+
+
