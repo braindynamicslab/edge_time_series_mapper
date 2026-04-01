@@ -85,8 +85,8 @@ echo ""
 # To skip a job, comment it out with #
 
 JOBS=(
-    #"one|LR|node|120"
-    #"one|RL|node|120"
+    ##"one|LR|node|120"
+    ##"one|RL|node|120"
     #"one|LR|edge|300"
     #"all_but_one|LR|node|180"
     #"all_but_one|LR|edge|450"
