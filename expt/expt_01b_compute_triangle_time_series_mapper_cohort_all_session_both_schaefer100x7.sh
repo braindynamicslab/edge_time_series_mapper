@@ -85,10 +85,10 @@ echo ""
 # To skip a job, comment it out with #
 
 JOBS=(
-    "one|LR|triangle|900"
-    "one|RL|triangle|900"
-    "all_but_one|LR|triangle|1350"
-    "all_but_one|RL|triangle|1350"
+    #"one|LR|triangle|900"
+    #"one|RL|triangle|900"
+    "all_but_one|LR|triangle|420"
+    "all_but_one|RL|triangle|420"
 )
 
 # ============================================
@@ -99,7 +99,7 @@ echo "Submitting ${#JOBS[@]} jobs sequentially..."
 echo ""
 
 JOB_COUNT=0
-CUMULATIVE_DELAY=720  # Track total delay from NOW for sequential scheduling
+CUMULATIVE_DELAY=0  # Track total delay from NOW for sequential scheduling
 
 for JOB_SPEC in "${JOBS[@]}"; do
     # Parse job specification
@@ -121,7 +121,7 @@ for JOB_SPEC in "${JOBS[@]}"; do
     # Build sbatch command
     if [ ${CUMULATIVE_DELAY} -eq 0 ]; then
         # First job - submit immediately
-        SUBMIT_CMD="sbatch --time=00:45:00 --cpus-per-task=8 --mem-per-cpu=8G --array=${ARRAY_SPEC} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\""
+        SUBMIT_CMD="sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G --array=${ARRAY_SPEC} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\""
         echo "Job $((JOB_COUNT + 1)): Submitting NOW"
         echo "  ${COHORT}/${SESSION}/${SIMPLEX}"
         echo "  Array: ${ARRAY_SPEC} (${N_SUBJECTS} subjects)"
@@ -130,7 +130,7 @@ for JOB_SPEC in "${JOBS[@]}"; do
     else
         # Subsequent jobs - schedule for later
         START_TIME=$(date -d "+${CUMULATIVE_DELAY} minutes" '+%Y-%m-%dT%H:%M:%S')
-        SUBMIT_CMD="sbatch --time=00:45:00 --cpus-per-task=8 --mem-per-cpu=8G --array=${ARRAY_SPEC} --begin=${START_TIME} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\""
+        SUBMIT_CMD="sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G --array=${ARRAY_SPEC} --begin=${START_TIME} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\""
         echo "Job $((JOB_COUNT + 1)): Scheduling for ${START_TIME}"
         echo "  ${COHORT}/${SESSION}/${SIMPLEX}"
         echo "  Array: ${ARRAY_SPEC} (${N_SUBJECTS} subjects)"

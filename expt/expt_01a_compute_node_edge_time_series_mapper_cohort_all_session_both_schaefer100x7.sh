@@ -87,12 +87,12 @@ echo ""
 JOBS=(
     #"one|LR|node|120"
     #"one|RL|node|120"
-    "one|LR|edge|300"
-    "all_but_one|LR|node|180"
-    "all_but_one|LR|edge|450"
-    "one|RL|edge|300"
-    "all_but_one|RL|node|180"
-    "all_but_one|RL|edge|450"
+    #"one|LR|edge|300"
+    #"all_but_one|LR|node|180"
+    #"all_but_one|LR|edge|450"
+    "one|RL|edge|200"
+    "all_but_one|RL|node|200"
+    "all_but_one|RL|edge|200"
 )
 
 # ============================================
