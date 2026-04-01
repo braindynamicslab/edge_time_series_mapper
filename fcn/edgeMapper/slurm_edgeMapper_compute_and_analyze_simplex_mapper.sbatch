@@ -35,6 +35,7 @@ SIMPLEX=$3
 PARCELLATION=$4
 EXPT_NAME=$5
 CLEAN_GARBAGE_FLAG=${6:-1}
+VARARGIN_STR=${7:-""}  # Optional 7th argument for MATLAB varargin
 
 # Configuration
 # Customize this section! Also, customize the output and error lines above!
@@ -76,16 +77,32 @@ CURRENT_DIRECTORY=$(pwd)
 cd $REPO_ROOT
 
 ml load matlab
+
+# Build MATLAB command with optional varargin
+# Process varargin, prefix with ", " if not already so
+if [[ -n "$${VARARGIN_STR}" && "$${VARARGIN_STR}" != ,* ]]; then
+        VARARGIN_STR=", ${VARARGIN_STR}";
+    fi
+fi
+
+# Base command with required arguments
 MATLAB_COMMAND="addpath(genpath('${REPO_ROOT}')); \
 fcn_edgeMapper_compute_and_analyze_simplex_mapper(\
 ${SUBJECT}, '${PARCELLATION}', '${SESSION}', '${SIMPLEX}', '${OUTPUT_DIRECTORY}', \
 'copy_data_flag', ${COPY_DATA_FLAG}, \
-'summary_csv_path', '${TMP_FILENAME}');"
+'summary_csv_path', '${TMP_FILENAME}'${VARARGIN_STR});"
+
+# Notes on parameter passing:
 # \ means the string continues in the next line
 # Numeric parameters can be embedded directly.
 # String parameter needs to be in quotes,
 # e.g. if COHORT="one", "fcn(${COHORT})" evaluates to "fcn(one)" (wrong, unless one is a MATLAB variable);
 # we need "fcn('${COHORT}')", which evaluates to "fcn('one')" (correct).
+#
+# VARARGIN_STR is already formatted with proper quotes from the submission script:
+# - String arguments like 'dim_reduction_type' have single quotes
+# - Numeric arguments like 0.95 or 20 have no quotes
+# Example: VARARGIN_STR="'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95"
 
 # Note: Do not separate the addpath-genpath line into two MATLAB calls.
 # This would open two MATLAB sessions, one just add the path and does nothing,
