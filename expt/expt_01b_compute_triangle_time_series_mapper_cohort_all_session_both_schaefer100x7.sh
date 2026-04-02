@@ -85,10 +85,10 @@ echo ""
 # To skip a job, comment it out with #
 
 JOBS=(
-    #"one|LR|triangle|900"
-    "one|RL|triangle|240"
-    "all_but_one|LR|triangle|420"
-    "all_but_one|RL|triangle|420"
+    #"one|LR|triangle|120"
+    "one|RL|triangle|120"
+    #"all_but_one|LR|triangle|240"
+    #"all_but_one|RL|triangle|240"
 )
 
 # ============================================
@@ -99,7 +99,7 @@ echo "Submitting ${#JOBS[@]} jobs sequentially..."
 echo ""
 
 JOB_COUNT=0
-CUMULATIVE_DELAY=480  # Track total delay from NOW for sequential scheduling
+CUMULATIVE_DELAY=0  # Track total delay from NOW for sequential scheduling
 
 for JOB_SPEC in "${JOBS[@]}"; do
     # Parse job specification
@@ -116,7 +116,7 @@ for JOB_SPEC in "${JOBS[@]}"; do
     
     # Get cohort size: count lines in CSV file minus 1 for header
     N_SUBJECTS=$(( $(wc -l < "${COHORT_DIR}cohort_${COHORT}_session_${SESSION}.csv") - 1 ))
-    ARRAY_SPEC="1-${N_SUBJECTS}%20"
+    ARRAY_SPEC="1-${N_SUBJECTS}%40"
     
     # Build sbatch command
     if [ ${CUMULATIVE_DELAY} -eq 0 ]; then
