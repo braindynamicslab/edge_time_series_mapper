@@ -214,3 +214,477 @@ End time: 2026-04-01 11:03:14
 ============================================
 
 
+============================================
+SCRIPT START
+============================================
+Script:    expt_01b_compute_triangle_time_series_mapper_cohort_all_session_both_schaefer100x7.sh
+User:      siuc
+Date:      2026-04-01 11:53:15
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: run remainder of triangle Mapper at night with no feature processing
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Parcellation:         schaefer100x7
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 3 jobs sequentially...
+
+Job 1: Scheduling for 2026-04-01T19:53:15
+  one/RL/triangle
+  Array: 1-397%20 (397 subjects)
+  Start: 480 min from now
+  Estimated duration: 240 min
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-397%20 --begin=2026-04-01T19:53:15 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "RL" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_RL_triangle_schaefer100x7"
+Submitted batch job 20208460
+
+Job 2: Scheduling for 2026-04-01T23:53:29
+  all_but_one/LR/triangle
+  Array: 1-574%20 (574 subjects)
+  Start: 720 min from now
+  Estimated duration: 420 min
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-574%20 --begin=2026-04-01T23:53:29 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_LR_triangle_schaefer100x7"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-01 13:00:01
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: Try feature processing for node and edge
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 6 jobs sequentially...
+
+expt/expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh: line 118: local: -n: invalid option
+local: usage: local [option] name[=value] ...
+expt/expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh: line 124: varargin_array: unbound variable
+============================================
+SCRIPT START
+============================================
+Script:    expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-01 13:06:24
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: try feature processing for node and edge again
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 6 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/LR/node/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95
+  Array: 1-394%20 (394 subjects)
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95
+  Command: sbatch --array=1-394%20 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95"
+Submitted batch job 20218867
+
+Job 2: Scheduling for 2026-04-01T16:06:27
+  one/LR/edge/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95
+  Array: 1-394%20 (394 subjects)
+  Start: 180 min from now
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95
+  Command: sbatch --array=1-394%20 --begin=2026-04-01T16:06:27 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-01 13:22:03
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: tried featured processed node
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 6 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/LR/node/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95
+  Array: 1-394%20 (394 subjects)
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95
+  Command: sbatch --array=1-394%20 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95"
+Submitted batch job 20220075
+
+Job 2: Scheduling for 2026-04-01T16:22:03
+  one/LR/edge/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95
+  Array: 1-394%20 (394 subjects)
+  Start: 180 min from now
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95
+  Command: sbatch --array=1-394%20 --begin=2026-04-01T16:22:03 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-01 15:57:21
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: try another processed feature
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 5 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/LR/edge/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95
+  Array: 1-394%20 (394 subjects)
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95
+  Command: sbatch --array=1-394%20 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95"
+Submitted batch job 20232956
+
+Job 2: Scheduling for 2026-04-01T18:57:25
+  one/LR/node/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%20 (394 subjects)
+  Start: 180 min from now
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --array=1-394%20 --begin=2026-04-01T18:57:25 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+Submitted batch job 20232958
+
+Job 3: Scheduling for 2026-04-01T21:57:28
+  one/LR/edge/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%20 (394 subjects)
+  Start: 360 min from now
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --array=1-394%20 --begin=2026-04-01T21:57:28 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01b_compute_triangle_time_series_mapper_cohort_all_session_both_schaefer100x7.sh
+User:      siuc
+Date:      2026-04-01 17:30:35
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: run triangle for cohort all_but_one overnight, increased array batch size to speed up computation
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Parcellation:         schaefer100x7
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 2 jobs sequentially...
+
+Job 1: Scheduling for 2026-04-01T23:30:35
+  all_but_one/LR/triangle
+  Array: 1-574%40 (574 subjects)
+  Start: 360 min from now
+  Estimated duration: 240 min
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-574%40 --begin=2026-04-01T23:30:35 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_LR_triangle_schaefer100x7"
+Submitted batch job 20243285
+
+Job 2: Scheduling for 2026-04-02T03:30:35
+  all_but_one/RL/triangle
+  Array: 1-594%40 (594 subjects)
+  Start: 600 min from now
+  Estimated duration: 240 min
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-594%40 --begin=2026-04-02T03:30:35 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "RL" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_RL_triangle_schaefer100x7"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01b_compute_triangle_time_series_mapper_cohort_all_session_both_schaefer100x7.sh
+User:      siuc
+Date:      2026-04-01 19:34:31
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: try the final triangle series
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Parcellation:         schaefer100x7
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 1 jobs sequentially...
+
+Job 1: Scheduling for 2026-04-02T03:34:31
+  all_but_one/RL/triangle
+  Array: 1-594%40 (594 subjects)
+  Start: 480 min from now
+  Estimated duration: 240 min
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-594%40 --begin=2026-04-02T03:34:31 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "all_but_one" "RL" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_all_but_one_RL_triangle_schaefer100x7"
+Submitted batch job 20255461
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      1
+  Total estimated duration:  720 minutes (~12 hours 0 min)
+  Expected completion:       2026-04-02 07:34:44
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-01 19:34:44
+============================================
+
+
+============================================
+SCRIPT START
+============================================
+Script:    expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-01 19:38:25
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: try more PCA
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 4 jobs sequentially...
+
+Job 1: Scheduling for 2026-04-02T04:38:25
+  one/LR/node/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%20 (394 subjects)
+  Start: 540 min from now
+  Estimated duration: 120 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T04:38:25 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01b_compute_triangle_time_series_mapper_cohort_all_session_both_schaefer100x7.sh
+User:      siuc
+Date:      2026-04-02 09:32:54
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: redo triangle cohort 1 RL
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Parcellation:         schaefer100x7
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 1 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/RL/triangle
+  Array: 1-397%40 (397 subjects)
+  Estimated duration: 120 min
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G --array=1-397%40 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "RL" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_RL_triangle_schaefer100x7"
+Submitted batch job 20308748
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      1
+  Total estimated duration:  120 minutes (~2 hours 0 min)
+  Expected completion:       2026-04-02 11:32:57
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-02 09:32:57
+============================================
+
+
+============================================
+SCRIPT START
+============================================
+Script:    expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-02 09:43:39
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: Try some processed feature, 40 comp first
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 4 jobs sequentially...
+
+Job 1: Scheduling for 2026-04-02T15:43:39
+  one/LR/node/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%20 (394 subjects)
+  Start: 360 min from now
+  Estimated duration: 120 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T15:43:39 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+Submitted batch job 20309450
+
+Job 2: Scheduling for 2026-04-02T17:43:41
+  one/LR/edge/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%20 (394 subjects)
+  Start: 480 min from now
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T17:43:41 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+Submitted batch job 20309453
+
+Job 3: Scheduling for 2026-04-02T20:43:43
+  one/LR/node/schaefer100x7
+  Varargin: , 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1
+  Array: 1-394%20 (394 subjects)
+  Start: 660 min from now
+  Estimated duration: 120 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T20:43:43 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1" 1 ", 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1"
+Submitted batch job 20309457
+
+Job 4: Scheduling for 2026-04-02T22:43:48
+  one/LR/edge/schaefer100x7
+  Varargin: , 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1
+  Array: 1-394%20 (394 subjects)
+  Start: 780 min from now
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T22:43:48 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1" 1 ", 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1"
+Submitted batch job 20309459
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      4
+  Total estimated duration:  960 minutes (~16 hours 0 min)
+  Expected completion:       2026-04-03 01:43:51
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-02 09:43:51
+============================================
+
+
+============================================
+SCRIPT START
+============================================
+Script:    expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-02 09:49:15
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: do PCA-40 and coherence
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 4 jobs sequentially...
+
+Job 1: Scheduling for 2026-04-02T11:49:15
+  one/LR/node/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%20 (394 subjects)
+  Start: 120 min from now
+  Estimated duration: 120 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T11:49:15 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+Submitted batch job 20310271
+
+Job 2: Scheduling for 2026-04-02T13:49:18
+  one/LR/edge/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%20 (394 subjects)
+  Start: 240 min from now
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T13:49:18 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+Submitted batch job 20310276
+
+Job 3: Scheduling for 2026-04-02T16:49:21
+  one/LR/node/schaefer100x7
+  Varargin: , 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1
+  Array: 1-394%20 (394 subjects)
+  Start: 420 min from now
+  Estimated duration: 120 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T16:49:21 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1" 1 ", 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1"
+Submitted batch job 20310281
+
+Job 4: Scheduling for 2026-04-02T18:49:23
+  one/LR/edge/schaefer100x7
+  Varargin: , 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1
+  Array: 1-394%20 (394 subjects)
+  Start: 540 min from now
+  Estimated duration: 180 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1
+  Command: sbatch --array=1-394%20 --begin=2026-04-02T18:49:23 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1" 1 ", 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1"
+Submitted batch job 20310290
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      4
+  Total estimated duration:  720 minutes (~12 hours 0 min)
+  Expected completion:       2026-04-02 21:49:26
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-02 09:49:26
+============================================
+
+
