@@ -61,7 +61,7 @@ for simplex_idx = 1:numel(simplices)
                 continue;
             end
 
-            output_filename = sprintf("mapper_node_features_%s_%s.csv", cohort, session);
+            output_filename = sprintf("mapper_node_features_%s_%s_%s.csv", simplex, cohort, session);
 
             %% Process each subject
             for subject_idx = 1:numel(subjects)
@@ -136,5 +136,5 @@ for simplex_idx = 1:numel(simplices)
             fprintf("Total rows: %d\n", height(output_table));
         end
     end
-    and
-    fprintf("\n=== All processing complete ===\n");
+end
+fprintf("\n=== All processing complete ===\n");
