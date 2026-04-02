@@ -1,5 +1,5 @@
 %cohorts = ["one", "two"];
-cohorts = ["one"];
+cohorts = ["two"];
 session = "LR";
 
 config = fcn_utils_get_config();
@@ -15,9 +15,7 @@ shuffled_modularity_full_filename = fullfile(shuffled_modularity_directory, shuf
 
 %purity_thresholds = [0.75, 1];
 purity_thresholds = 0.75;
-%peak_density_thresholds = [0.8, 0.9, 0.95];
-peak_density_thresholds = [0.8, 0.95]; %0.9;
-shuffle_all_flag = 0;
+peak_density_thresholds = [0.8, 0.9, 0.95];
 
 simplex = "edge";
 parcellation = "schaefer100x7";
@@ -28,6 +26,13 @@ seed = 0;
 for cohort = cohorts
     for purity_threshold = purity_thresholds
         for peak_density_threshold = peak_density_thresholds
+            
+            if abs(peak_density_threshold - 0.9) < 0.01
+                shuffle_all_flag = 1;
+            else
+                shuffle_all_flag = 0; % no need to repeat the shuffle all experiment because this has already been done
+            end
+            
             cohort_csv = fullfile(config.repo_root, "data_pipeline", "data_cohort", ...
                 sprintf("cohort_%s_session_%s.csv", cohort, session));
             subjects = readtable(cohort_csv).Subject;
