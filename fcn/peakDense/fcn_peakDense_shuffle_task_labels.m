@@ -43,7 +43,7 @@ num_peak_dense_pure_nodes = sum(is_peak_dense_pure_node);
 
 % Validate that peak dense pure nodes exist
 if num_peak_dense_pure_nodes == 0
-    error('fcn_peakDense_shuffle_task_labels:NoPeakDensePureNodes', ...
+    warning('fcn_peakDense_shuffle_task_labels:NoPeakDensePureNodes', ...
           'No peak dense pure nodes found for subject %d, session %s. Cannot perform shuffling.', ...
           subject, session);
 end
@@ -56,19 +56,23 @@ for shuffling_idx = 1:num_shuffling
         shuffled_labels_all = mode_task_indices(randperm(num_nodes));
         shuffled_mod(shuffling_idx, 1) = fcn_BCT_calMod(nodeBynode, shuffled_labels_all);
     end
-
-    shuffled_labels_peak_dense_pure_nodes = mode_task_indices;
-    shuffled_labels_peak_dense_pure_nodes(is_peak_dense_pure_node) = peak_dense_pure_labels(randperm(num_peak_dense_pure_nodes));
-    shuffled_mod(shuffling_idx, 1 + shuffle_all_flag) = fcn_BCT_calMod(nodeBynode, shuffled_labels_peak_dense_pure_nodes);
     
-    shuffled_labels_matched_random_nodes = mode_task_indices;
-    randomly_chosen_nodes = 1:num_nodes; % all nodes
-    randomly_chosen_nodes = randomly_chosen_nodes(is_pure_node); % all pure nodes
-    randomly_chosen_nodes = randomly_chosen_nodes(randperm(num_pure_nodes, num_peak_dense_pure_nodes)); % randomly chosen pure nodes
-    shuffled_labels_matched_random_nodes(randomly_chosen_nodes) = ...
-        shuffled_labels_matched_random_nodes(randomly_chosen_nodes(randperm(num_peak_dense_pure_nodes)));
-
-    shuffled_mod(shuffling_idx, 2 + shuffle_all_flag) = fcn_BCT_calMod(nodeBynode, shuffled_labels_matched_random_nodes);
+    if num_peak_dense_pure_nodes == 0
+        continue;
+    else
+        shuffled_labels_peak_dense_pure_nodes = mode_task_indices;
+        shuffled_labels_peak_dense_pure_nodes(is_peak_dense_pure_node) = peak_dense_pure_labels(randperm(num_peak_dense_pure_nodes));
+        shuffled_mod(shuffling_idx, 1 + shuffle_all_flag) = fcn_BCT_calMod(nodeBynode, shuffled_labels_peak_dense_pure_nodes);
+        
+        shuffled_labels_matched_random_nodes = mode_task_indices;
+        randomly_chosen_nodes = 1:num_nodes; % all nodes
+        randomly_chosen_nodes = randomly_chosen_nodes(is_pure_node); % all pure nodes
+        randomly_chosen_nodes = randomly_chosen_nodes(randperm(num_pure_nodes, num_peak_dense_pure_nodes)); % randomly chosen pure nodes
+        shuffled_labels_matched_random_nodes(randomly_chosen_nodes) = ...
+            shuffled_labels_matched_random_nodes(randomly_chosen_nodes(randperm(num_peak_dense_pure_nodes)));
+    
+        shuffled_mod(shuffling_idx, 2 + shuffle_all_flag) = fcn_BCT_calMod(nodeBynode, shuffled_labels_matched_random_nodes);
+    end
 end
 
 % shuffled_mod_mean = mean(shuffled_mod, 'omitnan');
