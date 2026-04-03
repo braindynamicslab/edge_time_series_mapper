@@ -98,7 +98,8 @@ echo ""
 
 JOBS=(
     "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|150"
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|20|150"
+    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.90|150"
+    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|50|150"
     "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|150"
     "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|150"
     "one|LR|triangle|schaefer100x7|'activity_mask_flag'|1|'sign_by_coherence_flag'|1|150"
@@ -164,7 +165,7 @@ for JOB_SPEC in "${JOBS[@]}"; do
     VARARGIN_ARRAY=("${JOB_PARTS[@]:4:${#JOB_PARTS[@]}-5}")
     
     # Process varargin to get string and suffix
-    RESULT=$(process_varargin VARARGIN_ARRAY)
+    RESULT=$(process_varargin "${VARARGIN_ARRAY[@]}")
     IFS='|||' read -r VARARGIN_STR EXPT_SUFFIX <<< "${RESULT}"
     
     # Build experiment name
