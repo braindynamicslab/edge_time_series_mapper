@@ -97,11 +97,12 @@ echo ""
 #     "one|LR|edge|schaefer100x7|'activity_mask_flag'|1|(none)|(none)|300"
 
 JOBS=(
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|150"
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|20|150"
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|150"
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|150"
-    "one|LR|triangle|schaefer100x7|'activity_mask_flag'|1|'sign_by_coherence_flag'|1|150"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|90"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.90|90"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|50|90"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|90"
+    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|90"
+    "one|LR|triangle|schaefer100x7|'activity_mask_flag'|1|'sign_by_coherence_flag'|1|90"
 )
 
 # ============================================
@@ -139,7 +140,7 @@ echo "Submitting ${#JOBS[@]} jobs sequentially..."
 echo ""
 
 JOB_COUNT=0
-CUMULATIVE_DELAY=0  # Track total delay from NOW for sequential scheduling
+CUMULATIVE_DELAY=90  # Track total delay from NOW for sequential scheduling
 
 for JOB_SPEC in "${JOBS[@]}"; do
     # Parse job specification into array
@@ -178,7 +179,7 @@ for JOB_SPEC in "${JOBS[@]}"; do
     # The VARARGIN_STR is passed as the 7th argument to the sbatch script
     if [ ${CUMULATIVE_DELAY} -eq 0 ]; then
         # First job - submit immediately
-        SUBMIT_CMD="sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=${ARRAY_SPEC} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\" 1 \"${VARARGIN_STR}\""
+        SUBMIT_CMD="sbatch --time=00:30:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=${ARRAY_SPEC} ${SCRIPT} \"${COHORT}\" \"${SESSION}\" \"${SIMPLEX}\" \"${PARCELLATION}\" \"${EXPT_NAME}\" 1 \"${VARARGIN_STR}\""
         
         echo "Job $((JOB_COUNT + 1)): Submitting NOW"
     else
