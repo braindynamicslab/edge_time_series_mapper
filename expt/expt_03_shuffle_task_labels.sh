@@ -3,7 +3,7 @@
 #
 # RESOURCE ALLOCATION
 # The resource allocation below works for node or edge time series, but probably is insufficient for triangle time series
-#SBATCH --time=01:00:00
+#SBATCH --time=03:30:00
 #SBATCH --cpus-per-task=8
 #SBATCH --mem-per-cpu=2G
 
