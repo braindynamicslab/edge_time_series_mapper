@@ -75,7 +75,7 @@ function fcn_io_generate_mean_head_motion_csv()
         
         % Create results table
         results_table = table(subjects, mean_head_motion_values, ...
-            'VariableNames', {'Subject', 'mean_head_motion'});
+            'VariableNames', {'subject', 'mean_head_motion'});
         
         % Save to CSV
         output_file = fullfile(output_dir, ...

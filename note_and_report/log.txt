@@ -1010,3 +1010,277 @@ Job 5: Scheduling for 2026-04-03T18:47:46
   Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T18:47:46 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_VARARGIN_ARRAY" 1 ", VARARGIN_ARRAY"
 sbatch: error: QOSMaxSubmitJobPerUserLimit
 sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01d_compute_triagnle_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-03 14:22:27
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: try triangle again
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 6 jobs sequentially...
+
+Job 1: Scheduling for 2026-04-03T15:52:27
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95
+  Array: 1-394%50 (394 subjects)
+  Start: 90 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T15:52:27 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95"
+Submitted batch job 20481599
+
+Job 2: Scheduling for 2026-04-03T17:32:27
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.90
+  Array: 1-394%50 (394 subjects)
+  Start: 190 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_90
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T17:32:27 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_90" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.90"
+Submitted batch job 20481600
+
+Job 3: Scheduling for 2026-04-03T19:12:35
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 50
+  Array: 1-394%50 (394 subjects)
+  Start: 290 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_50
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T19:12:35 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_50" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 50"
+Submitted batch job 20481603
+
+Job 4: Scheduling for 2026-04-03T20:52:37
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 30
+  Array: 1-394%50 (394 subjects)
+  Start: 390 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_30
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T20:52:37 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_30" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 30"
+Submitted batch job 20481604
+
+Job 5: Scheduling for 2026-04-03T22:32:39
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%50 (394 subjects)
+  Start: 490 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T22:32:39 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+Submitted batch job 20481605
+
+Job 6: Scheduling for 2026-04-04T00:12:42
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1
+  Array: 1-394%50 (394 subjects)
+  Start: 590 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-04T00:12:42 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1" 1 ", 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01d_compute_triagnle_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-03 14:24:40
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: try processed triangle again after debugging
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 6 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95
+  Array: 1-394%50 (394 subjects)
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95
+  Command: sbatch --time=00:30:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_95" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.95"
+Submitted batch job 20481764
+
+Job 2: Scheduling for 2026-04-03T16:04:45
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.90
+  Array: 1-394%50 (394 subjects)
+  Start: 100 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_90
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T16:04:45 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_variance_threshold_target_explained_variance_0_90" 1 ", 'dim_reduction_type', 'pca_variance_threshold', 'target_explained_variance', 0.90"
+Submitted batch job 20481766
+
+Job 3: Scheduling for 2026-04-03T17:44:45
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 50
+  Array: 1-394%50 (394 subjects)
+  Start: 200 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_50
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T17:44:45 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_50" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 50"
+Submitted batch job 20481769
+
+Job 4: Scheduling for 2026-04-03T19:24:45
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 30
+  Array: 1-394%50 (394 subjects)
+  Start: 300 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_30
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T19:24:45 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_30" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 30"
+Submitted batch job 20481771
+
+Job 5: Scheduling for 2026-04-03T21:04:45
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 1-394%50 (394 subjects)
+  Start: 400 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T21:04:45 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+Submitted batch job 20481773
+
+Job 6: Scheduling for 2026-04-03T22:44:45
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1
+  Array: 1-394%50 (394 subjects)
+  Start: 500 min from now
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1
+  Command: sbatch --time=00:20:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 --begin=2026-04-03T22:44:45 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1" 1 ", 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1"
+sbatch: error: QOSMaxSubmitJobPerUserLimit
+sbatch: error: Batch job submission failed: Job violates accounting/QOS policy (job submit limit, user's size and/or time limits)
+============================================
+SCRIPT START
+============================================
+Script:    expt_01d_compute_triagnle_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-03 16:44:49
+Hostname:  sh04-ln07.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: last processed feature
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 1 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1
+  Array: 1-394%50 (394 subjects)
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1
+  Command: sbatch --time=00:30:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_activity_mask_flag_1_sign_by_coherence_flag_1" 1 ", 'activity_mask_flag', 1, 'sign_by_coherence_flag', 1"
+Submitted batch job 20497734
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      1
+  Total estimated duration:  100 minutes (~1 hours 40 min)
+  Expected completion:       2026-04-03 18:24:51
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-03 16:44:51
+============================================
+
+
+============================================
+SCRIPT START
+============================================
+Script:    expt_01e_recompute_triagnle_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-06 10:43:22
+Hostname:  sh04-ln04.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: recompute for PCA-40-triangle because too many timeout error
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+  SLURM error dir:      /scratch/users/siuc/edge_time_series_mapper/slurm_err
+
+Submitting 1 jobs sequentially...
+
+Searching for failed tasks matching pattern: expt_compute_analyze_simplex_mapper_node_or_edge_20481771
+Found 18 failed tasks: /scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_086.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_091.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_094.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_096.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_176.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_188.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_189.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_225.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_229.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_230.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_236.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_237.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_261.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_272.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_284.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_292.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_334.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_341.err
+Job 1: Submitting NOW
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: /scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_086.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_091.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_094.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_096.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_176.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_188.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_189.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_225.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_229.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_230.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_236.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_237.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_261.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_272.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_284.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_292.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_334.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_341.err (18 failed tasks)
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --time=01:00:00 --cpus-per-task=8 --mem-per-cpu=8G --array=/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_086.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_091.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_094.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_096.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_176.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_188.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_189.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_225.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_229.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_230.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_236.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_237.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_261.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_272.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_284.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_292.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_334.err,/scratch/users/siuc/edge_time_series_mapper/slurm_err/expt_compute_analyze_simplex_mapper_node_or_edge_20481771_341.err fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+sbatch: error: Batch job submission failed: Invalid job array specification
+============================================
+SCRIPT START
+============================================
+Script:    expt_01e_recompute_triagnle_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-06 10:46:02
+Hostname:  sh04-ln04.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: try again PCA-40-triangle recompute codes
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+  SLURM error dir:      /scratch/users/siuc/edge_time_series_mapper/slurm_err
+
+Submitting 1 jobs sequentially...
+
+Searching for failed tasks matching pattern: expt_compute_analyze_simplex_mapper_node_or_edge_20481771
+Found 18 failed tasks: 225,189,096,261,094,176,272,284,334,229,236,237,292,230,341,091,188,086
+Job 1: Submitting NOW
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40
+  Array: 225,189,096,261,094,176,272,284,334,229,236,237,292,230,341,091,188,086 (18 failed tasks)
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40
+  Command: sbatch --time=01:00:00 --cpus-per-task=8 --mem-per-cpu=8G --array=225,189,096,261,094,176,272,284,334,229,236,237,292,230,341,091,188,086 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_40" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 40"
+Submitted batch job 20751214
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      1
+  Total estimated duration:  100 minutes (~1 hours 40 min)
+  Expected completion:       2026-04-06 12:26:08
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-06 10:46:08
+============================================
+
+

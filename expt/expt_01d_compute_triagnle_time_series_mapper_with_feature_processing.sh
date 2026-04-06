@@ -97,11 +97,11 @@ echo ""
 #     "one|LR|edge|schaefer100x7|'activity_mask_flag'|1|(none)|(none)|300"
 
 JOBS=(
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|100"
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.90|100"
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|50|100"
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|100"
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|100"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|100"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.90|100"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|50|100"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|100"
+#    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|100"
     "one|LR|triangle|schaefer100x7|'activity_mask_flag'|1|'sign_by_coherence_flag'|1|100"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|90"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.90|90"
@@ -146,7 +146,7 @@ echo "Submitting ${#JOBS[@]} jobs sequentially..."
 echo ""
 
 JOB_COUNT=0
-CUMULATIVE_DELAY=90  # Track total delay from NOW for sequential scheduling
+CUMULATIVE_DELAY=0  # Track total delay from NOW for sequential scheduling
 
 for JOB_SPEC in "${JOBS[@]}"; do
     # Parse job specification into array
