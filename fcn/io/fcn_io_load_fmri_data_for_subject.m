@@ -17,25 +17,31 @@ function [data_cell, missing_data_flag] = fcn_io_load_fmri_data_for_subject(subj
     %
     % Optional Parameters (name-value pairs):
     %   'verbose_flag' - Print progress messages: 1=yes, 0=no (default: 1)
+    %   'motion_data_flag' - Load motion data instead of timeseries: 1=yes, 0=no (default: 0)
     %
     % Outputs:
     %   data_cell - Cell array where each element is a [timepoints x ROIs]
-    %               matrix of timeseries data for one task
+    %               matrix of timeseries data for one task (or motion data if motion_data_flag=1)
     %   missing_data_flag - 1 if any data files are missing, 0 otherwise
     %
     % Example:
     %   config = fcn_utils_get_config();
     %   tasks = ["REST", "WM", "MOTOR"];
-    %   [data_cell, missing] = fcn_io_load_data_for_subject(subject, tasks, "LR", ...
+    %   [data_cell, missing] = fcn_io_load_fmri_data_for_subject(subject, tasks, "LR", ...
     %                                                        "LR_run-1", "schaefer100x7", config);
     %   if missing
     %       return;  % Skip this subject
     %   end
     %
     %   % Silent mode
-    %   [data_cell, missing] = fcn_io_load_data_for_subject(subject, tasks, "LR", ...
+    %   [data_cell, missing] = fcn_io_load_fmri_data_for_subject(subject, tasks, "LR", ...
     %                                                        "LR_run-1", "schaefer100x7", config, ...
     %                                                        'verbose_flag', 0);
+    %
+    %   % Load motion data instead
+    %   [motion_cell, missing] = fcn_io_load_fmri_data_for_subject(subject, tasks, "LR", ...
+    %                                                        "LR_run-1", "schaefer100x7", config, ...
+    %                                                        'motion_data_flag', 1);
     %
     % See also: fcn_io_get_parcellated_fmri_path, fcn_io_lookup_batch_table
     
@@ -50,10 +56,12 @@ function [data_cell, missing_data_flag] = fcn_io_load_fmri_data_for_subject(subj
     addRequired(p, 'config', @isstruct);
     addParameter(p, 'verbose_flag', 1, @isnumeric);
     addParameter(p, 'load_method', "readmatrix", @isStringScalar);
+    addParameter(p, 'motion_data_flag', 0, @(x) isnumeric(x) && isscalar(x));
     parse(p, subject, tasks, session, rest_session, parcellation, config, varargin{:});
     
     verbose_flag = p.Results.verbose_flag;
     load_method = p.Results.load_method;
+    motion_data_flag = p.Results.motion_data_flag;
     
     %% Load data
     
@@ -78,7 +86,11 @@ function [data_cell, missing_data_flag] = fcn_io_load_fmri_data_for_subject(subj
         end
         
         if verbose_flag
-            fprintf('  Loading %s (%s)... ', task, task_session);
+            if motion_data_flag
+                fprintf('  Loading %s (%s) motion data... ', task, task_session);
+            else
+                fprintf('  Loading %s (%s)... ', task, task_session);
+            end
         end
         
         % Look up batch identifier
@@ -93,7 +105,8 @@ function [data_cell, missing_data_flag] = fcn_io_load_fmri_data_for_subject(subj
         % Construct filepath
         filepath = fcn_io_get_parcellated_fmri_path(config.hcp_fmri_dir, ...
                                                     subject, task, task_session, ...
-                                                    parcellation, batch);
+                                                    parcellation, batch, ...
+                                                    'motion_data_flag', motion_data_flag);
         
         % Check if file exists
         if ~isfile(filepath)
@@ -111,8 +124,12 @@ function [data_cell, missing_data_flag] = fcn_io_load_fmri_data_for_subject(subj
         end
         
         if verbose_flag
-            fprintf('Done (%d timepoints x %d ROIs)\n', ...
-                    size(data_cell{task_idx}, 1), size(data_cell{task_idx}, 2));
+            if motion_data_flag
+                fprintf('Done (%d timepoints)\n', size(data_cell{task_idx}, 1));
+            else
+                fprintf('Done (%d timepoints x %d ROIs)\n', ...
+                        size(data_cell{task_idx}, 1), size(data_cell{task_idx}, 2));
+            end
         end
     end
     
