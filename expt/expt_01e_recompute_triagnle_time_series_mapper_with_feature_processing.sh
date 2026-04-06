@@ -134,12 +134,21 @@ find_failed_tasks() {
     local pattern="$1"
     
     # Find files matching pattern that contain the timeout error
-    local failed_tasks=$(find "${SLURM_ERR_DIR}" -maxdepth 1 -name "*${pattern}*" -type f ! -empty \
-        -exec grep -l "CANCELLED AT .* DUE TO TIME LIMIT" {} \; \
-        | sed "s/.*_${pattern}_\([0-9]\{3\}\)\.err/\1/" \
-        | sort -n)
+    local failed_files=$(find "${SLURM_ERR_DIR}" -maxdepth 1 -name "*${pattern}*" -type f ! -empty \
+        -exec grep -l "CANCELLED AT .* DUE TO TIME LIMIT" {} \;)
     
-    echo "${failed_tasks}"
+    # Extract just the 3-digit numbers from the filenames
+    local failed_tasks=""
+    for file in ${failed_files}; do
+        # Extract 3-digit number: pattern_XXX.err
+        task_id=$(echo "$file" | sed -n "s/.*${pattern}_\([0-9]\{3\}\)\.err/\1/p")
+        if [ -n "$task_id" ]; then
+            failed_tasks="${failed_tasks}${task_id}"$'\n'
+        fi
+    done
+    
+    # Remove trailing newline and return
+    echo "${failed_tasks}" | sed '/^$/d'
 }
 
 # ============================================
