@@ -1,0 +1,5 @@
+condition,cohort,session,parcellation
+raw_features,one,LR,schaefer100x7
+raw_features,two,LR,schaefer100x7
+raw_features,one,RL,schaefer100x7
+raw_features,two,RL,schaefer100x7
