@@ -97,7 +97,7 @@ echo ""
 #     "one|LR|edge|schaefer100x7|'activity_mask_flag'|1|(none)|(none)|300|(none)"
 
 JOBS=(
-    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|100|expt_compute_analyze_simplex_mapper_node_or_edge_20481771"
+    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|100|expt_compute_analyze_simplex_mapper_node_or_edge_20481771"
 )
 
 # ============================================
