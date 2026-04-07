@@ -1,0 +1,9 @@
+condition,cohort,session,parcellation
+raw_features,one,LR,schaefer100x7
+raw_features,two,LR,schaefer100x7
+raw_features,one,RL,schaefer100x7
+raw_features,one,LR,schaefer200x7
+coherence,one,LR,schaefer100x7
+pca_variance_threshold_90,one,LR,schaefer100x7
+pca_fixed_components_30,one,LR,schaefer100x7
+pca_fixed_components_40,one,LR,schaefer100x7

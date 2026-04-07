@@ -228,3 +228,4 @@ note_and_report/private/      # For private repos sharing with collaborators
 
 test/debug/
 data_pipeline/mapper_node_features/
+test/file_tree/

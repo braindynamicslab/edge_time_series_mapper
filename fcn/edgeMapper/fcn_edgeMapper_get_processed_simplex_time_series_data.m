@@ -290,7 +290,7 @@ end
         end
         
         pca_results.num_features = actual_num_features;
-        pca_results.explained_variance = sum(pca_explained_variance) / 100;
+        pca_results.explained_variance = sum(pca_explained_variance) / 100; % should sum up to actual_num_features, but this is innocuous
         pca_results.reduction_type = dim_reduction_type;
         
         if verbose_flag
