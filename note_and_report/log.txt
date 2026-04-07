@@ -1284,3 +1284,51 @@ End time: 2026-04-06 10:46:08
 ============================================
 
 
+============================================
+SCRIPT START
+============================================
+Script:    expt_01e_recompute_triagnle_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-06 17:36:31
+Hostname:  sh04-ln04.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: redid pca 30 (40 did not require redoing!)
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+  SLURM error dir:      /scratch/users/siuc/edge_time_series_mapper/slurm_err
+
+Submitting 1 jobs sequentially...
+
+Searching for failed tasks matching pattern: expt_compute_analyze_simplex_mapper_node_or_edge_20481771
+Found 18 failed tasks: 225,189,096,261,094,176,272,284,334,229,236,237,292,230,341,091,188,086
+Job 1: Submitting NOW
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 30
+  Array: 225,189,096,261,094,176,272,284,334,229,236,237,292,230,341,091,188,086 (18 failed tasks)
+  Estimated duration: 100 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_30
+  Command: sbatch --time=01:00:00 --cpus-per-task=8 --mem-per-cpu=8G --array=225,189,096,261,094,176,272,284,334,229,236,237,292,230,341,091,188,086 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_30" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 30"
+Submitted batch job 20796766
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      1
+  Total estimated duration:  100 minutes (~1 hours 40 min)
+  Expected completion:       2026-04-06 19:16:35
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-06 17:36:35
+============================================
+
+
