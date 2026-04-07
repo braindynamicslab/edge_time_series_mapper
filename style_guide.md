@@ -34,6 +34,8 @@ When you deviate from guidelines, document why.
 ## Requirements
 
 - **MATLAB:** R2019b or later (for string features and `VariableNamingRule`)
+- **Bash:** Version 4.0 or later (for associative arrays)
+- **SLURM:** For HPC job scheduling
 - **Operating System:** Cross-platform (Windows, macOS, Linux)
 - **HPC:** Stanford Sherlock cluster with SLURM (for this project)
 
@@ -54,6 +56,7 @@ When you deviate from guidelines, document why.
 11. [Data Presentation](#data-presentation)
 12. [Testing](#testing)
 13. [Version Control](#version-control)
+14. [Bash and SLURM Scripts](#bash-and-slurm-scripts)
 
 ---
 
@@ -1360,7 +1363,7 @@ external_path = get_path_from_config();  % Might contain / or \
 filepath = fullfile(base_dir, external_path);
 ```
 
-### Relative vs Absolute Paths
+### Relative vs Absolute Paths in MATLAB
 
 **Use relative paths for portability:**
 
@@ -1381,6 +1384,20 @@ config.data_dir = '/oak/stanford/groups/yourgroup/data/raw';
 config.scratch_dir = '/scratch/users/youruser/temp';
 ```
 
+
+
+### Bash Path Management
+
+**All directory variables must have trailing slashes:**
+
+```bash
+# Correct
+REPO_ROOT="/home/users/username/project/"
+DATA_DIR="/oak/stanford/groups/group/data/"
+
+# Use without additional slash
+FILEPATH="${DATA_DIR}subject_01.mat"
+
 ---
 
 ## Numerical Precision
@@ -1396,6 +1413,33 @@ save('results.mat', 'correlation_value');  % Saves all digits
 
 % Write to CSV/TSV
 writetable(results, 'output.csv');  % Full precision
+```
+
+**Rationale:**
+- Consistent visual pattern - directories always end with `/`
+- Never add `/` when concatenating - it's already there
+- Avoids both missing and double slashes
+- Clear distinction between directories and files
+
+**Rules:**
+1. **Directory variables:** Always end with `/`
+2. **File variables:** Never end with `/`  
+3. **Concatenating filenames:** Never add `/` (already in directory variable)
+4. **Creating subdirectories:** Add trailing `/`
+
+```bash
+# Setting up paths
+BASE_DIR="/oak/stanford/groups/project/"
+DATA_DIR="${BASE_DIR}data/"
+SUBJECT_DIR="$${DATA_DIR}sub-$${SUBJECT}/"
+OUTPUT_FILE="${SUBJECT_DIR}results.csv"
+
+# Creating directories  
+mkdir -p "${DATA_DIR}"
+mkdir -p "${SUBJECT_DIR}"
+
+# Creating files
+touch "${OUTPUT_FILE}"
 ```
 
 ### Displaying Data
@@ -1893,6 +1937,19 @@ function results = fcn_analysis_process(data, varargin)
 end
 ```
 
+### Submitting SLURM Jobs with Dependencies
+
+```bash
+# Submit jobs in sequence
+PREV_JOB=""
+for SIMPLEX in node edge; do
+    if [ -z "${PREV_JOB}" ]; then
+        PREV_JOB=$$(sbatch --parsable script.sbatch "$${COHORT}" "${SIMPLEX}")
+    else
+        PREV_JOB=$$(sbatch --dependency=afterok:$${PREV_JOB} --parsable script.sbatch "$${COHORT}" "$${SIMPLEX}")
+    fi
+done
+
 ---
 
 ## Summary
@@ -2205,6 +2262,723 @@ fprintf('Results saved to: %s\n', output_file);
 ```
 
 ---
+
+## Bash and SLURM Style Guide
+
+### Philosophy
+
+**Keep bash and SLURM scripts light.** Outsource heavy computation and complex logic to higher-level languages (MATLAB, Python, R) for easier debugging, testing, and maintenance. Bash should orchestrate workflows, not implement algorithms.
+
+```bash
+# Good - Bash orchestrates, MATLAB computes
+matlab -nodisplay -batch "fcn_analysis_complex_computation(data, params);"
+
+# Avoid - Complex computation in bash
+# Don't implement statistical tests, signal processing, etc. in bash
+```
+
+**Why:**
+- Higher-level languages have better debugging tools
+- Easier to test and validate complex logic
+- More readable and maintainable
+- Better error messages and stack traces
+
+---
+
+### Comments and Print Statements
+
+**Comments and print statements are highly encouraged** to avoid bugs and misunderstandings. Bash scripts can be opaque - make execution transparent.
+
+```bash
+# Print what you're doing at each step
+echo "Loading configuration..."
+source config.sh
+
+echo "Processing ${num_subjects} subjects"
+echo "Output directory: ${OUTPUT_DIR}"
+echo "Method: ${METHOD}"
+
+# Comment non-obvious decisions
+# Use Spearman correlation because data may have outliers
+METHOD="spearman"
+
+# Explain file operations
+echo "Creating output directories..."
+mkdir -p "${OUTPUT_DIR}"
+mkdir -p "${TMP_DIR}"
+```
+
+**Print important variable values:**
+
+```bash
+# At start of script
+echo "========================================="
+echo "Script: $(basename \$0)"
+echo "Started: $(date)"
+echo "User: ${USER}"
+echo "========================================="
+echo ""
+
+echo "Configuration:"
+echo "  COHORT: ${COHORT}"
+echo "  SESSION: ${SESSION}"
+echo "  SIMPLEX: ${SIMPLEX}"
+echo "  OUTPUT_DIR: ${OUTPUT_DIR}"
+echo ""
+```
+
+---
+
+### Building Commands with Variables
+
+**When building commands with variables, save the command as a string and print it before execution.** This aids debugging and reduces confusion about quotes.
+
+#### The Problem
+
+```bash
+# Hard to debug - what does MATLAB actually receive?
+matlab -batch "fcn_process($${SUBJECT}, '$${SESSION}', ${SIMPLEX})"
+```
+
+If this fails, you can't see what was actually passed to MATLAB. Was `${SUBJECT}` expanded correctly? Are the quotes right?
+
+#### The Solution
+
+```bash
+# Build command as a string
+MATLAB_COMMAND="addpath(genpath('${REPO_ROOT}')); \
+fcn_edgeMapper_compute_and_analyze_simplex_mapper(\
+$${SUBJECT}, '$${PARCELLATION}', '$${SESSION}', $${SIMPLEX}, '${OUTPUT_DIR}', \
+'copy_data_flag', ${COPY_DATA_FLAG}, \
+'summary_csv_path', '${TMP_FILENAME}');"
+
+# Print for debugging
+echo "MATLAB command:"
+echo "${MATLAB_COMMAND}"
+echo ""
+
+# Execute
+matlab -nodisplay -batch "${MATLAB_COMMAND}"
+```
+
+**Benefits:**
+- Can see exactly what MATLAB receives
+- Easy to copy-paste for interactive testing
+- Helps catch quoting errors before execution
+- Clear separation between construction and execution
+
+#### Understanding Quotes in Bash-MATLAB Interface
+
+**Three layers of quoting:**
+1. Bash shell quoting
+2. The `-batch` argument string  
+3. MATLAB string syntax
+
+**Rules:**
+
+```bash
+# String variables in bash → Strings in MATLAB
+# Need quotes around bash variable so MATLAB sees it as a string
+PARCELLATION="schaefer100x7"
+"'${PARCELLATION}'"  # Bash expands to → 'schaefer100x7' in MATLAB
+
+# Numeric variables in bash → Numbers in MATLAB  
+# No quotes around bash variable so MATLAB sees it as a number
+SIMPLEX=2
+"${SIMPLEX}"  # Bash expands to → 2 in MATLAB
+
+# Literal strings (parameter names) → Strings in MATLAB
+# Single quotes for MATLAB
+"'copy_data_flag'"  # → 'copy_data_flag' in MATLAB
+```
+
+**Complete example with comments:**
+
+```bash
+# Variables
+SUBJECT=101              # Numeric subject ID
+PARCELLATION="schaefer100x7"  # String parcellation name
+SIMPLEX=2               # Numeric simplex level
+COPY_DATA_FLAG=1        # Numeric flag
+
+# Build MATLAB command
+# Use double quotes for the entire bash string
+# Use single quotes around bash variables that should be MATLAB strings
+# Use ${VAR} without quotes for bash variables that should be MATLAB numbers
+MATLAB_COMMAND="addpath(genpath('${REPO_ROOT}')); \
+fcn_process(\
+${SUBJECT}, \
+'${PARCELLATION}', \
+${SIMPLEX}, \
+'copy_data_flag', ${COPY_DATA_FLAG});"
+
+# What MATLAB receives (after bash expansion):
+# addpath(genpath('/path/to/repo')); 
+# fcn_process(101, 'schaefer100x7', 2, 'copy_data_flag', 1);
+#              ^^^  ^^^^^^^^^^^^^^  ^                      ^
+#              number  string    number                  number
+```
+
+**Why this matters:**
+
+```bash
+# Wrong - MATLAB sees variable name instead of string
+COHORT="one"
+"fcn(${COHORT})"  
+# Bash expands to → fcn(one)
+# MATLAB error: Undefined variable 'one'
+
+# Correct - MATLAB sees string literal  
+"fcn('${COHORT}')"
+# Bash expands to → fcn('one')
+# MATLAB receives string: 'one'
+```
+
+**Additional notes:**
+
+```bash
+# Backslash \ continues the string to next line
+COMMAND="first_part \
+second_part"
+
+# Note: Do not separate the addpath line from the function call!
+# This would create TWO MATLAB sessions:
+matlab -batch "addpath(...)"        # Session 1: adds path, exits
+matlab -batch "fcn_process(...)"    # Session 2: path not available!
+
+# Correct - one session:
+MATLAB_COMMAND="addpath(...); fcn_process(...);"
+matlab -batch "${MATLAB_COMMAND}"
+```
+
+---
+
+### Reproducibility: Scripts Over Interactive Commands
+
+**Always write a script and execute it, rather than running commands interactively.** This ensures reproducibility and creates an audit trail.
+
+```bash
+# Good - Script is version controlled and reproducible
+bash scripts/submit_all_jobs.sh one LR edge schaefer100x7
+
+# Avoid - Interactive commands are lost
+cd /some/path
+for i in 1 2 3; do
+    sbatch script.sh $i  # Where did this run? What were the exact parameters?
+done
+```
+
+**Why:**
+- Scripts are version controlled
+- Can be re-run with same parameters
+- Documents what was done
+- Can be reviewed and debugged
+- Creates audit trail in logs
+
+---
+
+### Logging: Automatic Documentation
+
+**Every bash script should log execution details automatically.** This is especially critical when launching SLURM jobs.
+
+#### Standard Logging Pattern
+
+```bash
+#!/bin/bash
+#
+# Description of what this script does
+#
+
+# ============================================
+# Configuration
+# ============================================
+SCRIPT_NAME=$(basename "\$0")
+LOG_DIR="note_and_report"
+LOG_FILE="${LOG_DIR}/log.txt"
+
+# Ensure log directory exists
+mkdir -p "${LOG_DIR}"
+
+# ============================================
+# Start logging
+# ============================================
+{
+    echo "============================================"
+    echo "SCRIPT START"
+    echo "============================================"
+    echo "Script:    ${SCRIPT_NAME}"
+    echo "User:      ${USER}"
+    echo "Date:      $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "Hostname:  $(hostname)"
+    echo "Directory: $(pwd)"
+    echo ""
+    echo "Parameters:"
+    echo "  COHORT:       ${COHORT}"
+    echo "  SESSION:      ${SESSION}"
+    echo "  SIMPLEX:      ${SIMPLEX}"
+    echo ""
+} >> "${LOG_FILE}"
+
+# ============================================
+# Main script execution
+# ============================================
+
+# Example: Submit jobs and log IDs
+echo "Submitting jobs..." | tee -a "${LOG_FILE}"
+
+for SIMPLEX in node edge; do
+    JOB_ID=$$(sbatch --parsable script.sbatch "$${COHORT}" "$${SESSION}" "$${SIMPLEX}")
+    
+    {
+        echo "Submitted job:"
+        echo "  Job ID:   ${JOB_ID}"
+        echo "  Simplex:  ${SIMPLEX}"
+        echo "  Command:  sbatch script.sbatch $${COHORT} $${SESSION} ${SIMPLEX}"
+        echo ""
+    } >> "${LOG_FILE}"
+done
+
+# ============================================
+# End logging
+# ============================================
+{
+    echo "Script completed successfully"
+    echo "End time: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "============================================"
+    echo ""
+    echo ""
+} >> "${LOG_FILE}"
+```
+
+#### Why Log Job IDs?
+
+SLURM job IDs are critical for:
+- Checking job status: `squeue -j ${JOB_ID}`
+- Viewing job details: `sacct -j ${JOB_ID}`  
+- Canceling jobs: `scancel ${JOB_ID}`
+- Debugging failures
+- Tracking which analysis produced which results
+
+**Without logging, you lose track of which jobs you launched and with what parameters.**
+
+#### Adding User Comments to Log
+
+Encourage users to document why they're running the analysis:
+
+```bash
+# Allow user to add comments before script runs
+echo ""
+echo "Optional: Add comment about this run (press Enter to skip):"
+read -r USER_COMMENT
+
+if [ -n "${USER_COMMENT}" ]; then
+    {
+        echo "User comment:"
+        echo "  ${USER_COMMENT}"
+        echo ""
+    } >> "${LOG_FILE}"
+fi
+```
+
+**Example comments:**
+- "Testing new preprocessing parameters"
+- "Rerunning failed subjects from batch 2"
+- "Exploratory analysis for reviewer response"
+- "Final analysis for paper submission"
+
+#### Log Format
+
+Use clear separators between log entries for easy navigation:
+
+```
+============================================
+SCRIPT START
+============================================
+Script:    submit_jobs.sh
+User:      username
+Date:      2024-03-26 14:30:00
+Hostname:  sh-ln01.stanford.edu
+Directory: /home/users/username/project
+
+Parameters:
+  COHORT:       one
+  SESSION:      LR
+  SIMPLEX:      edge
+
+User comment:
+  Testing edge mapper with new parameters
+
+Submitting jobs...
+
+Submitted job:
+  Job ID:   20016104
+  Simplex:  node
+  Command:  sbatch script.sbatch one LR node
+
+Submitted job:
+  Job ID:   20016105
+  Simplex:  edge
+  Command:  sbatch script.sbatch one LR edge
+
+Script completed successfully
+End time: 2024-03-26 14:30:15
+============================================
+
+
+============================================
+SCRIPT START
+============================================
+Script:    submit_jobs.sh
+User:      username
+Date:      2024-03-27 09:15:23
+...next entry...
+```
+
+**Benefits:**
+- Easy to grep for specific dates or job IDs
+- Clear visual separation between runs
+- Complete context for each execution
+- Searchable history of all analyses
+
+#### Redirecting Output to Log
+
+**Option 1: Append selected output (recommended)**
+
+```bash
+# Explicit logging of specific messages
+echo "Processing subject $${SUBJECT}..." >> "$${LOG_FILE}"
+```
+
+**Option 2: Tee for simultaneous console and log**
+
+```bash
+# Show on console AND append to log
+echo "Processing subject $${SUBJECT}..." | tee -a "$${LOG_FILE}"
+```
+
+**Option 3: Redirect all script output (use carefully)**
+
+```bash
+#!/bin/bash
+
+# Redirect stdout and stderr to log file AND console
+exec > >(tee -a "${LOG_FILE}")
+exec 2>&1
+
+# Now everything is logged automatically
+echo "This goes to console and log"
+ls /nonexistent  # Errors also logged
+```
+
+**Recommendation:** Use explicit logging (Option 1) or tee (Option 2) for important messages. Avoid redirecting everything (Option 3) as it can create massive log files with unnecessary detail.
+
+#### Complete Template Script with Logging
+
+```bash
+#!/bin/bash
+#
+# submit_analysis_jobs.sh
+#
+# Submit SLURM jobs for connectivity analysis across cohorts and sessions
+#
+
+set -e  # Exit on error
+set -u  # Exit on undefined variable
+
+# ============================================
+# Configuration
+# ============================================
+SCRIPT_NAME=$(basename "\$0")
+REPO_ROOT="/home/users/username/project/"
+LOG_DIR="${REPO_ROOT}note_and_report/"
+LOG_FILE="${LOG_DIR}log.txt"
+
+COHORTS=("one" "all_but_one")
+SESSIONS=("LR" "RL")
+SIMPLEXES=("node" "edge")
+
+SLURM_SCRIPT="${REPO_ROOT}slurm_script/analysis.sbatch"
+
+# Ensure log directory exists
+mkdir -p "${LOG_DIR}"
+
+# ============================================
+# User input
+# ============================================
+echo "============================================"
+echo "JOB SUBMISSION SCRIPT"
+echo "============================================"
+echo ""
+echo "Will submit $$(( $${#COHORTS[@]} * $${#SESSIONS[@]} * $${#SIMPLEXES[@]} )) jobs"
+echo ""
+echo "Optional: Add comment about this run (press Enter to skip):"
+read -r USER_COMMENT
+echo ""
+
+# ============================================
+# Start logging
+# ============================================
+{
+    echo "============================================"
+    echo "SCRIPT START"
+    echo "============================================"
+    echo "Script:    ${SCRIPT_NAME}"
+    echo "User:      ${USER}"
+    echo "Date:      $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "Hostname:  $(hostname)"
+    echo "Directory: $(pwd)"
+    echo ""
+    
+    if [ -n "${USER_COMMENT}" ]; then
+        echo "User comment:"
+        echo "  ${USER_COMMENT}"
+        echo ""
+    fi
+    
+    echo "Configuration:"
+    echo "  Cohorts:   ${COHORTS[*]}"
+    echo "  Sessions:  ${SESSIONS[*]}"
+    echo "  Simplexes: ${SIMPLEXES[*]}"
+    echo "  SLURM script: ${SLURM_SCRIPT}"
+    echo ""
+} >> "${LOG_FILE}"
+
+# ============================================
+# Submit jobs
+# ============================================
+echo "Submitting jobs..." | tee -a "${LOG_FILE}"
+echo "" >> "${LOG_FILE}"
+
+JOB_COUNT=0
+
+for COHORT in "${COHORTS[@]}"; do
+    for SESSION in "${SESSIONS[@]}"; do
+        PREV_JOB=""
+        
+        for SIMPLEX in "${SIMPLEXES[@]}"; do
+            # Build experiment name
+            EXPT_NAME="analysis_$${COHORT}_$${SESSION}_${SIMPLEX}"
+            
+            # Submit with dependency
+            if [ -z "${PREV_JOB}" ]; then
+                JOB_ID=$$(sbatch --parsable "$${SLURM_SCRIPT}" \
+                    "$${COHORT}" "$${SESSION}" "$${SIMPLEX}" "$${EXPT_NAME}")
+                
+                echo "  Job $${JOB_ID}: cohort=$${COHORT}, session=$${SESSION}, simplex=$${SIMPLEX}"
+                
+                {
+                    echo "Submitted job ${JOB_ID}:"
+                    echo "  Cohort:       ${COHORT}"
+                    echo "  Session:      ${SESSION}"
+                    echo "  Simplex:      ${SIMPLEX}"
+                    echo "  Experiment:   ${EXPT_NAME}"
+                    echo "  Dependency:   none (first in chain)"
+                    echo ""
+                } >> "${LOG_FILE}"
+            else
+                JOB_ID=$$(sbatch --dependency=afterok:$${PREV_JOB} --parsable "${SLURM_SCRIPT}" \
+                    "$${COHORT}" "$${SESSION}" "$${SIMPLEX}" "$${EXPT_NAME}")
+                
+                echo "  Job $${JOB_ID}: cohort=$${COHORT}, session=$${SESSION}, simplex=$${SIMPLEX} (depends on ${PREV_JOB})"
+                
+                {
+                    echo "Submitted job ${JOB_ID}:"
+                    echo "  Cohort:       ${COHORT}"
+                    echo "  Session:      ${SESSION}"
+                    echo "  Simplex:      ${SIMPLEX}"
+                    echo "  Experiment:   ${EXPT_NAME}"
+                    echo "  Dependency:   afterok:${PREV_JOB}"
+                    echo ""
+                } >> "${LOG_FILE}"
+            fi
+            
+            PREV_JOB="${JOB_ID}"
+            JOB_COUNT=$((JOB_COUNT + 1))
+        done
+        
+        echo "" >> "${LOG_FILE}"
+    done
+done
+
+# ============================================
+# Summary
+# ============================================
+echo ""
+echo "Submission complete!" | tee -a "${LOG_FILE}"
+
+{
+    echo "Summary:"
+    echo "  Total jobs submitted: ${JOB_COUNT}"
+    echo "  Check status: squeue -u ${USER}"
+    echo "  View details: sacct -j <JOB_ID>"
+    echo ""
+} | tee -a "${LOG_FILE}"
+
+# ============================================
+# End logging
+# ============================================
+{
+    echo "Script completed successfully"
+    echo "End time: $(date '+%Y-%m-%d %H:%M:%S')"
+    echo "============================================"
+    echo ""
+    echo ""
+} >> "${LOG_FILE}"
+
+echo ""
+echo "Log saved to: ${LOG_FILE}"
+```
+
+#### Using the Log File
+
+**View recent entries:**
+```bash
+tail -100 note_and_report/log.txt
+```
+
+**Search for specific job ID:**
+```bash
+grep "20016104" note_and_report/log.txt
+```
+
+**Find all runs from a specific date:**
+```bash
+grep "2024-03-26" note_and_report/log.txt
+```
+
+**Extract all job IDs from a run:**
+```bash
+# Get the block for a specific run, then extract job IDs
+sed -n '/SCRIPT START.*2024-03-26 14:30/,/SCRIPT.*completed/p' note_and_report/log.txt | \
+    grep "Job ID:"
+```
+
+**Cancel all jobs from a logged run:**
+```bash
+# Extract job IDs and cancel them
+grep "Job ID:" note_and_report/log.txt | tail -10 | awk '{print \$3}' | xargs scancel
+```
+
+#### Best Practices
+
+1. **Always log before modifying:**
+   - Log before deleting files
+   - Log before overwriting results
+   - Log before launching large job arrays
+
+2. **Include context:**
+   - Why you're running this analysis
+   - What parameters changed from last time
+   - Expected completion time
+
+3. **Review logs periodically:**
+   - Archive old entries (e.g., yearly)
+   - Check for patterns in failures
+   - Document successful parameter combinations
+
+4. **Version control:**
+   - Commit `log.txt` periodically (or use `.gitignore` if it gets too large)
+   - Keep separate logs for different projects
+   - Include timestamps in archived logs: `log_2024.txt`
+
+#### Example Log Review Session
+
+```bash
+# What jobs did I submit today?
+grep "$(date '+%Y-%m-%d')" note_and_report/log.txt
+
+# Which jobs are still pending?
+JOBS=$(grep "Job ID:" note_and_report/log.txt | tail -20 | awk '{print \$3}')
+for JOB in $JOBS; do
+    squeue -j $$JOB 2>/dev/null || echo "Job $$JOB completed or not found"
+done
+
+# Review my comment from last run
+grep -A 2 "User comment:" note_and_report/log.txt | tail -3
+```
+
+---
+
+### Script vs Interactive Commands
+
+**Always prefer scripts over interactive commands for reproducibility.**
+
+#### Why Scripts?
+
+| Interactive | Script |
+|------------|--------|
+| No record of what you did | Complete history |
+| Can't reproduce exactly | Reproducible |
+| Typos cause errors | Typos caught in testing |
+| Parameter values forgotten | Parameters documented |
+| Can't review before execution | Can review and version control |
+
+#### Example: Interactive (Avoid)
+
+```bash
+# At command line - no record, no logging
+$ cd /scratch/users/siuc/project
+$ sbatch analysis.sbatch one LR node
+Submitted batch job 12345
+$ sbatch analysis.sbatch one LR edge
+Submitted batch job 12346
+# ... 30 minutes later: which parameters did I use? What were the job IDs?
+```
+
+#### Example: Script (Preferred)
+
+```bash
+# submit_jobs.sh - versioned, logged, reproducible
+$ bash submit_jobs.sh
+
+============================================
+JOB SUBMISSION SCRIPT
+============================================
+
+Will submit 4 jobs
+
+Optional: Add comment about this run (press Enter to skip):
+Testing new filtering parameters
+
+Submitting jobs...
+  Job 20016104: cohort=one, session=LR, simplex=node
+  Job 20016105: cohort=one, session=LR, simplex=edge
+  ...
+
+Submission complete!
+Log saved to: note_and_report/log.txt
+```
+
+**Benefits:**
+- Every execution is logged
+- Parameters are documented
+- Can review script before running
+- Easy to modify and rerun
+- Version controlled
+- Shareable with collaborators
+
+#### When Interactive is Acceptable
+
+**Quick checks and exploration:**
+```bash
+# OK - Simple query
+squeue -u $USER
+
+# OK - Checking a file
+head data/participants.tsv
+
+# OK - Testing a command before scripting
+matlab -nodisplay -batch "disp('test')"
+```
+
+**But for any real work:**
+- Launching jobs → Write a script
+- Processing data → Write a script
+- Moving/deleting files → Write a script
+- Anything you might need to repeat → Write a script
+
+---
+
 
 ## Revision History
 
