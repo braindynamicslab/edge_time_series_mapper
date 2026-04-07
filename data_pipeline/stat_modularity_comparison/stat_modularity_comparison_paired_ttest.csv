@@ -16,8 +16,8 @@ pca_variance_threshold_90,one,LR,schaefer100x7,edge,node,0,0,28.9100984830044,39
 pca_variance_threshold_90,one,LR,schaefer100x7,edge,triangle,0,0,16.4706154715936,393,1.0077067674403e-46,0.829777619914155,***
 pca_variance_threshold_90,one,LR,schaefer100x7,triangle,node,0,0,7.1200164260929,393,5.16988855241163e-12,0.358701245498839,***
 pca_fixed_components_30,one,LR,schaefer100x7,edge,node,3,0,10.8811782570774,390,2.92746124894646e-24,0.550284837339133,***
-pca_fixed_components_30,one,LR,schaefer100x7,edge,triangle,3,18,34.0613033302204,372,2.13877592185031e-116,1.76362743458614,***
-pca_fixed_components_30,one,LR,schaefer100x7,triangle,node,18,0,-22.9447964800299,375,2.03552508622617e-73,-1.18328752902934,***
-pca_fixed_components_40,one,LR,schaefer100x7,edge,node,5,0,4.62975787047744,405,4.9383910752814e-06,0.229771025127832,***
-pca_fixed_components_40,one,LR,schaefer100x7,edge,triangle,5,5,29.8023575360523,400,1.2518270193479e-103,1.4882587146603,***
-pca_fixed_components_40,one,LR,schaefer100x7,triangle,node,5,0,-25.2621707698443,405,3.13402109202695e-85,-1.25374048430375,***
+pca_fixed_components_30,one,LR,schaefer100x7,edge,triangle,3,1,30.0999260424311,389,1.23636460954721e-103,1.52416900247384,***
+pca_fixed_components_30,one,LR,schaefer100x7,triangle,node,1,0,-20.0297093969918,392,5.73026790570583e-62,-1.01036518544492,***
+pca_fixed_components_40,one,LR,schaefer100x7,edge,node,4,0,4.38488005774511,389,1.49564309290265e-05,0.222037032720929,***
+pca_fixed_components_40,one,LR,schaefer100x7,edge,triangle,4,5,29.6990450067852,384,1.6203742652326e-101,1.51360348760877,***
+pca_fixed_components_40,one,LR,schaefer100x7,triangle,node,5,0,-25.2767766979268,388,5.07273857150907e-84,-1.28158345204975,***
