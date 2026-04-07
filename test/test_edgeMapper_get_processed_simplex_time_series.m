@@ -1,4 +1,4 @@
-subject = 100206;
+subject = 108222; %100206
 session = "LR";
 parcellation = "schaefer100x7";
 

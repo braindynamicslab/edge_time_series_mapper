@@ -4,7 +4,7 @@ parcellation = "schaefer100x7";
 simplex = "node";
 % simplex = "edge";
 
-subject = 100206;
+subject = 108222;
 
 config = fcn_utils_get_config();
 output_directory = fullfile(config.repo_root, "data_pipeline_gitignore/test/test_fcn_edgeMapper_compute_and_analyze_simplex_mapper");

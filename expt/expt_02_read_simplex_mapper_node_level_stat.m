@@ -5,7 +5,7 @@
 
 config = fcn_utils_get_config();
 parcellation = "schaefer100x7";
-simplices = ["node", "edge"];
+simplices = ["node", "edge", "triangle"];
 cohorts = ["one", "two"];  % cohort two is in 'all_but_one'
 sessions = ["LR", "RL"];
 output_directory = fullfile(config.repo_root, "data_pipeline", "mapper_node_features");
@@ -17,6 +17,7 @@ end
 % Feature fields to extract
 feature_fields = [
     "amplitude_nodewise", ...
+    "amplitude_peak_density_peak_threshold_95", ...
     "mapper_stat_node_purity", ...
     "mapper_stat_mode_task_indices", ...
     "mapper_stat_within_task_centrallity"
