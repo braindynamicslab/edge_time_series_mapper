@@ -15,4 +15,8 @@ function config = config_local()
     
     % Scratch directory for temporary files
     config.scratch_dir = fullfile(config.repo_root, "data_pipeline_gitignore", "temp");
+
+    % HCP non-imaging data
+    config.hcp_restricted_data_path = "/Users/siuc/Documents/hcp_nonimaging_data/restricted_siuc_3_24_2025_15_27_00.csv";
+    config.hcp_unrestricted_data_path = "/Users/siuc/Documents/hcp_nonimaging_data/unrestricted_siuc_2_17_2025_12_16_57.csv";
 end
