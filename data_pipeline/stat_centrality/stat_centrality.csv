@@ -1,0 +1,5 @@
+cohort,session,analysis_type,comparison,num_na_in_either_samples,mean_peak_dense_pure,sd_peak_dense_pure,mean_pure_non_peak_dense,sd_pure_non_peak_dense,t_statistic,degree_of_freedom,p_value,effect_size_cohens_d_or_coeff_estimate,standard_error,significance_bonferroni
+one,LR,cohort_wide_t_test,peak_dense_nodes_vs_other_pure_nodes,17,0.0434675104249596,0.942349116024805,-0.114480413361951,0.818782055842354,20.7527013848203,18228.8960330338,1.4347346479533e-94,0.19065691771283,NaN,***
+one,LR,ANCOVA_LME,coefficient_of_peak_dense_pure_nodes,17,NaN,NaN,NaN,NaN,93.9284247507227,222162,0,0.243885680680281,0.00259650559803947,***
+two,LR,cohort_wide_t_test,peak_dense_nodes_vs_other_pure_nodes,12,0.0101703033419802,0.902237548961866,-0.110988722201188,0.823757998442395,15.0622388858681,15266.8174378643,6.65872139891697e-51,0.146004044470704,NaN,***
+two,LR,ANCOVA_LME,coefficient_of_peak_dense_pure_nodes,12,NaN,NaN,NaN,NaN,80.8953194294604,180945,0,0.225877694744102,0.00279222205112948,***

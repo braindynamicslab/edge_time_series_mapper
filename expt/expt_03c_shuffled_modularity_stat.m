@@ -21,7 +21,7 @@ peak_threshold = 0.95;
 purity_threshold = 0.75;
 peak_density_thresholds = [0.9, 0.8, 0.95];
 candidate_peak_density_threshold = 0.9;  % Used for Sections IV and V
-num_external_hypotheses = 1;  % For Bonferroni correction
+num_external_hypotheses_per_cohort = 1;  % For Bonferroni correction
 
 % Control flag for delta table creation
 % create_delta_table_flag = true;
@@ -117,15 +117,15 @@ num_cohorts = numel(cohorts);
 
 % Per cohort: (num_simplices * 3 within-simplex tests + 3 between-simplex tests)
 % Times num_cohorts, plus num_external_hypotheses
-num_tests = (num_simplices * 3 + 3 + num_external_hypotheses) * num_cohorts;
+num_tests = (num_simplices * 3 + 3 + num_external_hypotheses_per_cohort) * num_cohorts;
 
 fprintf('  Simplices: %d\n', num_simplices);
 fprintf('  Within-simplex tests per simplex: 3\n');
 fprintf('  Between-simplex pairwise tests: 3\n');
 fprintf('  Cohorts: %d\n', num_cohorts);
-fprintf('  External hypotheses: %d\n', num_external_hypotheses);
+fprintf('  External hypotheses: %d\n', num_external_hypotheses_per_cohort);
 fprintf('Total number of tests: (%d * 3 + 3 + %d) * %d = %d\n', ...
-    num_simplices, num_external_hypotheses, num_cohorts, num_tests);
+    num_simplices, num_external_hypotheses_per_cohort, num_cohorts, num_tests);
 fprintf('Bonferroni-corrected alpha: %.6f\n\n', 0.05 / num_tests);
 
 %% SECTION III: T-tests comparing against "all" and "none" baselines
