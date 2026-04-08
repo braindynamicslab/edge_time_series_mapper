@@ -1,0 +1,91 @@
+Simplex,Response Variable,Control Type,Estimate,Standard Error,DF,t-statistic,p-value (two-tail),Significance (two-tail),p-value (one-tail),Significance (one-tail)
+Node,Conscientiousness,None,0.0295,0.0327,935,0.905,0.366,0,0.183,0
+Node,Neuroticism,None,-0.0298,0.0327,935,-0.911,0.362,0,0.181,0
+Node,Agreeableness,None,0.0734,0.0326,935,2.25,0.0246,*,0.0123,*
+Node,Externalizing,None,-0.0449,0.0326,935,-1.38,0.169,0,0.0847,0
+Node,Internalizing,None,-0.0342,0.0327,935,-1.05,0.296,0,0.148,0
+Node,Fluid Intelligence (PMAT24),None,0.108,0.0325,935,3.33,0.000895,***,0.000448,***
+Node,Conscientiousness,Demographics,0.0347,0.0316,933,1.1,0.272,0,0.136,0
+Node,Neuroticism,Demographics,-0.0238,0.0321,933,-0.742,0.458,0,0.229,0
+Node,Agreeableness,Demographics,0.0741,0.0315,933,2.35,0.0191,*,0.00955,**
+Node,Externalizing,Demographics,-0.0434,0.032,933,-1.36,0.175,0,0.0873,0
+Node,Internalizing,Demographics,-0.0328,0.0323,933,-1.02,0.309,0,0.155,0
+Node,Fluid Intelligence (PMAT24),Demographics,0.0984,0.03,933,3.27,0.0011,**,0.000548,***
+Node,Conscientiousness,Head Motion,0.0302,0.0344,934,0.878,0.38,0,0.19,0
+Node,Neuroticism,Head Motion,-0.0253,0.0344,934,-0.736,0.462,0,0.231,0
+Node,Agreeableness,Head Motion,0.0428,0.0342,934,1.25,0.211,0,0.106,0
+Node,Externalizing,Head Motion,-0.011,0.0342,934,-0.321,0.749,0,0.374,0
+Node,Internalizing,Head Motion,-0.036,0.0344,934,-1.05,0.295,0,0.147,0
+Node,Fluid Intelligence (PMAT24),Head Motion,0.0265,0.0331,934,0.801,0.423,0,0.212,0
+Node,Conscientiousness,Head Motion + Family,0.0304,0.0334,934,0.91,0.363,0,0.181,0
+Node,Neuroticism,Head Motion + Family,-0.0262,0.0341,934,-0.77,0.442,0,0.221,0
+Node,Agreeableness,Head Motion + Family,0.0421,0.0339,934,1.24,0.215,0,0.108,0
+Node,Externalizing,Head Motion + Family,-0.0091,0.034,934,-0.268,0.789,0,0.395,0
+Node,Internalizing,Head Motion + Family,-0.0346,0.0341,934,-1.02,0.31,0,0.155,0
+Node,Fluid Intelligence (PMAT24),Head Motion + Family,0.0353,0.0314,934,1.12,0.262,0,0.131,0
+Node,Conscientiousness,Demographics + Head Motion,0.0268,0.0333,932,0.803,0.422,0,0.211,0
+Node,Neuroticism,Demographics + Head Motion,-0.0213,0.0339,932,-0.627,0.531,0,0.265,0
+Node,Agreeableness,Demographics + Head Motion,0.0394,0.0332,932,1.19,0.235,0,0.117,0
+Node,Externalizing,Demographics + Head Motion,-0.0027,0.0335,932,-0.0805,0.936,0,0.468,0
+Node,Internalizing,Demographics + Head Motion,-0.0285,0.0341,932,-0.836,0.403,0,0.202,0
+Node,Fluid Intelligence (PMAT24),Demographics + Head Motion,0.0358,0.0314,932,1.14,0.254,0,0.127,0
+Edge,Conscientiousness,None,0.0745,0.0326,935,2.29,0.0224,*,0.0112,*
+Edge,Neuroticism,None,-0.0338,0.0326,935,-1.04,0.301,0,0.15,0
+Edge,Agreeableness,None,0.0692,0.0326,935,2.12,0.0339,*,0.017,*
+Edge,Externalizing,None,-0.124,0.0324,935,-3.82,0.000141,***,7.05e-05,***
+Edge,Internalizing,None,-0.0743,0.0326,935,-2.28,0.0226,*,0.0113,*
+Edge,Fluid Intelligence (PMAT24),None,0.0494,0.0326,935,1.52,0.13,0,0.065,0
+Edge,Conscientiousness,Demographics,0.0651,0.0327,933,1.99,0.0464,*,0.0232,*
+Edge,Neuroticism,Demographics,-0.0339,0.033,933,-1.03,0.305,0,0.152,0
+Edge,Agreeableness,Demographics,0.0461,0.0324,933,1.42,0.155,0,0.0776,0
+Edge,Externalizing,Demographics,-0.104,0.0326,933,-3.19,0.00145,**,0.000724,***
+Edge,Internalizing,Demographics,-0.0614,0.0331,933,-1.86,0.0635,0,0.0317,*
+Edge,Fluid Intelligence (PMAT24),Demographics,0.0709,0.0316,933,2.24,0.025,*,0.0125,*
+Edge,Conscientiousness,Head Motion,0.0858,0.0357,934,2.41,0.0164,*,0.00818,**
+Edge,Neuroticism,Head Motion,-0.0297,0.0358,934,-0.831,0.406,0,0.203,0
+Edge,Agreeableness,Head Motion,0.0285,0.0355,934,0.802,0.423,0,0.211,0
+Edge,Externalizing,Head Motion,-0.0938,0.0354,934,-2.65,0.00825,**,0.00412,**
+Edge,Internalizing,Head Motion,-0.0867,0.0357,934,-2.43,0.0153,*,0.00763,**
+Edge,Fluid Intelligence (PMAT24),Head Motion,-0.073,0.0344,934,-2.12,0.0339,*,0.0169,*
+Edge,Conscientiousness,Head Motion + Family,0.0807,0.0356,934,2.26,0.0238,*,0.0119,*
+Edge,Neuroticism,Head Motion + Family,-0.0307,0.0361,934,-0.849,0.396,0,0.198,0
+Edge,Agreeableness,Head Motion + Family,0.0266,0.0359,934,0.743,0.458,0,0.229,0
+Edge,Externalizing,Head Motion + Family,-0.0931,0.0357,934,-2.61,0.00933,**,0.00467,**
+Edge,Internalizing,Head Motion + Family,-0.0826,0.036,934,-2.3,0.0219,*,0.011,*
+Edge,Fluid Intelligence (PMAT24),Head Motion + Family,-0.0456,0.0339,934,-1.35,0.179,0,0.0895,0
+Edge,Conscientiousness,Demographics + Head Motion,0.0619,0.0363,932,1.7,0.0888,0,0.0444,*
+Edge,Neuroticism,Demographics + Head Motion,-0.0337,0.0367,932,-0.918,0.359,0,0.179,0
+Edge,Agreeableness,Demographics + Head Motion,-0.00986,0.0358,932,-0.276,0.783,0,0.391,0
+Edge,Externalizing,Demographics + Head Motion,-0.0578,0.036,932,-1.61,0.109,0,0.0543,0
+Edge,Internalizing,Demographics + Head Motion,-0.0634,0.0368,932,-1.72,0.0849,0,0.0424,*
+Edge,Fluid Intelligence (PMAT24),Demographics + Head Motion,-0.0326,0.0345,932,-0.946,0.344,0,0.172,0
+Triangle,Conscientiousness,None,-0.000652,0.0327,934,-0.0199,0.984,0,0.492,0
+Triangle,Neuroticism,None,-0.0189,0.0327,934,-0.578,0.563,0,0.282,0
+Triangle,Agreeableness,None,0.033,0.0327,934,1.01,0.312,0,0.156,0
+Triangle,Externalizing,None,-0.098,0.0326,934,-3.01,0.0027,**,0.00135,**
+Triangle,Internalizing,None,-0.057,0.0326,934,-1.75,0.0809,0,0.0405,*
+Triangle,Fluid Intelligence (PMAT24),None,0.12,0.0324,934,3.7,0.000231,***,0.000116,***
+Triangle,Conscientiousness,Demographics,0.0114,0.0326,932,0.349,0.727,0,0.363,0
+Triangle,Neuroticism,Demographics,-0.00633,0.0329,932,-0.192,0.847,0,0.424,0
+Triangle,Agreeableness,Demographics,0.0387,0.0323,932,1.2,0.231,0,0.115,0
+Triangle,Externalizing,Demographics,-0.104,0.0324,932,-3.22,0.00132,**,0.000662,***
+Triangle,Internalizing,Demographics,-0.0545,0.0329,932,-1.65,0.0984,0,0.0492,*
+Triangle,Fluid Intelligence (PMAT24),Demographics,0.101,0.0314,932,3.21,0.00135,**,0.000677,***
+Triangle,Conscientiousness,Head Motion,-0.00552,0.0371,933,-0.149,0.882,0,0.441,0
+Triangle,Neuroticism,Head Motion,-0.0105,0.037,933,-0.282,0.778,0,0.389,0
+Triangle,Agreeableness,Head Motion,-0.0253,0.0368,933,-0.689,0.491,0,0.246,0
+Triangle,Externalizing,Head Motion,-0.0581,0.0368,933,-1.58,0.115,0,0.0573,0
+Triangle,Internalizing,Head Motion,-0.0693,0.0369,933,-1.88,0.061,0,0.0305,*
+Triangle,Fluid Intelligence (PMAT24),Head Motion,-0.00809,0.0356,933,-0.227,0.82,0,0.41,0
+Triangle,Conscientiousness,Head Motion + Family,-0.00326,0.037,933,-0.0881,0.93,0,0.465,0
+Triangle,Neuroticism,Head Motion + Family,-0.0127,0.0373,933,-0.341,0.733,0,0.367,0
+Triangle,Agreeableness,Head Motion + Family,-0.0299,0.0371,933,-0.807,0.42,0,0.21,0
+Triangle,Externalizing,Head Motion + Family,-0.0598,0.0371,933,-1.61,0.107,0,0.0537,0
+Triangle,Internalizing,Head Motion + Family,-0.0643,0.0372,933,-1.73,0.0845,0,0.0422,*
+Triangle,Fluid Intelligence (PMAT24),Head Motion + Family,0.00276,0.035,933,0.0789,0.937,0,0.469,0
+Triangle,Conscientiousness,Demographics + Head Motion,-0.00701,0.0372,931,-0.188,0.851,0,0.425,0
+Triangle,Neuroticism,Demographics + Head Motion,0.00188,0.0375,931,0.0501,0.96,0,0.48,0
+Triangle,Agreeableness,Demographics + Head Motion,-0.0273,0.0365,931,-0.75,0.454,0,0.227,0
+Triangle,Externalizing,Demographics + Head Motion,-0.054,0.0368,931,-1.47,0.142,0,0.0711,0
+Triangle,Internalizing,Demographics + Head Motion,-0.0552,0.0375,931,-1.47,0.142,0,0.0709,0
+Triangle,Fluid Intelligence (PMAT24),Demographics + Head Motion,-0.00191,0.0352,931,-0.0543,0.957,0,0.478,0
