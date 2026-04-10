@@ -102,12 +102,13 @@ JOBS=(
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|50|100"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|100"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|100"
-    "one|LR|triangle|schaefer100x7|'activity_mask_flag'|1|'sign_by_coherence_flag'|1|100"
+#    "one|LR|triangle|schaefer100x7|'activity_mask_flag'|1|'sign_by_coherence_flag'|1|100"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|90"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.90|90"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|50|90"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|90"
 #    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|90"
+    "one|LR|triangle|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|35|90"
 #    "one|LR|triangle|schaefer100x7|'activity_mask_flag'|1|'sign_by_coherence_flag'|1|90"
 )
 

@@ -97,8 +97,8 @@ echo ""
 #     "one|LR|edge|schaefer100x7|'activity_mask_flag'|1|(none)|(none)|300"
 
 JOBS=(
-    "one|LR|node|schaefer200x7|(none)|(none)|(none)|(none)|180"
-    "one|LR|edge|schaefer200x7|(none)|(none)|(none)|(none)|180"
+    #"one|LR|node|schaefer200x7|(none)|(none)|(none)|(none)|180"
+    #"one|LR|edge|schaefer200x7|(none)|(none)|(none)|(none)|180"
     ###"one|LR|node|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|180" # done 20220075, took about 1 hour
     ###"one|LR|edge|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.95|180" # done 20232956, took about 2 hour 15 min
     ##"one|LR|node|schaefer100x7|'dim_reduction_type'|'pca_variance_threshold'|'target_explained_variance'|0.90|180"
@@ -107,6 +107,8 @@ JOBS=(
     #"one|LR|edge|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|50|150"
     #"one|LR|node|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|150"
     #"one|LR|edge|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|30|150"
+    "one|LR|node|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|35|120"
+    "one|LR|edge|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|35|120"
     ##"one|LR|node|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|120" # done 20310271, took about 1 hour
     ##"one|LR|edge|schaefer100x7|'dim_reduction_type'|'pca_fixed_components'|'target_num_features'|40|180" # done 20310276, took about 1 hour 30 min, 4 timeout
     ##"one|LR|node|schaefer100x7|'activity_mask_flag'|1|'sign_by_coherence_flag'|1|120" # done 20310281, took about 1 hour
