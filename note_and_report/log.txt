@@ -1332,3 +1332,103 @@ End time: 2026-04-06 17:36:35
 ============================================
 
 
+============================================
+SCRIPT START
+============================================
+Script:    expt_01c_compute_node_edge_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-10 11:35:29
+Hostname:  sh04-ln02.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: do PCA 35
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 2 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/LR/node/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 35
+  Array: 1-394%20 (394 subjects)
+  Estimated duration: 120 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_35
+  Command: sbatch --array=1-394%20 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "node" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_node_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_35" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 35"
+Submitted batch job 21171533
+
+Job 2: Scheduling for 2026-04-10T13:35:32
+  one/LR/edge/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 35
+  Array: 1-394%20 (394 subjects)
+  Start: 120 min from now
+  Estimated duration: 120 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_35
+  Command: sbatch --array=1-394%20 --begin=2026-04-10T13:35:32 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "edge" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_35" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 35"
+Submitted batch job 21171534
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      2
+  Total estimated duration:  240 minutes (~4 hours 0 min)
+  Expected completion:       2026-04-10 15:35:35
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-10 11:35:35
+============================================
+
+
+============================================
+SCRIPT START
+============================================
+Script:    expt_01d_compute_triagnle_time_series_mapper_with_feature_processing.sh
+User:      siuc
+Date:      2026-04-10 11:36:06
+Hostname:  sh04-ln02.stanford.edu
+Directory: /home/users/siuc/edge_time_series_mapper
+
+User comment: do PCA 35 for triangle
+
+Configuration:
+  SLURM script:         fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch
+  Cohort directory:     /home/users/siuc/edge_time_series_mapper/data_pipeline/data_cohort/
+
+Submitting 1 jobs sequentially...
+
+Job 1: Submitting NOW
+  one/LR/triangle/schaefer100x7
+  Varargin: , 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 35
+  Array: 1-394%50 (394 subjects)
+  Estimated duration: 90 min
+  Experiment: simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_35
+  Command: sbatch --time=00:30:00 --cpus-per-task=8 --mem-per-cpu=8G  --array=1-394%50 fcn/edgeMapper/slurm_edgeMapper_compute_and_analyze_simplex_mapper.sbatch "one" "LR" "triangle" "schaefer100x7" "simplex_mapper_raw_features_cohort_one_LR_triangle_schaefer100x7||_dim_reduction_type_pca_fixed_components_target_num_features_35" 1 ", 'dim_reduction_type', 'pca_fixed_components', 'target_num_features', 35"
+Submitted batch job 21171558
+
+Submission complete!
+
+Summary:
+  Total jobs submitted:      1
+  Total estimated duration:  90 minutes (~1 hours 30 min)
+  Expected completion:       2026-04-10 13:06:10
+
+Useful commands:
+  Check status:      squeue -u siuc
+  View scheduled:    squeue -u siuc --start
+  View details:      sacct -j <JOB_ID> --format=JobID,State,Elapsed,ExitCode
+  Cancel all:        scancel -u siuc
+  Cancel specific:   scancel <JOB_ID>
+
+Script completed successfully
+End time: 2026-04-10 11:36:10
+============================================
+
+
