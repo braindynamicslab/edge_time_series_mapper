@@ -1,0 +1,25 @@
+Cohort,Session,Test Type,Simplex,Coef,SE,t-stat,DF,p-value,Sig (Bonferroni corr)
+Expl,LR,peak dense minus none,node,-0.00844,0.000603,-14,326,3.44e-35,***
+Expl,LR,peak dense minus all,node,0.212,0.00197,108,326,9.33e-257,***
+Expl,LR,none minus all,node,0.217,0.00194,112,392,1.12e-299,***
+Expl,LR,peak dense minus none,edge,-0.0632,0.00138,-45.8,392,1.94e-159,***
+Expl,LR,peak dense minus all,edge,0.364,0.00236,154,392,0,***
+Expl,LR,none minus all,edge,0.427,0.00319,134,392,0,***
+Expl,LR,peak dense minus none,triangle,-0.0431,0.00118,-36.7,392,9.07e-129,***
+Expl,LR,peak dense minus all,triangle,0.306,0.004,76.4,392,1.74e-237,***
+Expl,LR,none minus all,triangle,0.349,0.005,69.8,392,3.1e-223,***
+Expl,LR,paired edge vs node,edge-node,-0.0566,0.00147,-38.4,326,4.94e-123,***
+Expl,LR,paired edge vs triangle,edge-triangle,-0.0201,0.0012,-16.8,392,3.58e-48,***
+Expl,LR,paired triangle vs node,triangle-node,-0.0356,0.0013,-27.5,326,6.53e-87,***
+Repl,LR,peak dense minus none,node,-0.00672,0.000569,-11.8,267,3.43e-26,***
+Repl,LR,peak dense minus all,node,0.211,0.00236,89.6,267,3.41e-201,***
+Repl,LR,none minus all,node,0.216,0.00222,96.9,317,1.44e-237,***
+Repl,LR,peak dense minus none,edge,-0.0631,0.00155,-40.8,317,4.02e-128,***
+Repl,LR,peak dense minus all,edge,0.364,0.00269,135,317,1.7e-282,***
+Repl,LR,none minus all,edge,0.427,0.00369,116,317,1.68e-261,***
+Repl,LR,peak dense minus none,triangle,-0.0449,0.00139,-32.4,317,1.33e-102,***
+Repl,LR,peak dense minus all,triangle,0.31,0.00461,67.3,317,9.02e-190,***
+Repl,LR,none minus all,triangle,0.355,0.00582,61.1,317,1.99e-177,***
+Repl,LR,paired edge vs node,edge-node,-0.0583,0.00158,-36.8,267,1.48e-106,***
+Repl,LR,paired edge vs triangle,edge-triangle,-0.0181,0.00127,-14.2,317,8.24e-36,***
+Repl,LR,paired triangle vs node,triangle-node,-0.0399,0.00149,-26.8,267,1.37e-77,***
