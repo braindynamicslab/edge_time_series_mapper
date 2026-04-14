@@ -10,40 +10,15 @@ if ~isfolder(output_directory)
     mkdir(output_directory);
 end
 
+BH_FDR_flag = 1;
+
 %% Output Filenames - Centralized Location
 output_file_table1 = fullfile(output_directory, "brain_behavior_corr_stats_cohort_one_all_features_no_control.csv");
 output_file_table2 = fullfile(output_directory, "brain_behavior_corr_stats_cohort_one_select_features_all_controls.csv");
 output_file_table3 = fullfile(output_directory, "brain_behavior_corr_stats_cohort_all_select_features_all_controls.csv");
 
 %% Variable Dictionary for Human-Readable Names
-var_dict = struct();
-
-% Response variables
-var_dict.response_NEOFAC_C = "Conscientiousness";
-var_dict.response_NEOFAC_N = "Neuroticism";
-var_dict.response_NEOFAC_A = "Agreeableness";
-var_dict.response_NEOFAC_O = "Openness";
-var_dict.response_NEOFAC_E = "Extraversion";
-var_dict.response_ASR_Extn_T = "Externalizing";
-var_dict.response_ASR_Intn_T = "Internalizing";
-var_dict.response_PMAT24_A_CR = "Fluid Intelligence (PMAT24)";
-
-% Control types
-var_dict.control_none = "None";
-var_dict.control_demographics = "Demographics";
-var_dict.control_headMotion = "Head Motion";
-var_dict.control_headMotion_family = "Head Motion + Family";
-var_dict.control_demographics_headMotion = "Demographics + Head Motion";
-
-% Modularity levels
-var_dict.modularity_node = "Node";
-var_dict.modularity_edge = "Edge";
-var_dict.modularity_triangle = "Triangle";
-
-% Cohorts
-var_dict.cohort_one = "Exploration";
-var_dict.cohort_two = "Replication";
-var_dict.cohort_all = "Total";
+var_dict = config.var_dict;
 
 %% Table 1: Cohort One, All Features, No Control
 fprintf("\n" + repmat('=', 1, 70) + "\n");
@@ -58,15 +33,32 @@ table1_config.feature_processing = "raw_features";
 table1_config.modularity_prefixes = ["node", "edge", "triangle"];
 table1_config.control_types = ["none"];
 table1_config.tails = [2];
+table1_config.simplexwise_variable_selection_flag = 0;
 table1_config.response_variables = ["NEOFAC_C", "NEOFAC_N", "NEOFAC_A", "NEOFAC_O", "NEOFAC_E", ...
                                      "ASR_Extn_T", "ASR_Intn_T", "PMAT24_A_CR"];
 
 table1_results = generate_results_table(table1_config, input_directory, var_dict);
+if BH_FDR_flag
+    table1_results = apply_fdr_correction(table1_results);
+end
 
 % Save Table 1
 writetable(table1_results, output_file_table1);
 fprintf("Table 1 saved to: %s\n", output_file_table1);
 fprintf("Total rows: %d\n\n", height(table1_results));
+
+%% Extract Significant Variables from Table 1 for Tables 2 & 3
+fprintf("\n" + repmat('=', 1, 70) + "\n");
+fprintf("Extracting significant variables from Table 1...\n");
+fprintf(repmat('=', 1, 70) + "\n\n");
+
+[node_vars, edge_vars, triangle_vars] = fcn_stat_extract_significant_variables(table1_results, var_dict);
+
+fprintf("Selected variables:\n");
+fprintf("  Node: %s\n", strjoin(node_vars, ", "));
+fprintf("  Edge: %s\n", strjoin(edge_vars, ", "));
+fprintf("  Triangle: %s\n", strjoin(triangle_vars, ", "));
+fprintf("\n");
 
 %% Table 2: Cohort One, Select Features, All Controls, 1-tail and 2-tail
 fprintf("\n" + repmat('=', 1, 70) + "\n");
@@ -79,11 +71,19 @@ table2_config.session = "both";
 table2_config.parcellation = "schaefer100x7";
 table2_config.feature_processing = "raw_features";
 table2_config.modularity_prefixes = ["node", "edge", "triangle"];
-table2_config.control_types = ["none", "demographics", "headMotion", "headMotion_family", "demographics_headMotion"];
+% table2_config.control_types = ["none", "demographics", "headMotion", "demographics_headMotion"];
+table2_config.control_types = ["none", "demographics", "headMotion"];
 table2_config.tails = [1, 2];
-table2_config.response_variables = ["NEOFAC_C", "NEOFAC_N", "NEOFAC_A", "ASR_Extn_T", "ASR_Intn_T", "PMAT24_A_CR"];
+table2_config.simplexwise_variable_selection_flag = 1;
+table2_config.node_response_variables = node_vars;
+table2_config.edge_response_variables = edge_vars;
+table2_config.triangle_response_variables = triangle_vars;
+% table2_config.response_variables = ["NEOFAC_C", "NEOFAC_N", "NEOFAC_A", "ASR_Extn_T", "ASR_Intn_T", "PMAT24_A_CR"];
 
 table2_results = generate_results_table(table2_config, input_directory, var_dict);
+if BH_FDR_flag
+    table2_results = apply_fdr_correction(table2_results);
+end
 
 % Save Table 2
 writetable(table2_results, output_file_table2);
@@ -101,11 +101,19 @@ table3_config.session = "both";
 table3_config.parcellation = "schaefer100x7";
 table3_config.feature_processing = "raw_features";
 table3_config.modularity_prefixes = ["node", "edge", "triangle"];
-table3_config.control_types = ["none", "demographics", "headMotion", "headMotion_family", "demographics_headMotion"];
+% table3_config.control_types = ["none", "demographics", "headMotion", "headMotion_family", "demographics_headMotion"];
+table3_config.control_types = ["none", "demographics", "headMotion", "headMotion_family"];
 table3_config.tails = [1, 2];
-table3_config.response_variables = ["NEOFAC_C", "NEOFAC_N", "NEOFAC_A", "ASR_Extn_T", "ASR_Intn_T", "PMAT24_A_CR"];
+table3_config.simplexwise_variable_selection_flag = 1;
+table3_config.node_response_variables = node_vars;
+table3_config.edge_response_variables = edge_vars;
+table3_config.triangle_response_variables = triangle_vars;
+%table3_config.response_variables = ["NEOFAC_C", "NEOFAC_N", "NEOFAC_A", "ASR_Extn_T", "ASR_Intn_T", "PMAT24_A_CR"];
 
 table3_results = generate_results_table(table3_config, input_directory, var_dict);
+if BH_FDR_flag
+    table3_results = apply_fdr_correction(table3_results);
+end
 
 % Save Table 3
 writetable(table3_results, output_file_table3);
@@ -146,12 +154,26 @@ function results_table = generate_results_table(expt_config, input_directory, va
 
         for modularity_idx = 1:numel(expt_config.modularity_prefixes)
             modularity_prefix = expt_config.modularity_prefixes(modularity_idx);
-            
+
+            % Determine which response variables to use
+            if expt_config.simplexwise_variable_selection_flag == 1
+                % Use simplex-specific variable list
+                field_name = sprintf("%s_response_variables", modularity_prefix);
+                response_vars_to_use = expt_config.(field_name);
+            else
+                % Use global variable list
+                response_vars_to_use = expt_config.response_variables;
+            end
+            if isempty(response_vars_to_use)
+                warning("No response variables selected for %s. Skipping.", modularity_prefix);
+                continue;
+            end
+
             for control_idx = 1:numel(expt_config.control_types)
                 control_type = expt_config.control_types(control_idx);
                 
-                for response_idx = 1:numel(expt_config.response_variables)
-                    response_variable = expt_config.response_variables(response_idx);
+                for response_idx = 1:numel(response_vars_to_use)
+                    response_variable = response_vars_to_use(response_idx);
                     
                     % Construct filename
                     featureMassaging = get_featureMassaging_from_modularity_prefix(modularity_prefix, expt_config.feature_processing);
@@ -259,3 +281,57 @@ function feature_processing = get_featureMassaging_from_modularity_prefix(modula
         end
     end
 end
+
+function results_table = apply_fdr_correction(results_table)
+    % Apply BH-FDR correction within simplex × control × tail families
+    
+    unique_simplices = unique(results_table.Simplex);
+    unique_controls = unique(results_table.("Control Type"));
+    
+    % Determine which tail columns exist
+    has_two_tail = ismember("p-value (two-tail)", results_table.Properties.VariableNames);
+    has_one_tail = ismember("p-value (one-tail)", results_table.Properties.VariableNames);
+    
+    % Initialize FDR-corrected columns
+    if has_two_tail
+        results_table.("p-value (two-tail, BH corrected)") = nan(height(results_table), 1);
+        results_table.("Significance (two-tail, BH corrected)") = cell(height(results_table), 1);
+    end
+    
+    if has_one_tail
+        results_table.("p-value (one-tail, BH corrected)") = nan(height(results_table), 1);
+        results_table.("Significance (one-tail, BH corrected)") = cell(height(results_table), 1);
+    end
+    
+    % Apply BH-FDR correction within each simplex-control combination
+    for s = 1:length(unique_simplices)
+        for c = 1:length(unique_controls)
+            % Find rows matching this simplex-control combination
+            idx = strcmp(results_table.Simplex, unique_simplices(s)) & ...
+                  strcmp(results_table.("Control Type"), unique_controls(c));
+            
+            % Correct two-tail p-values (separate family)
+            if has_two_tail
+                p_values = results_table.("p-value (two-tail)")(idx);
+                p_adjusted = mafdr(p_values, 'BHFDR', true);
+                
+                results_table.("p-value (two-tail, BH corrected)")(idx) = p_adjusted;
+                results_table.("Significance (two-tail, BH corrected)")(idx) = ...
+                    cellfun(@fcn_stat_get_significance_asterisks, ...
+                            num2cell(p_adjusted), 'UniformOutput', false);
+            end
+            
+            % Correct one-tail p-values (separate family)
+            if has_one_tail
+                p_values = results_table.("p-value (one-tail)")(idx);
+                p_adjusted = mafdr(p_values, 'BHFDR', true);
+                
+                results_table.("p-value (one-tail, BH corrected)")(idx) = p_adjusted;
+                results_table.("Significance (one-tail, BH corrected)")(idx) = ...
+                    cellfun(@fcn_stat_get_significance_asterisks, ...
+                            num2cell(p_adjusted), 'UniformOutput', false);
+            end
+        end
+    end
+end
+

@@ -29,8 +29,9 @@ function expt_04a_combine_simplex_tables()
     conditions = [
         "raw_features";
         "pca_fixed_components_30";
+        "pca_fixed_components_35";
         "pca_fixed_components_40";
-        "pca_fixed_components_50";
+        %"pca_fixed_components_50";
         "pca_variance_threshold_90";
         "pca_variance_threshold_95";
         "coherence"

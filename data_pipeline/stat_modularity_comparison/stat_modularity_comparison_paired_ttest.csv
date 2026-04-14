@@ -15,9 +15,12 @@ coherence,one,LR,schaefer100x7,triangle,node,9,1,-0.0550513058904794,384,0.95612
 pca_variance_threshold_90,one,LR,schaefer100x7,edge,node,0,0,28.9100984830044,393,2.53018796127889e-99,1.45646972039899,***
 pca_variance_threshold_90,one,LR,schaefer100x7,edge,triangle,0,0,16.4706154715936,393,1.0077067674403e-46,0.829777619914155,***
 pca_variance_threshold_90,one,LR,schaefer100x7,triangle,node,0,0,7.1200164260929,393,5.16988855241163e-12,0.358701245498839,***
-pca_fixed_components_30,one,LR,schaefer100x7,edge,node,3,0,10.8811782570774,390,2.92746124894646e-24,0.550284837339133,***
-pca_fixed_components_30,one,LR,schaefer100x7,edge,triangle,3,1,30.0999260424311,389,1.23636460954721e-103,1.52416900247384,***
-pca_fixed_components_30,one,LR,schaefer100x7,triangle,node,1,0,-20.0297093969918,392,5.73026790570583e-62,-1.01036518544492,***
+pca_fixed_components_20,one,LR,schaefer100x7,edge,node,NaN,NaN,NaN,NaN,NaN,NaN,
+pca_fixed_components_20,one,LR,schaefer100x7,edge,triangle,NaN,NaN,NaN,NaN,NaN,NaN,
+pca_fixed_components_20,one,LR,schaefer100x7,triangle,node,NaN,NaN,NaN,NaN,NaN,NaN,
+pca_fixed_components_35,one,LR,schaefer100x7,edge,node,3,0,7.29710022947411,390,1.65986251364337e-12,0.369030220620798,***
+pca_fixed_components_35,one,LR,schaefer100x7,edge,triangle,3,0,30.5931840906626,390,1.11317615182907e-105,1.54716382116675,***
+pca_fixed_components_35,one,LR,schaefer100x7,triangle,node,0,0,-22.9129900825331,393,2.10893381124997e-74,-1.15433976396277,***
 pca_fixed_components_40,one,LR,schaefer100x7,edge,node,4,0,4.38488005774511,389,1.49564309290265e-05,0.222037032720929,***
 pca_fixed_components_40,one,LR,schaefer100x7,edge,triangle,4,5,29.6990450067852,384,1.6203742652326e-101,1.51360348760877,***
 pca_fixed_components_40,one,LR,schaefer100x7,triangle,node,5,0,-25.2767766979268,388,5.07273857150907e-84,-1.28158345204975,***
