@@ -1,4 +1,12 @@
-function fcn_mapper_drawpie(percents,pos,radius,colors)
+function fcn_mapper_drawpie(percents,pos,radius,colors, varargin)
+
+p = inputParser;
+addParameter(p, "EdgeColor", "none");
+addParameter(p, "LineWidth", 1);
+parse(p, varargin{:});
+EdgeColor = p.Results.EdgeColor;
+LineWidth = p.Results.LineWidth;
+
     points = 40;
     x = pos(1);
     y = pos(2);
@@ -9,7 +17,11 @@ function fcn_mapper_drawpie(percents,pos,radius,colors)
             tlist = [last_t ceil(last_t):floor(end_t) end_t];
             xlist = [0 (radius*cos(tlist*2*pi/points)) 0] + x;
             ylist = [0 (radius*sin(tlist*2*pi/points)) 0] + y;
-            patch(xlist,ylist,colors(i,:), "EdgeColor", "none");
+            if isstring(EdgeColor) || ischar(EdgeColor) || all(size(EdgeColor) == [1 3])
+                patch(xlist,ylist,colors(i,:), "EdgeColor", EdgeColor, "LineWidth", LineWidth);
+            else
+                patch(xlist,ylist,colors(i,:), "EdgeColor", EdgeColor{i}, "LineWidth", LineWidth);
+            end
             last_t = end_t;
         end
     else
@@ -17,6 +29,10 @@ function fcn_mapper_drawpie(percents,pos,radius,colors)
         tlist = [0:points];
         xlist = x+radius*cos(tlist*2*pi/points);
         ylist = y+radius*sin(tlist*2*pi/points);
-        patch(xlist,ylist,colors(i,:), "EdgeColor", "none");
+        if isstring(EdgeColor) || ischar(EdgeColor) || all(size(EdgeColor) == [1 3])
+            patch(xlist,ylist,colors(i,:), "EdgeColor", EdgeColor, "LineWidth", LineWidth);
+        else
+            patch(xlist,ylist,colors(i,:), "EdgeColor", EdgeColor{i}, "LineWidth", LineWidth);
+        end
     end
 end

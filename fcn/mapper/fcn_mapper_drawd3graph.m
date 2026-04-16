@@ -6,6 +6,8 @@ function varargout = fcn_mapper_drawd3graph(nodemat, nodecomm, cmap, outputname,
     addParameter(p, "minimal_radius", 0.1);
     addParameter(p, "radius_scaling_factor", 2);
     addParameter(p, "colorbar_flag", 1);
+    addParameter(p, "highlighted_nodes", []);
+    addParameter(p, "highlighted_sectors", []);
 
     parse(p, varargin{:});
     XY = p.Results.XY;
@@ -13,6 +15,18 @@ function varargout = fcn_mapper_drawd3graph(nodemat, nodecomm, cmap, outputname,
     minimal_radius = p.Results.minimal_radius;
     radius_scaling_factor = p.Results.radius_scaling_factor;
     colorbar_flag = p.Results.colorbar_flag;
+    highlighted_nodes = p.Results.highlighted_nodes;
+    highlighted_sectors = p.Results.highlighted_sectors;
+
+    if isempty(highlighted_sectors)
+        highlighted_sectors = zeros(size(nodemat, 1), size(cmap, 1));
+    end
+
+    if numel(highlighted_nodes) < size(nodemat, 1)
+        highlighted_nodes = ismember(1:size(nodemat, 1), highlighted_nodes);
+    end
+
+    highlighted_sectors(highlighted_nodes, :) = 1;
 
     if isempty(XY)
         fig = figure;
@@ -53,15 +67,27 @@ function varargout = fcn_mapper_drawd3graph(nodemat, nodecomm, cmap, outputname,
 
     % draw piecharts
     colors = cmap;
+    if size(colors, 3) == 1
+        colors = repmat(colors, 1, 1, numel(radius));
+    end
     for n = 1:1:length(nodecomm)
         hold on;
         pos = XY(n,:);
-        fcn_mapper_drawpie(percents(n,:),pos,radius(n),colors)
+        %if highlighted_nodes(n)
+        %    EdgeColor = 'k';
+        if any(highlighted_sectors(n, :) == 1)
+            EdgeColor = cell(1, size(cmap, 1));
+            EdgeColor(highlighted_sectors(n, :) == 1) = {'k'};
+            EdgeColor(highlighted_sectors(n, :) == 0) = {'None'};
+        else
+            EdgeColor = 'None';
+        end
+        fcn_mapper_drawpie(percents(n,:),pos,radius(n),colors(:, :, n), "EdgeColor", EdgeColor);
     end
     alpha(0.9);
     hold on;
     
-    if colorbar_flag && ~isempty(labels)
+    if colorbar_flag && ~isempty(labels) && size(colors, 3) == 1
         colormap(cmap);
         c=colorbar;
         c.Ticks=((1:1:length(labels)) - 0.5) / length(labels);
@@ -82,7 +108,7 @@ function varargout = fcn_mapper_drawd3graph(nodemat, nodecomm, cmap, outputname,
     %plot2svg([outputname '.svg']);
 
     exportgraphics(fig,strcat(outputname,'.pdf'),'ContentType','vector');
-    close all;
+    close(fig);
 
     if nargout > 0
         varargout{1} = XY;

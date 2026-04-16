@@ -46,7 +46,8 @@ for cohort = cohorts
                         simplex, subject, session, parcellation, ...
                         round(100*peak_threshold), round(100*peak_density_threshold), ...
                         round(100*purity_threshold), num_shuffling, seed);
-                    full_filename_filename = strcat(shuffled_modularity_full_filename, "_", filename_suffix, ".csv");
+%                     full_filename_filename = strcat(shuffled_modularity_full_filename, "_", filename_suffix, ".csv");
+                    full_filename_filename = strcat(fullfile(config.repo_root, "test/test_shuffled.csv"));
                     if isfile(full_filename_filename)
                         fprintf("   computed\n");
                     else

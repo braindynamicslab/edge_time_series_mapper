@@ -64,32 +64,31 @@ function repo_root = fcn_utils_detect_repo_root()
     
     config_file_path = fullfile(repo_root_candidate, 'config', 'repo_root_local.txt');
     
+    is_validated = 0;
     if exist(config_file_path, 'file') == 2
         fid = fopen(config_file_path, 'r');
         if fid == -1
-            error('Could not open config/repo_root_local.txt for reading');
+            warning('Could not open config/repo_root_local.txt for reading');
         end
         
         repo_root = strtrim(fgetl(fid));
         fclose(fid);
         repo_root = string(repo_root);
         
-        % Validate
-        if ~exist(repo_root, 'dir')
-            error('Path in config/repo_root_local.txt does not exist: %s', repo_root);
+        is_validated = fcn_utils_validate_repo_root(repo_root);
+        
+        if is_validated
+            fprintf('Successfully loaded repository root from config/repo_root_local.txt\n');
+            return;
         end
-        
-        has_fcn = exist(fullfile(repo_root, 'fcn'), 'dir') == 7;
-        has_config = exist(fullfile(repo_root, 'config'), 'dir') == 7;
-        
-        if ~has_fcn || ~has_config
-            error(['Path in config/repo_root_local.txt is invalid.\n', ...
-                   'Missing fcn/ or config/ directories at: %s'], repo_root);
-        end
-        
-        fprintf('Successfully loaded repository root from config/repo_root_local.txt\n');
-        return;
     end
+    
+    while ~is_validated
+        repo_root = fcn_utils_get_repo_path_interactively();
+        is_validated = fcn_utils_validate_repo_root(repo_root);
+    end
+
+
     
     %% All methods failed - provide detailed error message
     error_msg = sprintf(['\n', ...
@@ -158,3 +157,5 @@ function str = tf_to_string(tf)
         str = 'NO';
     end
 end
+
+
