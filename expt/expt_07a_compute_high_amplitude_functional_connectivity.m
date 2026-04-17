@@ -24,7 +24,7 @@ tasks = ["REST", ...
 [start_times, end_times, unit, tr] = ...
   fcn_edgeMapper_get_time_windows(tasks, "rest_5min_and_tasks");
 
-for cohort = ["two"]%["one", "two"]
+for cohort = ["one", "two"]
     cohort_storage = cohort;
     if strcmp(cohort, "two")
         cohort_storage = "all_but_one";

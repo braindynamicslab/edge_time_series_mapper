@@ -137,7 +137,7 @@ for cohort = ["one", "two"]
         output_table.T_Stat = round(output_table.T_Stat, 3, 'significant');
         output_table.P_Value = round(output_table.P_Value, 3, 'significant');
 
-        output_table.Properties.VariableNames = {'Task', 'Measure', 'N', 'Mean Correlation', 'Confidence Interval (Lower Bound)', 'Confidence Interval (Upper Bound)', 't-stat', 'p-Value'};
+        output_table.Properties.VariableNames = {'Task', 'Measure', 'N', 'Mean Correlation', 'Confidence Interval (Lower Bound)', 'Confidence Interval (Upper Bound)', 't-stat', 'p-value'};
         
         output_filename = sprintf('correlation_with_FC_stats_%s_%s.csv', cohort, session);
         writetable(output_table, fullfile(output_data_directory, output_filename));
