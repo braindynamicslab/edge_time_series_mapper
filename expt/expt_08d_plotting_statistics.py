@@ -7,6 +7,7 @@ Created on Tue Nov  4 11:19:02 2025
 """
 
 #%%Import Packages
+import os
 import pandas as pd
 import scipy as sp
 import numpy as np
@@ -90,6 +91,8 @@ plt.xlabel('')
 plt.ylabel('')
 
 # Show the plot
+
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_scatter_pairwise_distances_one_subject.png', dpi=600, bbox_inches='tight') # new
 plt.show()
 
 #%%
@@ -122,11 +125,12 @@ def load_networks(file_path):
 
 def load_distance_matrices(node_file_path, edge_file_path):
     """Load distance matrices from .mat files and return squareform matrices."""
-    node_data_square = squareform(sp.io.loadmat(node_file_path)['distMat'].flatten())
-    edge_data_square = squareform(sp.io.loadmat(edge_file_path)['distMat'].flatten())
+    node_data_square = squareform(sp.io.loadmat(node_file_path)['dist_mat'].flatten())
+    edge_data_square = squareform(sp.io.loadmat(edge_file_path)['dist_mat'].flatten())
     return node_data_square, edge_data_square
 
-def create_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels, mask=None):
+def create_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels, mask=None, save_flag = 0, save_path = None):
+    assert(save_flag == 0 or not save_path is None)
     """Create a heatmap with specified data and add lines based on index_dict."""
     plt.figure(figsize=(4, 3), dpi = 1000)
     sns.heatmap(data, mask=mask, cmap='Blues', square=True, cbar_kws={"shrink": 1}, vmin=0, vmax=2)
@@ -176,12 +180,13 @@ def create_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels, mask=No
     plt.plot(362,376, 'o', markerfacecolor='none', markeredgecolor='red', markersize = 5)
     plt.plot(1957,1968, 'o', markerfacecolor='none', markeredgecolor='red', markersize = 5)
 
+    if save_flag:
+        plt.savefig(save_path, dpi=600, bbox_inches='tight') # new
     plt.show()
     
 
-    
-
-def create_bounded_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels, bounds):
+def create_bounded_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels, bounds, save_flag = 0, save_path = None):
+    assert(save_flag == 0 or not save_path is None)
     """Create a heatmap with specified data within provided bounds."""
     plt.figure(figsize=(5, 4))
     
@@ -211,10 +216,12 @@ def create_bounded_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels,
         
     plt.xticks(ticks=tick_nums, labels=tick_labels, rotation=90, fontsize=8)
     plt.yticks(ticks=tick_nums, labels=tick_labels, fontsize=8)
-
+    if save_flag:
+        plt.savefig(save_path, dpi=600, bbox_inches='tight')
     plt.show()
 
-def plot_upper_lower_triangles(node_data_square, edge_data_square, index_dict):
+def plot_upper_lower_triangles(node_data_square, edge_data_square, index_dict, save_flag = 0, save_directory = ""):
+    assert(save_flag == 0 or os.isdirs(save_directory))
     """Plot upper and lower triangles of the correlation matrices."""
     # Create masks for upper and lower triangles
     mask_upper_node = np.triu(np.ones_like(node_data_square, dtype=bool))
@@ -224,16 +231,24 @@ def plot_upper_lower_triangles(node_data_square, edge_data_square, index_dict):
     mask_lower_edge = np.tril(np.ones_like(edge_data_square, dtype=bool))
 
     # Plot upper triangle for node data
-    create_heatmap(node_data_square, 'Upper Triangle of Node Data', 'Nodes', 'Nodes', index_dict, list(index_dict.keys()), mask=mask_upper_node)
+    create_heatmap(node_data_square, 'Upper Triangle of Node Data', 'Nodes', 'Nodes', index_dict, list(index_dict.keys()), mask=mask_upper_node, 
+                   save_flag = save_flag,
+                   save_path = os.path.join(save_directory, "plot_scatter_pairwise_distances_one_subject_node_upper.png")) #new
+    
 
     # Plot lower triangle for node data
-    create_heatmap(node_data_square, 'Lower Triangle of Node Data', 'Nodes', 'Nodes', index_dict, list(index_dict.keys()), mask=mask_lower_node)
+    create_heatmap(node_data_square, 'Lower Triangle of Node Data', 'Nodes', 'Nodes', index_dict, list(index_dict.keys()), mask=mask_lower_node,save_flag = save_flag,
+    save_path = os.path.join(save_directory, "plot_scatter_pairwise_distances_one_subject_node_lower.png")) #new
 
     # Plot upper triangle for edge data
-    create_heatmap(edge_data_square, 'Upper Triangle of Edge Data', 'Edges', 'Edges', index_dict, list(index_dict.keys()), mask=mask_upper_edge)
+    create_heatmap(edge_data_square, 'Upper Triangle of Edge Data', 'Edges', 'Edges', index_dict, list(index_dict.keys()), mask=mask_upper_edge,
+                   save_flag = save_flag,
+                   save_path = os.path.join(save_directory, "plot_scatter_pairwise_distances_one_subject_edge_upper.png")) #new
 
     # Plot lower triangle for edge data
-    create_heatmap(edge_data_square, 'Lower Triangle of Edge Data', 'Edges', 'Edges', index_dict, list(index_dict.keys()), mask=mask_lower_edge)
+    create_heatmap(edge_data_square, 'Lower Triangle of Edge Data', 'Edges', 'Edges', index_dict, list(index_dict.keys()), mask=mask_lower_edge,
+                   save_flag = save_flag,
+                   save_path = os.path.join(save_directory, "plot_scatter_pairwise_distances_one_subject_edge_lower.png")) #new
 
 # File paths
 #csv_file_path = '/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/heatmap_networks.csv'
@@ -249,12 +264,12 @@ index_dict = load_networks(mat_file_path)
 node_data_square, edge_data_square = load_distance_matrices(node_file_path, edge_file_path)
 
 # Plot upper and lower triangles
-plot_upper_lower_triangles(node_data_square, edge_data_square, index_dict)
+plot_upper_lower_triangles(node_data_square, edge_data_square, index_dict, save_flag = 1, save_directory = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/')
 
 # Example of using the bounded heatmap function
 bounds = (0.5, 1.5)  # Define your bounds here
-create_bounded_heatmap(node_data_square, '', 'Nodes', 'Nodes', index_dict, list(index_dict.keys()), bounds)
-create_bounded_heatmap(edge_data_square, '', 'Edges', 'Edges', index_dict, list(index_dict.keys()), bounds)
+create_bounded_heatmap(node_data_square, '', 'Nodes', 'Nodes', index_dict, list(index_dict.keys()), bounds, save_flag = 1, save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_scatter_pairwise_distances_one_subject_node_bounded')
+create_bounded_heatmap(edge_data_square, '', 'Edges', 'Edges', index_dict, list(index_dict.keys()), bounds, save_flag = 1, save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_scatter_pairwise_distances_one_subject_edge_bounded')
 
 #%%NEW PARABOLA PLOT CODE
 
@@ -422,7 +437,9 @@ plt.xlim(-0.1, 2.1)
 plt.ylim(0, 1.1)
 
 # Show the plot
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_one_parabolas.png')
 plt.show()
+
 
 
 #%%Parabolas 1 close 
@@ -465,12 +482,13 @@ plt.xlim(0.98, 1.02)
 plt.ylim(1.0085, 1.01)
 
 # Show the plot
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_one_parabolas_zoomed.png')
 plt.show()
 
 #%%Parabolas 2 far
 # Load data
-#p_data_1 = pd.read_csv('/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/quadratic_approximation_one_LR_schaefer100x7.csv')
-p_data_1 = pd.read_csv('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/quadratic_approximation_one_LR_schaefer100x7.csv')
+#p_data_1 = pd.read_csv('/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/quadratic_approximation_two_LR_schaefer100x7.csv')
+p_data_1 = pd.read_csv('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/quadratic_approximation_two_LR_schaefer100x7.csv')
 a = list(p_data_1['Coeff Est (linear)'])
 b = list(p_data_1['Coeff Est (quadratic)'])
 c = list(p_data_1['Coeff Est (constant)'])
@@ -507,13 +525,14 @@ plt.xlim(-0.1, 2.1)
 plt.ylim(0, 1.1)
 
 # Show the plot
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_two_parabolas.png')
 plt.show()
 
 
 #%%Parabolas 2 close 
 # Load data
-#p_data_1 = pd.read_csv('/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/quadratic_approximation_one_LR_schaefer100x7.csv')
-p_data_1 = pd.read_csv('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/quadratic_approximation_one_LR_schaefer100x7.csv')
+#p_data_1 = pd.read_csv('/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/quadratic_approximation_two_LR_schaefer100x7.csv')
+p_data_1 = pd.read_csv('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/quadratic_approximation_two_LR_schaefer100x7.csv')
 a = list(p_data_1['Coeff Est (linear)'])
 b = list(p_data_1['Coeff Est (quadratic)'])
 c = list(p_data_1['Coeff Est (constant)'])
@@ -550,6 +569,7 @@ plt.xlim(0.98, 1.02)
 plt.ylim(1.0082, 1.0101)
 
 # Show the plot
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_two_parabolas_zoomed.png')
 plt.show()
 
 #%%Cohort 1 and 2 r distribution
@@ -591,6 +611,7 @@ plt.xlim(0.9 ,1)
 plt.ylim(0, 80)
 
 # Show the plot
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_R_squared_one.png')
 plt.show()
 
 # Create a figure
@@ -619,6 +640,7 @@ plt.ylim(0, 80)
 plt.xlim(0.9 ,1)
 
 # Show the plot
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_R_squared_two.png')
 plt.show()
 
 #%%Cohort 1 and 2 deviation distribution
@@ -660,6 +682,7 @@ plt.xlim(0 ,0.001)
 plt.ylim(0, 400)
 
 # Show the plot
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_bound_violation_one.png')
 plt.show()
 
 # Create a figure
@@ -689,6 +712,7 @@ plt.xlim(0 ,0.001)
 plt.ylim(0, 400)
 
 # Show the plot
+plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_bound_violation_two.png')
 plt.show()
 
 
