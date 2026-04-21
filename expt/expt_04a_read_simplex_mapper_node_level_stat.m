@@ -5,9 +5,9 @@
 
 config = fcn_utils_get_config();
 parcellation = "schaefer100x7";
-simplices = ["node", "edge", "triangle"];
+simplices = ["edge"]; %["node", "edge", "triangle"];
 cohorts = ["one", "two"];  % cohort two is in 'all_but_one'
-sessions = ["LR", "RL"];
+sessions = ["RL"]; %sessions = ["LR", "RL"];
 output_directory = fullfile(config.repo_root, "data_pipeline", "mapper_node_features");
 if ~exist(output_directory, "dir")
     mkdir(output_directory);
@@ -84,7 +84,12 @@ for simplex_idx = 1:numel(simplices)
 
                     % Extract features
                     amplitude_nodewise = m.amplitude_nodewise;
-                    amplitude_peak_density_peak_threshold_95 = m.amplitude_peak_density_peak_threshold_95;
+                    try
+                        amplitude_peak_density_peak_threshold_95 = m.amplitude_peak_density_peak_threshold_95;
+                    catch
+                        warning("no amplitude_peak_density_peak_threshold_95 in file %s", data_file)
+                        amplitude_peak_density_peak_threshold_95 = nan(size(amplitude_nodewise));
+                    end
                     mapper_stat_node_purity = m.mapper_stat_node_purity;
                     mapper_stat_mode_task_indices = m.mapper_stat_mode_task_indices;
                     mapper_stat_within_task_centrallity = m.mapper_stat_within_task_centrallity;

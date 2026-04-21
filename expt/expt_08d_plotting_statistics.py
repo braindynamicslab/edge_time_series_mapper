@@ -1,9 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+
 """
 Created on Tue Nov  4 11:19:02 2025
 
 @author: cameron
+
+When using VS code on Sherlock, first do these
+ml python/3.12.1
+ml hdf5/1.14.4
+source base_env/bin/activate
+
 """
 
 #%%Import Packages
@@ -15,85 +23,95 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import squareform
 from scipy.spatial.distance import squareform
+import h5py as h5py
 plt.rcParams['font.family'] = 'Helvetica'
 
 
-#%%Load Data
-import numpy as np
-import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import scipy as sp
+# #%%Load Data
+# import numpy as np
+# import pandas as pd
+# import seaborn as sns
+# import matplotlib.pyplot as plt
+# import scipy as sp
 
-# Load the .mat files
-# node_file_path = '/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/brain_state_mapper_noFeatureMassaging_100206_LR_node_schaefer100x7_xcpengine_2025_pdist.mat'
-# edge_file_path = '/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/brain_state_mapper_noFeatureMassaging_100206_LR_edge_schaefer100x7_xcpengine_2025_pdist.mat'  
+# # Load the .mat files
+# # node_file_path = '/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/brain_state_mapper_noFeatureMassaging_100206_LR_node_schaefer100x7_xcpengine_2025_pdist.mat'
+# # edge_file_path = '/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/brain_state_mapper_noFeatureMassaging_100206_LR_edge_schaefer100x7_xcpengine_2025_pdist.mat'  
 
-node_file_path = '/scratch/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/framewise_pairwise_distances_node_100206_LR_schaefer100x7.mat'
-edge_file_path = '/scratch/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/framewise_pairwise_distances_edge_100206_LR_schaefer100x7.mat'
+# node_file_path = '/scratch/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/framewise_pairwise_distances_node_100206_LR_schaefer100x7.mat'
+# edge_file_path = '/scratch/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/framewise_pairwise_distances_edge_100206_LR_schaefer100x7.mat'
 
 
-# Load data from .mat files
-node_data = sp.io.loadmat(node_file_path)['dist_mat']
-edge_data = sp.io.loadmat(edge_file_path)['dist_mat']
+# # Load data from .mat files
+# # node_data = sp.io.loadmat(node_file_path)['dist_mat']
+# # edge_data = sp.io.loadmat(edge_file_path)['dist_mat']
+# with h5py.File(node_file_path) as f:
+#     node_data = squareform(f['dist_mat'][:].flatten())
+# with h5py.File(edge_file_path) as f:
+#     edge_data = squareform(f['dist_mat'][:].flatten())
 
-# Convert to 1D arrays if necessary # should be already 1D though
-node_data_flat = node_data.flatten()
-edge_data_flat = edge_data.flatten()
+# # Convert to 1D arrays if necessary # should be already 1D though
+# node_data_flat = node_data.flatten()
+# edge_data_flat = edge_data.flatten()
 
-# Create a DataFrame for easier plotting
-data = pd.DataFrame({
-    'Node Data': node_data_flat,
-    'Edge Data': edge_data_flat
-})
+# # Create a DataFrame for easier plotting
+# data = pd.DataFrame({
+#     'Node Data': node_data_flat,
+#     'Edge Data': edge_data_flat
+# })
 
-# Calculate the average score for each point
-data['Average Score'] = (data['Node Data'] + data['Edge Data']) / 2
+# # Calculate the average score for each point
+# data['Average Score'] = (data['Node Data'] + data['Edge Data']) / 2
 
-# Create a figure
-plt.figure(figsize=(4.3,3.6), dpi=1000)
+# # Create a figure
+# plt.figure(figsize=(4.3,3.6), dpi=1000)
 
-# Create a scatter plot without a legend
-scatter = sns.scatterplot(data=data, x='Node Data', y='Edge Data',
-                          # color = 'black',
-                          hue='Node Data', palette="crest", 
-                          alpha=0.1, edgecolor='white', s=2, zorder=1, legend=False)
+# # Create a scatter plot without a legend
+# scatter = sns.scatterplot(data=data, x='Node Data', y='Edge Data',
+#                           # color = 'black',
+#                           hue='Node Data', palette="crest", 
+#                           alpha=0.1, edgecolor='white', s=2, zorder=1, legend=False)
 
-def load_distance_matrices(node_file_path, edge_file_path):
-    """Load distance matrices from .mat files and return squareform matrices."""
-    node_data_square = squareform(sp.io.loadmat(node_file_path)['dist_mat'].flatten())
-    edge_data_square = squareform(sp.io.loadmat(edge_file_path)['dist_mat'].flatten())
-    return node_data_square, edge_data_square
+# def load_distance_matrices(node_file_path, edge_file_path):
+#     """Load distance matrices from .mat files and return squareform matrices."""
+#     #node_data_square = squareform(sp.io.loadmat(node_file_path)['dist_mat'].flatten())
+#     #edge_data_square = squareform(sp.io.loadmat(edge_file_path)['dist_mat'].flatten())
+#     with h5py.File(node_file_path, 'r') as f:
+#         node_data_square = squareform(f['dist_mat'][:].flatten())
+#     with h5py.File(edge_file_path, 'r') as f:
+#         edge_data_square = squareform(f['dist_mat'][:].flatten())
+#     return node_data_square, edge_data_square
 
-node_data_square, edge_data_square = load_distance_matrices(node_file_path, edge_file_path)
+# node_data_square, edge_data_square = load_distance_matrices(node_file_path, edge_file_path)
 
-plt.scatter(node_data_square[362,1957], edge_data_square[362,1957], marker='o', color='black', s=30, zorder=2, label='Point 1')
-plt.scatter(node_data_square[1957,1968], edge_data_square[1957,1968], marker='o', color='black', s=30, zorder=2, label='Point 2')
+# plt.scatter(node_data_square[362,1957], edge_data_square[362,1957], marker='o', color='black', s=30, zorder=2, label='Point 1')
+# plt.scatter(node_data_square[1957,1968], edge_data_square[1957,1968], marker='o', color='black', s=30, zorder=2, label='Point 2')
 
-# Define the main curve
-x = np.linspace(0, 2, 1000)
-y_main = 1 - (1 - x)**2
-y_second = 1.1 * (1 - 0.5 * (1 - x)**2 - 0.5 * (1 - x)**4)
-y_third = 1 - 0.5 * (1 - x)**2 - 0.5 * abs(1 - x)
+# # Define the main curve
+# x = np.linspace(0, 2, 1000)
+# y_main = 1 - (1 - x)**2
+# y_second = 1.1 * (1 - 0.5 * (1 - x)**2 - 0.5 * (1 - x)**4)
+# y_third = 1 - 0.5 * (1 - x)**2 - 0.5 * abs(1 - x)
 
-# Plot the main curve with a higher zorder
-plt.plot(x, y_main, color='black', linestyle = '-', linewidth=0.5, zorder=2)
-plt.plot(x, y_second, color='black', linestyle = '--',  linewidth=0.5, zorder=3)
-plt.plot(x, y_third, color='black', linestyle = '--',  linewidth=0.5, zorder=4)
+# # Plot the main curve with a higher zorder
+# plt.plot(x, y_main, color='black', linestyle = '-', linewidth=0.5, zorder=2)
+# plt.plot(x, y_second, color='black', linestyle = '--',  linewidth=0.5, zorder=3)
+# plt.plot(x, y_third, color='black', linestyle = '--',  linewidth=0.5, zorder=4)
 
-plt.gca().spines['right'].set_visible(False)
-plt.gca().spines['top'].set_visible(False)
+# plt.gca().spines['right'].set_visible(False)
+# plt.gca().spines['top'].set_visible(False)
 
-plt.xticks(fontsize=8)  # Set x ticks font size
-plt.yticks(fontsize=8)  # Set y ticks font size
+# plt.xticks(fontsize=8)  # Set x ticks font size
+# plt.yticks(fontsize=8)  # Set y ticks font size
 
-plt.xlabel('')
-plt.ylabel('')
+# plt.xlabel('')
+# plt.ylabel('')
 
-# Show the plot
+# # Show the plot
 
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_scatter_pairwise_distances_one_subject.png', dpi=600, bbox_inches='tight') # new
-plt.show()
+# plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_scatter_pairwise_distances_one_subject.png', dpi=600, bbox_inches='tight') # new
+# plt.show()
+# print("made /home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_scatter_pairwise_distances_one_subject.png")
 
 #%%
 import numpy as np
@@ -104,17 +122,25 @@ import scipy as sp
 from scipy.spatial.distance import squareform
 import matplotlib.patches as patches
 
+
 def load_networks(file_path):
     """Load networks from a CSV file and return a dictionary of first and last indices."""
     
-    if file_path[-4:] == '.mat':
-        # Extract the field as a 1D array
-        mat_data = sp.io.loadmat(file_path)
-        feature_tasks_instantwise = mat_data['feature_tasks_instantwise'].flatten()
-        feature_tasks_instantwise = [str(x[0]) if len(x) > 0 else '' for x in feature_tasks_instantwise]
-        networks = pd.DataFrame({'feature_tasks_instantwise': feature_tasks_instantwise})
-    elif file_path[-4:] == '.csv':
+    # if file_path[-4:] == '.mat':
+    #     # Extract the field as a 1D array
+        
+    #     # mat_data = sp.io.loadmat(file_path)
+    #     # feature_tasks_instantwise = mat_data['feature_tasks_instantwise'].flatten()
+    #     with h5py.File(file_path, 'r') as f:
+    #         mat_data = f['feature_tasks_instantwise'][:]
+    #         print(mat_data.shape)
+    #         feature_tasks_instantwise = mat_data.flatten()
+    #         print(feature_tasks_instantwise.shape)        
+    #     feature_tasks_instantwise = [str(x[0]) if len(x) > 0 else '' for x in feature_tasks_instantwise]
+    #     networks = pd.DataFrame({'feature_tasks_instantwise': feature_tasks_instantwise})
+    if file_path[-4:] in ['.csv', '.txt']:
         networks = pd.read_csv(file_path)
+    print(file_path)
     index_dict = {}
     for index, string in enumerate(networks.iloc[:, 0]):
         if string not in index_dict:
@@ -125,8 +151,12 @@ def load_networks(file_path):
 
 def load_distance_matrices(node_file_path, edge_file_path):
     """Load distance matrices from .mat files and return squareform matrices."""
-    node_data_square = squareform(sp.io.loadmat(node_file_path)['dist_mat'].flatten())
-    edge_data_square = squareform(sp.io.loadmat(edge_file_path)['dist_mat'].flatten())
+    #node_data_square = squareform(sp.io.loadmat(node_file_path)['dist_mat'].flatten())
+    #edge_data_square = squareform(sp.io.loadmat(edge_file_path)['dist_mat'].flatten())
+    with h5py.File(node_file_path) as f:
+        node_data_square = squareform(f['dist_mat'][:].flatten())
+    with h5py.File(edge_file_path) as f:
+        edge_data_square = squareform(f['dist_mat'][:].flatten())
     return node_data_square, edge_data_square
 
 def create_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels, mask=None, save_flag = 0, save_path = None):
@@ -183,6 +213,8 @@ def create_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels, mask=No
     if save_flag:
         plt.savefig(save_path, dpi=600, bbox_inches='tight') # new
     plt.show()
+    if save_flag:
+        print(f"made {save_path}")
     
 
 def create_bounded_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels, bounds, save_flag = 0, save_path = None):
@@ -196,7 +228,8 @@ def create_bounded_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels,
     # Create a mask for values outside the bounds
     mask = np.where((data < bounds[0]) | (data > bounds[1]), True, False)
     
-    sns.heatmap(bounded_data, cmap="magma", square=True, cbar_kws={"shrink": .8}, vmin=0, vmax=2)
+#    sns.heatmap(bounded_data, cmap="magma", square=True, cbar_kws={"shrink": .8}, vmin=0, vmax=2)
+    sns.heatmap(bounded_data, cmap="Greys", square=True, cbar_kws={"shrink": .8}, vmin=0, vmax=2)
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -219,9 +252,11 @@ def create_bounded_heatmap(data, title, xlabel, ylabel, index_dict, tick_labels,
     if save_flag:
         plt.savefig(save_path, dpi=600, bbox_inches='tight')
     plt.show()
+    if save_flag:
+        print(f"made {save_path}")
 
 def plot_upper_lower_triangles(node_data_square, edge_data_square, index_dict, save_flag = 0, save_directory = ""):
-    assert(save_flag == 0 or os.isdirs(save_directory))
+    assert(save_flag == 0 or os.path.isdir(save_directory))
     """Plot upper and lower triangles of the correlation matrices."""
     # Create masks for upper and lower triangles
     mask_upper_node = np.triu(np.ones_like(node_data_square, dtype=bool))
@@ -254,13 +289,16 @@ def plot_upper_lower_triangles(node_data_square, edge_data_square, index_dict, s
 #csv_file_path = '/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/heatmap_networks.csv'
 #node_file_path = '/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/brain_state_mapper_noFeatureMassaging_100206_LR_node_schaefer100x7_xcpengine_2025_pdist.mat'
 #edge_file_path = '/Users/cameron/Documents/GitHub/brain_HOI/cameron_code/quadratic-input-files/brain_state_mapper_noFeatureMassaging_100206_LR_edge_schaefer100x7_xcpengine_2025_pdist.mat'
-mat_file_path = '/scratch/users/siuc/edge_time_series_mapper/simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7/simplexMapper_edge_100206_LR_schaefer100x7_data.mat'
+#mat_file_path = '/scratch/users/siuc/edge_time_series_mapper/simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7/simplexMapper_edge_100206_LR_schaefer100x7_data.mat'
+csv_file_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline_gitignore/tasks_instantwise_tmp.txt'
 node_file_path = '/scratch/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/framewise_pairwise_distances_node_100206_LR_schaefer100x7.mat'
 edge_file_path = '/scratch/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/framewise_pairwise_distances_edge_100206_LR_schaefer100x7.mat'
 
 # Load networks and distance matrices
 #index_dict = load_networks(csv_file_path)
-index_dict = load_networks(mat_file_path)
+#index_dict = load_networks(mat_file_path)
+print(f"If {csv_file_path} does not load properly, manually extract it from the field feature_tasks_instantwise in /scratch/users/siuc/edge_time_series_mapper/simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7/simplexMapper_edge_100206_LR_schaefer100x7_data.mat")
+index_dict = load_networks(csv_file_path)
 node_data_square, edge_data_square = load_distance_matrices(node_file_path, edge_file_path)
 
 # Plot upper and lower triangles
@@ -358,6 +396,7 @@ plt.ylabel('')
 # Show the plot
 plt.show()
 
+
 for task in plot_df['Tasks'].unique():
     print(task)
     
@@ -437,9 +476,10 @@ plt.xlim(-0.1, 2.1)
 plt.ylim(0, 1.1)
 
 # Show the plot
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_one_parabolas.png')
+save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_one_parabolas.png'
+plt.savefig(save_path, dpi = 600, bbox_inches='tight')
 plt.show()
-
+print(f"made {save_path}")
 
 
 #%%Parabolas 1 close 
@@ -482,8 +522,10 @@ plt.xlim(0.98, 1.02)
 plt.ylim(1.0085, 1.01)
 
 # Show the plot
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_one_parabolas_zoomed.png')
+save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_one_parabolas_zoomed.png'
+plt.savefig(save_path, dpi = 600, bbox_inches='tight')
 plt.show()
+print(f"made {save_path}")
 
 #%%Parabolas 2 far
 # Load data
@@ -525,8 +567,10 @@ plt.xlim(-0.1, 2.1)
 plt.ylim(0, 1.1)
 
 # Show the plot
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_two_parabolas.png')
+save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_two_parabolas.png'
+plt.savefig(save_path, dpi = 600, bbox_inches='tight')
 plt.show()
+print(f"made {save_path}")
 
 
 #%%Parabolas 2 close 
@@ -569,8 +613,10 @@ plt.xlim(0.98, 1.02)
 plt.ylim(1.0082, 1.0101)
 
 # Show the plot
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_two_parabolas_zoomed.png')
+save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_cohortwide_two_parabolas_zoomed.png'
+plt.savefig(save_path, dpi = 600, bbox_inches='tight')
 plt.show()
+print(f"made {save_path}")
 
 #%%Cohort 1 and 2 r distribution
 # Load data
@@ -611,8 +657,10 @@ plt.xlim(0.9 ,1)
 plt.ylim(0, 80)
 
 # Show the plot
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_R_squared_one.png')
+save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_R_squared_one.png'
+plt.savefig(save_path, dpi = 600, bbox_inches='tight')
 plt.show()
+print(f"made {save_path}")
 
 # Create a figure
 plt.figure(figsize=(2.5, 2), dpi = 1000)
@@ -640,8 +688,10 @@ plt.ylim(0, 80)
 plt.xlim(0.9 ,1)
 
 # Show the plot
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_R_squared_two.png')
+save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_R_squared_two.png'
+plt.savefig(save_path, dpi = 600, bbox_inches='tight')
 plt.show()
+print(f"made {save_path}")
 
 #%%Cohort 1 and 2 deviation distribution
 # Load data
@@ -682,8 +732,10 @@ plt.xlim(0 ,0.001)
 plt.ylim(0, 400)
 
 # Show the plot
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_bound_violation_one.png')
+save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_bound_violation_one.png'
+plt.savefig(save_path, dpi = 600, bbox_inches='tight')
 plt.show()
+print(f"made {save_path}")
 
 # Create a figure
 plt.figure(figsize=(2.5, 2), dpi = 1000)
@@ -712,8 +764,10 @@ plt.xlim(0 ,0.001)
 plt.ylim(0, 400)
 
 # Show the plot
-plt.savefig('/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_bound_violation_two.png')
+save_path = '/home/users/siuc/edge_time_series_mapper/data_pipeline/pairwise_distances/plot_bound_violation_two.png'
+plt.savefig(save_path, dpi = 600, bbox_inches='tight')
 plt.show()
+print(f"made {save_path}")
 
 
 

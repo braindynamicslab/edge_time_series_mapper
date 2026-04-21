@@ -1,0 +1,60 @@
+# import h5py
+# import pandas as pd
+
+# file_path = '/scratch/users/siuc/edge_time_series_mapper/simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7/simplexMapper_edge_100206_LR_schaefer100x7_data.mat'
+
+# with h5py.File(file_path, 'r') as f:
+#     print("Keys in file:", list(f.keys()))
+#     print("\nfeature_tasks_instantwise info:")
+#     print("  Shape:", f['feature_tasks_instantwise'].shape)
+#     print("  Dtype:", f['feature_tasks_instantwise'].dtype)
+    
+#     # Look at the raw data
+#     data = f['feature_tasks_instantwise'][:]
+#     print("  Raw data shape:", data.shape)
+#     print("  Raw data:", data)
+    
+#     # If it's references, try dereferencing the first one
+#     if data.dtype == 'object' or 'uint' in str(data.dtype):
+#         print("\n  Trying to dereference first element:")
+#         first_ref = data.flatten()[0]
+#         print("  First ref:", first_ref)
+#         obj = f[first_ref]
+#         print("  Object shape:", obj.shape)
+#         print("  Object dtype:", obj.dtype)
+#         print("  Object data:", obj[:])
+
+##########
+
+import h5py
+import pandas as pd
+import numpy as np
+
+file_path = '/scratch/users/siuc/edge_time_series_mapper/simplex_mapper_raw_features_cohort_one_LR_edge_schaefer100x7/simplexMapper_edge_100206_LR_schaefer100x7_data.mat'
+
+with h5py.File(file_path, 'r') as f:
+    # The (1, 6) might mean it's stored as object references
+    data = f['feature_tasks_instantwise']
+    
+    print("Dataset info:")
+    print("  Shape:", data.shape)
+    print("  Dtype:", data.dtype)
+    
+    # Check if it's an HDF5 reference type
+    if h5py.check_dtype(ref=data.dtype):
+        print("\n  It contains references!")
+        refs = data[:]
+        strings = []
+        for ref in refs.flatten():
+            # Dereference to get the actual string data
+            dereferenced = f[ref]
+            print(f"  Dereferenced shape: {dereferenced.shape}, dtype: {dereferenced.dtype}")
+            # Convert character codes to string
+            char_array = dereferenced[:]
+            string = ''.join(chr(int(c)) for c in char_array.flatten())
+            strings.append(string)
+            print(f"  String: '{string}'")
+        
+        print(f"\nAll strings: {strings}")
+    else:
+        print("\n  Not references, raw data:", data[:])

@@ -7,7 +7,7 @@ end
 
 parcellation = "schaefer100x7";
 cohorts = ["one", "two"];
-simplices = ["node", "edge"];
+simplices = ["node"];%, "edge"];
 
 tasks = ["REST", ...
     "EMOTION", ...
@@ -39,7 +39,7 @@ for cohort = cohorts
 
         for subject_idx = 1:numel(subjects) %subjects = [143325]; % cohort 1 RL subject_id = 158, no pure node for gambling task
             subject = subjects(subject_idx);
-            fprintf("%d (%d  out of %d)\n", subject, subject_idx, numel(subjects))
+            fprintf("%s: %d (%d  out of %d)\n", datetime('now'), subject, subject_idx, numel(subjects))
             for simplex = simplices
                 [reduced_data, feature_indices, tasks_instantwise, feature_removal_mask, missing_data_flag, ~] = ...
                     fcn_edgeMapper_get_processed_simplex_time_series_data(...
@@ -47,12 +47,14 @@ for cohort = cohorts
                     'starting_times', start_times, ...
                     'ending_times', end_times, ...
                     'unit_time', unit, ...
-                    'seconds_per_TR', tr);
+                    'seconds_per_TR', tr, ...
+                    'verbose_flag', 0);
+                dist_mat = pdist(reduced_data, metric_type);
+                output_filename = sprintf("framewise_pairwise_distances_%s_%d_%s_%s.mat", simplex, subject, session, parcellation);
+                full_output_filename =fullfile(output_directory, output_filename);
+                save(full_output_filename, "dist_mat", '-v7.3');
             end
-            dist_mat = pdist(reduced_data, metric_type);
-            output_filename = sprintf("framewise_pairwise_distances_%s_%d_%s_%s.mat", simplex, subject, session, parcellation);
-            full_output_filename =fullfile(output_directory, output_filename);
-            save(full_output_filename, "dist_mat", '-v7.3');
+
         end
 
     end

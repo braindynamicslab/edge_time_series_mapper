@@ -4,11 +4,15 @@ parcellation = "schaefer100x7";
 input_directory = fullfile(config.scratch_dir, "data_pipeline", "pairwise_distances");
 output_directory = fullfile(config.repo_root, "data_pipeline", "pairwise_distances");
 
+if ~isfolder(output_directory)
+    mkdir(output_directory);
+end
+
 upperbound = @(x) 1.1 * (1 - 0.5*(1 - x).^2  - 0.5*(1 - x).^4);
 lowerbound = @(x) 1 - 0.5*(1 - x).^2  - 0.5*abs(1 - x);
 estimate = @(x) 1 - (1 - x).^2;
 
-for cohort = ["one", "two"]
+for cohort = ["two"]%["one", "two"]
     sublist_csv = fullfile(config.repo_root, "data_pipeline", "data_cohort", sprintf("cohort_%s_session_%s.csv", cohort, session));
     subjects = readtable(sublist_csv).Subject;
 
