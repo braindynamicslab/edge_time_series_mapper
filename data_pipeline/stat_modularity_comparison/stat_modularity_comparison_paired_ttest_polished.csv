@@ -1,26 +1,26 @@
 Condition,Co-hort,Ses-sion,Parcellation,Sim-plex 1,Sim-plex 2,t-stat,DF,p-value,Cohen's d,Sig (Bonfe-rroni corr)
-Raw Features,one,LR,schaefer100x7,edge,node,59,393,2.5e-197,2.97,***
-Raw Features,one,LR,schaefer100x7,edge,triangle,17.6,393,2.41e-51,0.884,***
-Raw Features,one,LR,schaefer100x7,triangle,node,23.8,393,2.32e-78,1.2,***
-Raw Features,two,LR,schaefer100x7,edge,node,52.7,318,3.86e-159,2.95,***
-Raw Features,two,LR,schaefer100x7,edge,triangle,14.7,318,1.28e-37,0.822,***
-Raw Features,two,LR,schaefer100x7,triangle,node,23.1,318,4.52e-70,1.29,***
-Raw Features,one,RL,schaefer100x7,edge,node,59.9,396,1.16e-200,3.01,***
-Raw Features,one,RL,schaefer100x7,edge,triangle,13.3,395,1.14e-33,0.669,***
-Raw Features,one,RL,schaefer100x7,triangle,node,27.1,395,6.2e-92,1.36,***
-Raw Features,one,LR,schaefer200x7,edge,node,67.1,392,5.17e-217,3.39,***
-Coherence,one,LR,schaefer100x7,edge,node,42.3,386,5.17e-147,2.15,***
-Coherence,one,LR,schaefer100x7,edge,triangle,51.3,378,2.17e-172,2.64,***
-Coherence,one,LR,schaefer100x7,triangle,node,-0.0551,384,0.956,-0.00281,0
-PCA (90% variance),one,LR,schaefer100x7,edge,node,28.9,393,2.53e-99,1.46,***
-PCA (90% variance),one,LR,schaefer100x7,edge,triangle,16.5,393,1.01e-46,0.83,***
-PCA (90% variance),one,LR,schaefer100x7,triangle,node,7.12,393,5.17e-12,0.359,***
-PCA (30 comp),one,LR,schaefer100x7,edge,node,10.9,390,2.93e-24,0.55,***
-PCA (30 comp),one,LR,schaefer100x7,edge,triangle,30.1,389,1.24e-103,1.52,***
-PCA (30 comp),one,LR,schaefer100x7,triangle,node,-20,392,5.73e-62,-1.01,***
-PCA (35 comp),one,LR,schaefer100x7,edge,node,7.3,390,1.66e-12,0.369,***
-PCA (35 comp),one,LR,schaefer100x7,edge,triangle,30.6,390,1.11e-105,1.55,***
-PCA (35 comp),one,LR,schaefer100x7,triangle,node,-22.9,393,2.11e-74,-1.15,***
-PCA (40 comp),one,LR,schaefer100x7,edge,node,4.38,389,1.5e-05,0.222,***
-PCA (40 comp),one,LR,schaefer100x7,edge,triangle,29.7,384,1.62e-101,1.51,***
-PCA (40 comp),one,LR,schaefer100x7,triangle,node,-25.3,388,5.07e-84,-1.28,***
+Raw Features,Expl,LR,schaefer100x7,edge,node,59,393,2.5e-197,2.97,***
+Raw Features,Expl,LR,schaefer100x7,edge,triangle,17.6,393,2.41e-51,0.884,***
+Raw Features,Expl,LR,schaefer100x7,triangle,node,23.8,393,2.32e-78,1.2,***
+Raw Features,Repl,LR,schaefer100x7,edge,node,52.7,318,3.86e-159,2.95,***
+Raw Features,Repl,LR,schaefer100x7,edge,triangle,14.7,318,1.28e-37,0.822,***
+Raw Features,Repl,LR,schaefer100x7,triangle,node,23.1,318,4.52e-70,1.29,***
+Raw Features,Expl,RL,schaefer100x7,edge,node,59.9,396,1.16e-200,3.01,***
+Raw Features,Expl,RL,schaefer100x7,edge,triangle,13.3,395,1.14e-33,0.669,***
+Raw Features,Expl,RL,schaefer100x7,triangle,node,27.1,395,6.2e-92,1.36,***
+Raw Features,Expl,LR,schaefer200x7,edge,node,67.1,392,5.17e-217,3.39,***
+Coherence,Expl,LR,schaefer100x7,edge,node,42.3,386,5.17e-147,2.15,***
+Coherence,Expl,LR,schaefer100x7,edge,triangle,51.3,378,2.17e-172,2.64,***
+Coherence,Expl,LR,schaefer100x7,triangle,node,-0.0551,384,0.956,-0.00281,0
+PCA (90% variance),Expl,LR,schaefer100x7,edge,node,28.9,393,2.53e-99,1.46,***
+PCA (90% variance),Expl,LR,schaefer100x7,edge,triangle,16.5,393,1.01e-46,0.83,***
+PCA (90% variance),Expl,LR,schaefer100x7,triangle,node,7.12,393,5.17e-12,0.359,***
+PCA (30 comp),Expl,LR,schaefer100x7,edge,node,10.9,390,2.93e-24,0.55,***
+PCA (30 comp),Expl,LR,schaefer100x7,edge,triangle,30.1,389,1.24e-103,1.52,***
+PCA (30 comp),Expl,LR,schaefer100x7,triangle,node,-20,392,5.73e-62,-1.01,***
+PCA (35 comp),Expl,LR,schaefer100x7,edge,node,7.3,390,1.66e-12,0.369,***
+PCA (35 comp),Expl,LR,schaefer100x7,edge,triangle,30.6,390,1.11e-105,1.55,***
+PCA (35 comp),Expl,LR,schaefer100x7,triangle,node,-22.9,393,2.11e-74,-1.15,***
+PCA (40 comp),Expl,LR,schaefer100x7,edge,node,4.38,389,1.5e-05,0.222,***
+PCA (40 comp),Expl,LR,schaefer100x7,edge,triangle,29.7,384,1.62e-101,1.51,***
+PCA (40 comp),Expl,LR,schaefer100x7,triangle,node,-25.3,388,5.07e-84,-1.28,***

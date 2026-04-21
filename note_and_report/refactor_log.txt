@@ -1,0 +1,2 @@
+Everything up till expt_06 was heavily refactored.
+High-amplitude FC was copied rather directly. Peak-dense pure nodes seem fine. but the correlation is off, and the new eigenbrains are also a little off.

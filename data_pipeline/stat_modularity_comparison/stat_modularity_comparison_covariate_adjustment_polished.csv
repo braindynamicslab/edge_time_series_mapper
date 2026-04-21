@@ -1,13 +1,13 @@
 Condition,Co-hort,Ses-sion,Parcellation,Simplices,Coef,SE,t-stat,DF,p-value,Sig (Bonfe-rroni corr)
-Raw Features,one,LR,schaefer100x7,edge-node,0.0824,0.00589,14,1.18e+03,2.73e-41,***
-Raw Features,one,LR,schaefer100x7,triangle-node,-0.0826,0.00737,-11.2,1.18e+03,9.29e-28,***
-Raw Features,one,LR,schaefer100x7,edge-triangle,0.165,0.00379,43.5,1.18e+03,1.99e-247,***
-Raw Features,two,LR,schaefer100x7,edge-node,0.0814,0.00643,12.6,952,5.22e-34,***
-Raw Features,two,LR,schaefer100x7,triangle-node,-0.084,0.00811,-10.4,952,7.05e-24,***
-Raw Features,two,LR,schaefer100x7,edge-triangle,0.165,0.00422,39.2,952,1.34e-200,***
-Raw Features,one,RL,schaefer100x7,edge-node,0.0765,0.00661,11.6,1.18e+03,2.28e-29,***
-Raw Features,one,RL,schaefer100x7,triangle-node,-0.094,0.00846,-11.1,1.18e+03,2.43e-27,***
-Raw Features,one,RL,schaefer100x7,edge-triangle,0.17,0.00431,39.6,1.18e+03,4.43e-219,***
-Raw Features,two,RL,schaefer100x7,edge-node,0.0876,0.00683,12.8,952,8.25e-35,***
-Raw Features,two,RL,schaefer100x7,triangle-node,-0.0819,0.00881,-9.3,952,9.4e-20,***
-Raw Features,two,RL,schaefer100x7,edge-triangle,0.17,0.00443,38.3,952,1.15e-194,***
+Raw Features,Expl,LR,schaefer100x7,edge-node,0.0824,0.00589,14,1177,2.73e-41,***
+Raw Features,Expl,LR,schaefer100x7,triangle-node,-0.0826,0.00737,-11.2,1177,9.29e-28,***
+Raw Features,Expl,LR,schaefer100x7,edge-triangle,0.165,0.00379,43.5,1177,1.99e-247,***
+Raw Features,Repl,LR,schaefer100x7,edge-node,0.0814,0.00643,12.6,952,5.22e-34,***
+Raw Features,Repl,LR,schaefer100x7,triangle-node,-0.084,0.00811,-10.4,952,7.05e-24,***
+Raw Features,Repl,LR,schaefer100x7,edge-triangle,0.165,0.00422,39.2,952,1.34e-200,***
+Raw Features,Expl,RL,schaefer100x7,edge-node,0.0765,0.00661,11.6,1185,2.28e-29,***
+Raw Features,Expl,RL,schaefer100x7,triangle-node,-0.094,0.00846,-11.1,1185,2.43e-27,***
+Raw Features,Expl,RL,schaefer100x7,edge-triangle,0.17,0.00431,39.6,1185,4.43e-219,***
+Raw Features,Repl,RL,schaefer100x7,edge-node,0.0876,0.00683,12.8,952,8.25e-35,***
+Raw Features,Repl,RL,schaefer100x7,triangle-node,-0.0819,0.00881,-9.3,952,9.4e-20,***
+Raw Features,Repl,RL,schaefer100x7,edge-triangle,0.17,0.00443,38.3,952,1.15e-194,***
