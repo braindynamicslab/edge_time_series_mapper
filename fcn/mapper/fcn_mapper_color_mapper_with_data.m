@@ -13,7 +13,10 @@ function fig = fcn_mapper_color_mapper_with_data(mapper_data, color_data, vararg
     %
     % Optional Parameters (name-value pairs):
     %   'cmap' - Colormap name (default: "turbo")
-    %   'edge_color' - RGBA color for edges (default: [0.6, 0.6, 0.6, 0.3])
+    %   'edge_color' - RGB or RGBA color for edges (default: [0.6, 0.6, 0.6])
+    %                  If 4 elements, alpha is included; if 3, use edge_alpha
+    %   'edge_alpha' - Alpha transparency for edges (default: 0.3)
+    %                  Ignored if edge_color has 4 elements
     %   'min_color_data' - Minimum value for color scale (default: min(color_data))
     %   'max_color_data' - Maximum value for color scale (default: max(color_data))
     %   'minimal_radius' - Minimum node radius (default: 0.1)
@@ -24,7 +27,7 @@ function fig = fcn_mapper_color_mapper_with_data(mapper_data, color_data, vararg
     %   fig - Figure handle
     %
     % Example:
-    %   fig = fcn_mapper_color_mapper_with_data(mapper_data, betweenness, 0, ...
+    %   fig = fcn_mapper_color_mapper_with_data(mapper_data, betweenness, ...
     %                                           'cmap', "viridis", ...
     %                                           'colorbar_flag', 1);
     %
@@ -35,7 +38,8 @@ function fig = fcn_mapper_color_mapper_with_data(mapper_data, color_data, vararg
     addRequired(p, 'mapper_data', @isstruct);
     addRequired(p, 'color_data', @isnumeric);
     addParameter(p, 'cmap', "parula", @ischar);
-    addParameter(p, 'edge_color', [0.6, 0.6, 0.6, 0.3], @isnumeric);
+    addParameter(p, 'edge_color', [0.6, 0.6, 0.6], @isnumeric);
+    addParameter(p, 'edge_alpha', 0.3, @isnumeric);
     addParameter(p, 'min_color_data', [], @isnumeric);
     addParameter(p, 'max_color_data', [], @isnumeric);
     addParameter(p, 'minimal_radius', 0.1, @isnumeric);
@@ -46,11 +50,19 @@ function fig = fcn_mapper_color_mapper_with_data(mapper_data, color_data, vararg
     % Extract parameters
     cmap = string(p.Results.cmap);
     edge_color = p.Results.edge_color;
+    edge_alpha = p.Results.edge_alpha;
     min_color_data = p.Results.min_color_data;
     max_color_data = p.Results.max_color_data;
     minimal_radius = p.Results.minimal_radius;
     radius_scaling_factor = p.Results.radius_scaling_factor;
     colorbar_flag = p.Results.colorbar_flag;
+    
+    % Construct edge color with alpha
+    if numel(edge_color) == 4
+        edge_color_with_alpha = edge_color;
+    else
+        edge_color_with_alpha = [edge_color(:)', edge_alpha];
+    end
     
     % Get dimensions
     num_nodes = size(mapper_data.mapper_nodeTpMat, 1);
@@ -97,7 +109,7 @@ function fig = fcn_mapper_color_mapper_with_data(mapper_data, color_data, vararg
     fig = figure;
     
     % Plot edges
-    plot(x_data(edge_list)', y_data(edge_list)', 'Color', edge_color);
+    plot(x_data(edge_list)', y_data(edge_list)', 'Color', edge_color_with_alpha);
     hold on;
     
     % Plot nodes as colored circles
