@@ -8,6 +8,9 @@ function varargout = fcn_mapper_drawd3graph(nodemat, nodecomm, cmap, outputname,
     addParameter(p, "colorbar_flag", 1);
     addParameter(p, "highlighted_nodes", []);
     addParameter(p, "highlighted_sectors", []);
+    addParameter(p, "edge_alpha", 0.3);
+    addParameter(p, "node_alpha", 0.9);
+    
 
     parse(p, varargin{:});
     XY = p.Results.XY;
@@ -17,6 +20,8 @@ function varargout = fcn_mapper_drawd3graph(nodemat, nodecomm, cmap, outputname,
     colorbar_flag = p.Results.colorbar_flag;
     highlighted_nodes = p.Results.highlighted_nodes;
     highlighted_sectors = p.Results.highlighted_sectors;
+    edge_alpha = p.Results.edge_alpha;
+    node_alpha = p.Results.node_alpha;
 
     if isempty(highlighted_sectors)
         highlighted_sectors = zeros(size(nodemat, 1), size(cmap, 1));
@@ -58,7 +63,7 @@ function varargout = fcn_mapper_drawd3graph(nodemat, nodecomm, cmap, outputname,
     radius = minimal_radius + radius_scaling_factor*sqrt(sum(prop,2)./sum(sum(prop,2)));
 
     % draw edges
-    plot([XY(e_ii, 1)'; XY(e_jj, 1)'], [XY(e_ii, 2)'; XY(e_jj, 2)'], 'Color', [0.6,0.6,0.6,0.3]);
+    plot([XY(e_ii, 1)'; XY(e_jj, 1)'], [XY(e_ii, 2)'; XY(e_jj, 2)'], 'Color', [0.6,0.6,0.6,edge_alpha]);
     hold on;
     % for e = 1:1:length(e_i)
     %    plot([XY(e_i(e),1), XY(e_j(e),1)],[XY(e_i(e),2), XY(e_j(e),2)],'Color',[0.6,0.6,0.6,0.3]); 
@@ -84,7 +89,7 @@ function varargout = fcn_mapper_drawd3graph(nodemat, nodecomm, cmap, outputname,
         end
         fcn_mapper_drawpie(percents(n,:),pos,radius(n),colors(:, :, n), "EdgeColor", EdgeColor);
     end
-    alpha(0.9);
+    alpha(node_alpha);
     hold on;
     
     if colorbar_flag && ~isempty(labels) && size(colors, 3) == 1
