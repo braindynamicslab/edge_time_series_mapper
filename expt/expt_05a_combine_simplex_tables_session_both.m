@@ -212,6 +212,102 @@ for parcellation_idx = 1:numel(parcellations)
     end
 end
 
+% ================================================================================
+% EXTRACT COHORT TWO FROM ALL_BUT_ONE
+% ================================================================================
+fprintf('================================================================================\n');
+fprintf('EXTRACTING COHORT TWO FROM ALL_BUT_ONE\n');
+fprintf('================================================================================\n\n');
+
+num_two_created = 0;
+num_two_skipped = 0;
+num_two_errors = 0;
+
+for parcellation_idx = 1:numel(parcellations)
+    parcellation = parcellations(parcellation_idx);
+
+    fprintf('Extracting cohort_two for parcellation: %s\n', parcellation);
+
+    % Load cohort_two subject list
+    cohort_two_path = fullfile(config.repo_root, 'data_pipeline', 'data_cohort', ...
+        'cohort_two_session_both.csv');
+
+    if ~isfile(cohort_two_path)
+        fprintf('  Cohort two subject file not found: %s\n', cohort_two_path);
+        fprintf('  Status: SKIPPED ✗\n\n');
+        num_two_skipped = num_two_skipped + 1;
+        continue;
+    end
+
+    % Load all_but_one data
+    all_but_one_filename = strcat('simplex_mapper_', condition, ...
+        '_cohort_all_but_one', ...
+        '_session_both', ...
+        '_', parcellation, '.csv');
+    all_but_one_path = fullfile(output_directory, all_but_one_filename);
+
+    if ~isfile(all_but_one_path)
+        fprintf('  All_but_one file not found: %s\n', all_but_one_filename);
+        fprintf('  Status: ERROR ✗\n\n');
+        num_two_errors = num_two_errors + 1;
+        continue;
+    end
+
+    try
+        % Read cohort_two subject list
+        cohort_two_table = readtable(cohort_two_path, ...
+            'TextType', 'string', ...
+            'VariableNamingRule', 'preserve');
+
+        % Normalize column name from 'Subject' to 'subject'
+        if ismember('Subject', cohort_two_table.Properties.VariableNames)
+            cohort_two_table.Properties.VariableNames{'Subject'} = 'subject';
+        end
+
+        fprintf('  Loaded cohort_two subject list: %d subjects\n', height(cohort_two_table));
+
+        % Read all_but_one data
+        all_but_one_table = readtable(all_but_one_path, ...
+            'TextType', 'string', ...
+            'VariableNamingRule', 'preserve');
+
+        fprintf('  Loaded all_but_one data: %d rows\n', height(all_but_one_table));
+
+        % Extract only cohort_two subjects (preserves all_but_one row/column order)
+        mask = ismember(all_but_one_table.subject, cohort_two_table.subject);
+        two_table = all_but_one_table(mask, :);
+
+        % Sanity check: warn if any cohort_two subjects were not found
+        num_found = height(two_table);
+        num_expected = height(cohort_two_table);
+        if num_found < num_expected
+            fprintf('    WARNING: %d cohort_two subjects not found in all_but_one\n', ...
+                num_expected - num_found);
+        end
+
+        fprintf('  Extracted cohort_two: %d rows\n', height(two_table));
+
+        % Define output filename
+        two_filename = strcat('simplex_mapper_', condition, ...
+            '_cohort_two', ...
+            '_session_both', ...
+            '_', parcellation, '.csv');
+        two_path = fullfile(output_directory, two_filename);
+
+        % Write output
+        writetable(two_table, two_path);
+
+        fprintf('  Output written: %s\n', two_filename);
+        fprintf('  Status: SUCCESS ✓\n\n');
+        num_two_created = num_two_created + 1;
+
+    catch ME
+        fprintf('  Error extracting cohort_two: %s\n', ME.message);
+        fprintf('  Status: ERROR ✗\n\n');
+        num_two_errors = num_two_errors + 1;
+    end
+end
+
 % Compute averaged modularity across sessions for existing files
 fprintf('================================================================================\n');
 fprintf('COMPUTING AVERAGED MODULARITY ACROSS SESSIONS\n');
@@ -221,7 +317,7 @@ num_averaged = 0;
 num_averaged_errors = 0;
 
 % Process both individual cohorts and the combined "all" cohort
-cohorts_to_average = ["one", "all_but_one", "all"];
+cohorts_to_average = ["one", "all_but_one", "two", "all"];
 
 for cohort_idx = 1:numel(cohorts_to_average)
     cohort = cohorts_to_average(cohort_idx);
@@ -422,6 +518,10 @@ end
     fprintf('\n');
     fprintf('  Combined "all" cohort files:       %d\n', num_combined);
     fprintf('  Combined errors:                   %d\n', num_combined_errors);
+    fprintf('  Cohort two files extracted:        %d\n', num_two_created);
+    fprintf('  Cohort two skipped:                %d\n', num_two_skipped);
+    fprintf('  Cohort two errors:                 %d\n', num_two_errors);
+    fprintf('\n');
     fprintf('\n');
     fprintf('  Files with averaged modularity:    %d\n', num_averaged);
     fprintf('  Averaging errors:                  %d\n', num_averaged_errors);
@@ -430,9 +530,9 @@ end
     fprintf('  Head motion errors:                %d\n', num_head_motion_errors);
     fprintf('\n');
     
-    if num_errors == 0 && num_combined_errors == 0 && num_averaged_errors == 0 && num_head_motion_errors == 0 && num_created > 0
+    if num_errors == 0 && num_two_errors == 0 && num_combined_errors == 0 && num_averaged_errors == 0 && num_head_motion_errors == 0 && num_created > 0
         fprintf('  Status:                            SUCCESS ✓✓✓\n');
-    elseif num_errors > 0 || num_combined_errors > 0 || num_averaged_errors > 0 || num_head_motion_errors > 0
+    elseif num_errors > 0 || num_two_errors > 0 || num_combined_errors > 0 || num_averaged_errors > 0 || num_head_motion_errors > 0
         fprintf('  Status:                            COMPLETED WITH ERRORS\n');
     else
         fprintf('  Status:                            NO TABLES CREATED\n');
