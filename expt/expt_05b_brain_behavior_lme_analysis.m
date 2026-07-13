@@ -9,7 +9,8 @@ if ~isfolder(output_gitignore_directory)
     mkdir(output_gitignore_directory);
 end
 
-cohorts = ["one", "all"];
+% cohorts = ["one", "all"];
+cohorts = ["two"];
 session = "both";
 modularity_prefixes = ["node", "edge", "triangle"];
 parcellation = "schaefer100x7";
