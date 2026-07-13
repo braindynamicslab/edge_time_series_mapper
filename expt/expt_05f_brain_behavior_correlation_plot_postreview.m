@@ -1,781 +1,393 @@
-%% plot_node_edge_triangle_nature_complete.m
+%% Brain-Behavior Correlation - Confidence-Interval Plots (postreview)
+% Companion to expt_05c_brain_behavior_correlation_stat_postreview.m.
+%
+% Produces ONE plot per covariate condition (rather than overlaying covariates
+% on a single panel), because the postreview design selects a different feature
+% set per covariate, so the conditions no longer share an x-axis.
+%
+% Panels:
+%   Discovery  - cohort one, all responses, two-tailed, one plot per covariate
+%                ("none", "headMotion").
+%   Confirm    - cohorts one, two, all, covariate-specific selected responses,
+%                one plot per covariate x tail. Cohort all uses
+%                "headMotion_family" and reuses the "headMotion" selection.
+%
+% Reads:
+%   - selected_features_postreview.mat  (from expt_05c postreview)
+%   - per-model coefficient files in brain_behavior_correlation_raw/ (from expt_05b)
 
 clear; clc; close all;
 
-%% --------------------------- USER PATHS ---------------------------------
-% Folder with all the stats_raw_features_*.mat files
+%% Paths
 config = fcn_utils_get_config();
-dataDir = fullfile(config.repo_root, "data_pipeline/brain_behavior_correlation_raw");
-
-% Output directory for plots
-outputDir = fullfile(config.repo_root, "data_pipeline", "plot_brain_behavior_correlation");
-if ~exist(outputDir, 'dir')
-    mkdir(outputDir);
+data_dir = fullfile(config.repo_root, "data_pipeline", "brain_behavior_correlation_raw");
+output_dir = fullfile(config.repo_root, "data_pipeline", "plot_brain_behavior_correlation_postreview");
+if ~isfolder(output_dir)
+    mkdir(output_dir);
 end
-
-% Folder that contains fcn_utils_construct_confidence_interval.m (no longer
-% needed)
-% ciDir   = '/Users/saadpirzada/Downloads/brain_behavior_correlation';
-% addpath(ciDir);
-
-%% --------------------------- GLOBAL SETTINGS ----------------------------
-parcellation = "schaefer100x7";
-session = "both";
-simplex_list = {'node','edge','triangle'};
-significance_alpha = 0.05;      % nominal 95% CI
-confidence_interval_bound = 3;         % cap infinite one-tailed bounds for internal safety
-y_lim = [-0.35 0.35];  % fixed y-scale for all panels (edit if desired)
-include_demo_plus_head_motion_flag = 0;
 var_dict = config.var_dict;
 
-if ~include_demo_plus_head_motion_flag
-    % Controls / covariates (file suffixes)
-    controls      = {'none','demographics','headMotion'};
-    controlLabels = {'none','demographics','Mean head motion'};
+%% Global settings
+parcellation = "schaefer100x7";
+session = "both";
+simplices = ["node", "edge", "triangle"];
+significance_alpha = 0.05;          % nominal 95% CI
+confidence_interval_bound = 3;      % cap infinite one-tailed bounds for internal safety
+y_lim = [-0.35 0.35];               % fixed y-scale for all panels
 
-    % Marker styling for multi-control plots (B/W, Nature-ish)
-    markers    = {'o','^','s'};   % none, demo, motion
-    faceColors = {'k','k','k'};
-else
-    controls      = {'none','demographics','headMotion','demographics_headMotion'};
-    controlLabels = {'none','demographics','Mean head motion', ...
-        'demographics, Mean head motion'};
+%% All responses (discovery): Big Five (5) | ASR (2) | PMAT (1)
+response_codes_all = [...
+    "NEOFAC_C", "NEOFAC_N", "NEOFAC_A", "NEOFAC_O", "NEOFAC_E", ...
+    "ASR_Extn_T", "ASR_Intn_T", "PMAT24_A_CR"];
+response_labels_all = arrayfun(@(code) get_display_name(var_dict, "response", code), ...
+    response_codes_all);
+bounds_all = compute_partition_bounds(response_codes_all);
 
-    % Marker styling for multi-control plots (B/W, Nature-ish)
-    markers    = {'o','^','s','d'};   % none, demo, motion, demo+motion
-    faceColors = {'k','k','k','w'};   % last one = white diamond
+%% Load covariate-specific feature selection produced by the stat script
+selection_file = fullfile(config.repo_root, "data_pipeline", "brain_behavior_correlation", ...
+    "selected_features_postreview.mat");
+if ~isfile(selection_file)
+    error("Feature selection not found:\n%s\nRun expt_05c (postreview) first.", selection_file);
 end
+loaded_selection = load(selection_file);
+selected_features = loaded_selection.selected_features;
 
-% Create ONE legend figure you can export and reuse for all multi-control plots
-figLeg_controls = create_control_legend(controlLabels, markers, faceColors);
+%% Discovery panels: cohort one, all responses, per covariate (2-tailed)
+discovery_cohort = "one";
+discovery_controls = ["none", "headMotion"];
 
-%% --------------------------- RESPONSES ----------------------------------
-% "All responses" set (EXCLUDING TASK ACCURACY MEASURES per request)
-featCodes_all = { ...
-    'NEOFAC_C','NEOFAC_N','NEOFAC_A','NEOFAC_O','NEOFAC_E', ...
-    'ASR_Extn_T','ASR_Intn_T', ...
-    'PMAT24_A_CR'};
+for control = discovery_controls
+    for simplex = simplices
+        [beta, lower, upper] = load_ci_two_tailed_single(...
+            data_dir, parcellation, simplex, discovery_cohort, session, response_codes_all, control);
 
-featLabels_all = { ...
-    'Conscientiousness','Neuroticism','Agreeableness','Openness','Extraversion', ...
-    'Externalizing','Internalizing', ...
-    'Fluid intelligence'};
+        fig = new_ci_figure();
+        ax = new_ci_axes(fig);
+        plot_ci_single(ax, beta, lower, upper, response_labels_all, bounds_all, y_lim);
 
-% Partition bounds for ALL responses:
-% Big Five (5) | ASR (2) | PMAT (1)
-bounds_all = [0.5, 5.5, 7.5, numel(featCodes_all)+0.5];
+        ylabel(ax, sprintf("Linear Coefficient of %s Modularity", capitalize(simplex)));
+        title(ax, sprintf("%s, cohort %s (2-tailed), control: %s (ALL responses)", ...
+            simplex, discovery_cohort, get_display_name(var_dict, "control", control)), ...
+            'FontWeight', 'normal');
 
-% Selected responses (must include Agreeableness)
-% featCodes_sel = {'NEOFAC_C','NEOFAC_N','NEOFAC_A','ASR_Extn_T','ASR_Intn_T','PMAT24_A_CR'};
-% featLabels_sel = {'Conscientiousness','Neuroticism','Agreeableness', ...
-%     'Externalizing','Internalizing','Fluid intelligence (PMAT)'};
-% % Partition bounds for SELECTED responses:
-% % Personality (C,N,A) | Psychopathology (ASR) | PMAT
-% bounds_sel = [0.5, 3.5, 5.5, numel(featCodes_sel)+0.5];
-
-%% ========================================================================
-% (A) Cohort ONE (cohort 1), 2-tailed, NO CONTROL, ALL responses
-%     -> node, edge, triangle
-% ========================================================================
-cohortA  = 'one';
-controlA = 'none'; % no control
-for s = 1:numel(simplex_list)
-    simplex = simplex_list{s};
-
-    [betaA, loA, upA] = load_ci_two_tailed_singleControl( ...
-        dataDir, parcellation, simplex, cohortA, session, featCodes_all, controlA);
-
-    fig = figure('Units','centimeters','Position',[2 2 12 14],'Color','w');
-    apply_figure_defaults(fig);
-
-    ax = axes('Parent',fig);
-    ax.Position = [0.12 0.20 0.84 0.74];
-
-    plot_ci_single(ax, betaA, loA, upA, featLabels_all, bounds_all, y_lim);
-
-    ylabel(ax, sprintf('Linear Coefficient of %s Modularity', [upper(simplex(1)), simplex(2:end)]));
-    title(ax, sprintf('%s, cohort one (2-tailed), control: none (ALL responses)', simplex), ...
-        'FontWeight','normal');
-
-    set(fig, 'PaperPositionMode','auto');
-
-    % Export
-    filename = sprintf('plot_brain_behavior_correlation_%s_cohort_%s_session_%s_parcellation_%s_tail_%d_response_%s_control_%s.pdf', ...
-        simplex, cohortA, session, parcellation, 2, 'all', 'none');
-    exportgraphics(fig, fullfile(outputDir, filename), ...
-        'ContentType', 'vector', ...
-        'Resolution', 300);
-    filename_png = strrep(filename, '.pdf', '.png');
-    exportgraphics(fig, fullfile(outputDir, filename_png), ...
-        'Resolution', 300);
-end
-
-%% Load simplex-specific selected variables from Table 1
-table1_file = fullfile(config.repo_root, "data_pipeline", "brain_behavior_correlation", ...
-    "brain_behavior_corr_stats_cohort_one_all_features_no_control.csv");
-
-if exist(table1_file, 'file')
-    table1_results = readtable(table1_file, 'PreserveVariableNames', true);
-    [node_selected, edge_selected, triangle_selected] = fcn_stat_extract_significant_variables(table1_results, var_dict);
-    
-    fprintf('Simplex-specific selected variables:\n');
-    fprintf('  Node: %s\n', strjoin(node_selected, ', '));
-    fprintf('  Edge: %s\n', strjoin(edge_selected, ', '));
-    fprintf('  Triangle: %s\n', strjoin(triangle_selected, ', '));
-else
-    error('Table 1 not found. Run table generation script first.');
-end
-
-% Convert codes to human-readable labels using var_dict
-node_featLabels_selected = cellfun(@(code) get_display_name(var_dict, "response", code), ...
-                                   node_selected, 'UniformOutput', false);
-edge_featLabels_selected = cellfun(@(code) get_display_name(var_dict, "response", code), ...
-                                   edge_selected, 'UniformOutput', false);
-triangle_featLabels_selected = cellfun(@(code) get_display_name(var_dict, "response", code), ...
-                                       triangle_selected, 'UniformOutput', false);
-
-% Compute partition bounds for background shading
-node_bounds_selected = compute_partition_bounds(node_selected);
-edge_bounds_selected = compute_partition_bounds(edge_selected);
-triangle_bounds_selected = compute_partition_bounds(triangle_selected);
-
-%% ========================================================================
-% (B1) Cohort ONE (cohort 1), SELECT responses, ALL controls/covariates
-%     -> 2-tailed (stored CI): node, edge, triangle
-% ========================================================================
-cohortB = 'one';
-for s = 1:numel(simplex_list)
-    simplex = simplex_list{s};
-
-    switch simplex
-        case 'node'
-            current_featCodes = node_selected;
-            current_featLabels = node_featLabels_selected;
-            current_bounds = node_bounds_selected;
-        case 'edge'
-            current_featCodes = edge_selected;
-            current_featLabels = edge_featLabels_selected;
-            current_bounds = edge_bounds_selected;
-        case 'triangle'
-            current_featCodes = triangle_selected;
-            current_featLabels = triangle_featLabels_selected;
-            current_bounds = triangle_bounds_selected;
+        export_ci_figure(fig, output_dir, simplex, discovery_cohort, session, parcellation, ...
+            2, "all", control);
     end
-    % CHANGED: use current_featCodes instead of featCodes_sel
-    [betaB2, loB2, upB2] = load_ci_two_tailed_multiControls( ...
-        dataDir, parcellation, simplex, cohortB, session, current_featCodes, controls);
-
-    fig = figure('Units','centimeters','Position',[2 2 12 14],'Color','w');
-    apply_figure_defaults(fig);
-
-    ax = axes('Parent',fig);
-    ax.Position = [0.12 0.20 0.84 0.74];
-
-    % CHANGED: use current_featLabels and current_bounds
-    plot_ci_multi(ax, betaB2, loB2, upB2, current_featLabels, controlLabels, ...
-        current_bounds, y_lim, markers, faceColors);
-
-    ylabel(ax, sprintf('Linear Coefficient of %s Modularity', [upper(simplex(1)), simplex(2:end)]));
-    title(ax, sprintf('%s, cohort one (2-tailed), ALL controls (SELECT responses)', simplex), ...
-        'FontWeight','normal');
-
-    set(fig, 'PaperPositionMode','auto');
-
-    % Export
-    filename = sprintf('plot_brain_behavior_correlation_%s_cohort_%s_session_%s_parcellation_%s_tail_%d_response_%s_control_%s.pdf', ...
-        simplex, cohortB, session, parcellation, 2, 'select', 'all');
-    exportgraphics(fig, fullfile(outputDir, filename), ...
-        'ContentType', 'vector', ...
-        'Resolution', 300);
-    filename_png = strrep(filename, '.pdf', '.png');
-    exportgraphics(fig, fullfile(outputDir, filename_png), ...
-        'Resolution', 300);
 end
 
-%% ========================================================================
-% (B2) Cohort ONE (cohort 1), SELECT responses, ALL controls/covariates
-%     -> 1-tailed (computed CI): node, edge, triangle
-%     (NOW includes ellipses at infinite CI ends; NO cap right before dots)
-% ========================================================================
-cohortB = 'one';
-for s = 1:numel(simplex_list)
-    simplex = simplex_list{s};
+%% Confirmation panels: cohorts one/two/all, selected responses, per covariate x tail
+% Each row: cohort, fitted covariate, selection key (discovery covariate whose
+% surviving feature set is reused).
+confirmation_cohorts    = ["one", "one",        "two", "two",        "all", "all"];
+confirmation_controls   = ["none", "headMotion", "none", "headMotion", "none", "headMotion_family"];
+confirmation_selections = ["none", "headMotion", "none", "headMotion", "none", "headMotion"];
+tails = [1, 2];
 
-    switch simplex
-        case 'node'
-            current_featCodes = node_selected;
-            current_featLabels = node_featLabels_selected;
-            current_bounds = node_bounds_selected;
-        case 'edge'
-            current_featCodes = edge_selected;
-            current_featLabels = edge_featLabels_selected;
-            current_bounds = edge_bounds_selected;
-        case 'triangle'
-            current_featCodes = triangle_selected;
-            current_featLabels = triangle_featLabels_selected;
-            current_bounds = triangle_bounds_selected;
+for row = 1:numel(confirmation_cohorts)
+    cohort = confirmation_cohorts(row);
+    control = confirmation_controls(row);
+    selection_key = confirmation_selections(row);
+
+    for simplex = simplices
+        response_codes = selected_features.(selection_key).(simplex);
+        if isempty(response_codes)
+            warning("No selected features for simplex '%s', selection '%s'. Skipping.", ...
+                simplex, selection_key);
+            continue;
+        end
+        response_codes = reshape(string(response_codes), 1, []);
+        response_labels = arrayfun(@(code) get_display_name(var_dict, "response", code), response_codes);
+        bounds = compute_partition_bounds(response_codes);
+
+        for tail = tails
+            if tail == 2
+                [beta, lower, upper] = load_ci_two_tailed_single(...
+                    data_dir, parcellation, simplex, cohort, session, response_codes, control);
+                inf_lower = [];
+                inf_upper = [];
+            else
+                [beta, lower, upper, inf_lower, inf_upper] = load_ci_one_tailed_single(...
+                    data_dir, parcellation, simplex, cohort, session, response_codes, control, ...
+                    significance_alpha, confidence_interval_bound);
+            end
+
+            fig = new_ci_figure();
+            ax = new_ci_axes(fig);
+            plot_ci_single(ax, beta, lower, upper, response_labels, bounds, y_lim, inf_lower, inf_upper);
+
+            ylabel(ax, sprintf("Linear Coefficient of %s Modularity", capitalize(simplex)));
+            title(ax, sprintf("%s, cohort %s (%d-tailed), control: %s (SELECT responses)", ...
+                simplex, cohort, tail, get_display_name(var_dict, "control", control)), ...
+                'FontWeight', 'normal');
+
+            export_ci_figure(fig, output_dir, simplex, cohort, session, parcellation, ...
+                tail, "select", control);
+        end
     end
-
-    [betaB1, loB1, upB1, infLoB1, infUpB1] = load_ci_one_tailed_multiControls( ...
-        dataDir, parcellation, simplex, cohortB, session, current_featCodes, controls, significance_alpha, confidence_interval_bound);
-
-    fig = figure('Units','centimeters','Position',[2 2 12 14],'Color','w');
-    apply_figure_defaults(fig);
-
-    ax = axes('Parent',fig);
-    ax.Position = [0.12 0.20 0.84 0.74];
-
-    plot_ci_multi(ax, betaB1, loB1, upB1, current_featLabels, controlLabels, ...
-        current_bounds, y_lim, markers, faceColors, infLoB1, infUpB1);
-
-    ylabel(ax, sprintf('Linear Coefficient of %s Modularity', [upper(simplex(1)), simplex(2:end)]));
-    title(ax, sprintf('%s, cohort one (1-tailed), ALL controls (SELECT responses)', simplex), ...
-        'FontWeight','normal');
-
-    set(fig, 'PaperPositionMode','auto');
-
-    % Export
-    filename = sprintf('plot_brain_behavior_correlation_%s_cohort_%s_session_%s_parcellation_%s_tail_%d_response_%s_control_%s.pdf', ...
-        simplex, cohortB, session, parcellation, 1, 'select', 'all');
-    exportgraphics(fig, fullfile(outputDir, filename), ...
-        'ContentType', 'vector', ...
-        'Resolution', 300);
-    filename_png = strrep(filename, '.pdf', '.png');
-    exportgraphics(fig, fullfile(outputDir, filename_png), ...
-        'Resolution', 300);
 end
 
-%% ========================================================================
-% (C1) Cohort ALL (everyone), SELECT responses, ALL controls/covariates
-%     -> 2-tailed (stored CI): node, edge, triangle
-% ========================================================================
-cohortC = 'all';
-for s = 1:numel(simplex_list)
-    simplex = simplex_list{s};
-
-    switch simplex
-        case 'node'
-            current_featCodes = node_selected;
-            current_featLabels = node_featLabels_selected;
-            current_bounds = node_bounds_selected;
-        case 'edge'
-            current_featCodes = edge_selected;
-            current_featLabels = edge_featLabels_selected;
-            current_bounds = edge_bounds_selected;
-        case 'triangle'
-            current_featCodes = triangle_selected;
-            current_featLabels = triangle_featLabels_selected;
-            current_bounds = triangle_bounds_selected;
-    end
-
-    [betaC2, loC2, upC2] = load_ci_two_tailed_multiControls( ...
-        dataDir, parcellation, simplex, cohortC, session, current_featCodes, controls);
-
-    fig = figure('Units','centimeters','Position',[2 2 12 14],'Color','w');
-    apply_figure_defaults(fig);
-
-    ax = axes('Parent',fig);
-    ax.Position = [0.12 0.20 0.84 0.74];
-
-    plot_ci_multi(ax, betaC2, loC2, upC2, current_featLabels, controlLabels, ...
-        current_bounds, y_lim, markers, faceColors);
-
-    ylabel(ax, sprintf('Linear Coefficient of %s Modularity', [upper(simplex(1)), simplex(2:end)]));
-    title(ax, sprintf('%s, cohort all (2-tailed), ALL controls (SELECT responses)', simplex), ...
-        'FontWeight','normal');
-
-    set(fig, 'PaperPositionMode','auto');
-
-    % Export
-    filename = sprintf('plot_brain_behavior_correlation_%s_cohort_%s_session_%s_parcellation_%s_tail_%d_response_%s_control_%s.pdf', ...
-        simplex, cohortC, session, parcellation, 2, 'select', 'all');
-    exportgraphics(fig, fullfile(outputDir, filename), ...
-        'ContentType', 'vector', ...
-        'Resolution', 300);
-    filename_png = strrep(filename, '.pdf', '.png');
-    exportgraphics(fig, fullfile(outputDir, filename_png), ...
-        'Resolution', 300);
-end
-
-%% ========================================================================
-% (C2) Cohort ALL (everyone), SELECT responses, ALL controls/covariates
-%     -> 1-tailed (computed CI): node, edge, triangle
-%     (NOW includes ellipses at infinite CI ends; NO cap right before dots)
-% ========================================================================
-cohortC = 'all';
-for s = 1:numel(simplex_list)
-    simplex = simplex_list{s};
-
-    switch simplex
-        case 'node'
-            current_featCodes = node_selected;
-            current_featLabels = node_featLabels_selected;
-            current_bounds = node_bounds_selected;
-        case 'edge'
-            current_featCodes = edge_selected;
-            current_featLabels = edge_featLabels_selected;
-            current_bounds = edge_bounds_selected;
-        case 'triangle'
-            current_featCodes = triangle_selected;
-            current_featLabels = triangle_featLabels_selected;
-            current_bounds = triangle_bounds_selected;
-    end
-
-    [betaC1, loC1, upC1, infLoC1, infUpC1] = load_ci_one_tailed_multiControls( ...
-        dataDir, parcellation, simplex, cohortC, session, current_featCodes, controls, significance_alpha, confidence_interval_bound);
-
-    fig = figure('Units','centimeters','Position',[2 2 12 14],'Color','w');
-    apply_figure_defaults(fig);
-
-    ax = axes('Parent',fig);
-    ax.Position = [0.12 0.20 0.84 0.74];
-
-    plot_ci_multi(ax, betaC1, loC1, upC1, current_featLabels, controlLabels, ...
-        current_bounds, y_lim, markers, faceColors, infLoC1, infUpC1);
-
-    ylabel(ax, sprintf('Linear Coefficient of %s Modularity', [upper(simplex(1)), simplex(2:end)]));
-    title(ax, sprintf('%s, cohort all (1-tailed), ALL controls (SELECT responses)', simplex), ...
-        'FontWeight','normal');
-
-    set(fig, 'PaperPositionMode','auto');
-
-    % Export
-    filename = sprintf('plot_brain_behavior_correlation_%s_cohort_%s_session_%s_parcellation_%s_tail_%d_response_%s_control_%s.pdf', ...
-        simplex, cohortC, session, parcellation, 1, 'select', 'all');
-    exportgraphics(fig, fullfile(outputDir, filename), ...
-        'ContentType', 'vector', ...
-        'Resolution', 300);
-    filename_png = strrep(filename, '.pdf', '.png');
-    exportgraphics(fig, fullfile(outputDir, filename_png), ...
-        'Resolution', 300);
-
-end
-
-%% Export legend:
-filename = 'plot_brain_behavior_correlation_legend_controls.pdf';
-exportgraphics(figLeg_controls, fullfile(outputDir, filename), ...
-    'ContentType', 'vector', ...
-    'Resolution', 300);
+fprintf("Plots saved to: %s\n", output_dir);
 
 %% ============================ FUNCTIONS =================================
 
-function apply_figure_defaults(fig)
-set(fig, 'DefaultAxesFontName','Helvetica', ...
-    'DefaultAxesFontSize',10, ...
-    'DefaultAxesLineWidth',1, ...
-    'DefaultLineLineWidth',1.4, ...
-    'DefaultLineMarkerSize',6);
+function fig = new_ci_figure()
+fig = figure('Units', 'centimeters', 'Position', [2 2 12 14], 'Color', 'w');
+set(fig, 'DefaultAxesFontName', 'Helvetica', ...
+    'DefaultAxesFontSize', 10, ...
+    'DefaultAxesLineWidth', 1, ...
+    'DefaultLineLineWidth', 1.4, ...
+    'DefaultLineMarkerSize', 6);
 end
 
-function fname = build_stats_fname(dataDir, cohort, session, parcellation, simplex, feature, control)
-fname = fullfile(dataDir, sprintf( ...
+function ax = new_ci_axes(fig)
+ax = axes('Parent', fig);
+ax.Position = [0.12 0.20 0.84 0.74];
+end
+
+function export_ci_figure(fig, output_dir, simplex, cohort, session, parcellation, tail, response, control)
+set(fig, 'PaperPositionMode', 'auto');
+filename = sprintf('plot_brain_behavior_correlation_%s_cohort_%s_session_%s_parcellation_%s_tail_%d_response_%s_control_%s.pdf', ...
+    simplex, cohort, session, parcellation, tail, response, control);
+exportgraphics(fig, fullfile(output_dir, filename), 'ContentType', 'vector', 'Resolution', 300);
+filename_png = strrep(filename, '.pdf', '.png');
+exportgraphics(fig, fullfile(output_dir, filename_png), 'Resolution', 300);
+end
+
+function name = capitalize(word)
+word = char(word);
+name = [upper(word(1)), word(2:end)];
+end
+
+function fname = build_stats_fname(data_dir, cohort, session, parcellation, simplex, feature, control)
+fname = fullfile(data_dir, sprintf( ...
     'stats_raw_features_%s_%s_%s_%s_predicts_%s_controlledby_%s.mat', ...
     cohort, session, parcellation, simplex, feature, control));
 end
 
-function rowIdx = find_coef_row(stats, coefName, fname)
-names = stats.Name;
-if isstring(names), names = cellstr(names); end
-if ischar(names),   names = cellstr(names); end
-
-rowIdx = find(strcmp(names, coefName), 1);
-if isempty(rowIdx)
-    error('Row "%s" not found in %s', coefName, fname);
+function row_idx = find_coef_row(stats, coef_name, fname)
+names = string(stats.Name);
+row_idx = find(names == coef_name, 1);
+if isempty(row_idx)
+    error('Row "%s" not found in %s', coef_name, fname);
 end
 end
 
-function [beta, lower, upper] = load_ci_two_tailed_singleControl(dataDir, parcellation, simplex, cohort, session, feats, control)
-% Load estimate and stored 2-tailed CI for a single control condition
-[betaM, lowerM, upperM] = load_ci_two_tailed_multiControls(dataDir, parcellation, simplex, cohort, session, feats, {control});
-beta  = betaM(:,1);
-lower = lowerM(:,1);
-upper = upperM(:,1);
-end
+function [beta, lower, upper] = load_ci_two_tailed_single(data_dir, parcellation, simplex, cohort, session, feats, control)
+% Estimate and stored 2-tailed CI for a single covariate condition
+feats = reshape(string(feats), 1, []);
+num_features = numel(feats);
 
-function [beta, lower, upper] = load_ci_two_tailed_multiControls(dataDir, parcellation, simplex, cohort, session, feats, controls)
-% Load estimate and stored 2-tailed CI for multiple control conditions
-nF = numel(feats);
-nC = numel(controls);
+beta = nan(num_features, 1);
+lower = nan(num_features, 1);
+upper = nan(num_features, 1);
 
-beta  = nan(nF,nC);
-lower = nan(nF,nC);
-upper = nan(nF,nC);
+coef_name = sprintf("%s_%s_modularity", session, simplex);
 
-coefName = sprintf("%s_%s_modularity", session, simplex); % both_edge_modularity
-
-for c = 1:nC
-    control = controls{c};
-    for k = 1:nF
-        feature = feats{k};
-        fname = build_stats_fname(dataDir, cohort, session, parcellation, simplex, feature, control);
-
-        if ~exist(fname,'file')
-            error('File not found:\n%s', fname);
-        end
-
-        L = load(fname);
-        if ~isfield(L,'stats')
-            error('Variable "stats" not found in %s', fname);
-        end
-        stats = L.stats;
-
-        rowIdx = find_coef_row(stats, coefName, fname);
-
-        beta(k,c)  = stats.Estimate(rowIdx);
-        lower(k,c) = stats.Lower(rowIdx);
-        upper(k,c) = stats.Upper(rowIdx);
+for feature_idx = 1:num_features
+    fname = build_stats_fname(data_dir, cohort, session, parcellation, simplex, feats(feature_idx), control);
+    if ~isfile(fname)
+        error('File not found:\n%s', fname);
     end
-end
-end
-
-function [beta, lower, upper, infLower, infUpper] = load_ci_one_tailed_multiControls( ...
-    dataDir, parcellation, simplex, cohort, session, feats, controls, alpha, bigCI)
-% Compute 1-tailed CIs for all control conditions using fcn_stat_construct_confidence_interval
-% Returns:
-%   infLower / infUpper masks indicating which bounds were +/-Inf BEFORE capping.
-
-nF = numel(feats);
-nC = numel(controls);
-
-beta     = nan(nF,nC);
-lower    = nan(nF,nC);
-upper    = nan(nF,nC);
-infLower = false(nF,nC);
-infUpper = false(nF,nC);
-
-coefName = sprintf("%s_%s_modularity", session, simplex); % e.g. 'both_triangle_modularity'
-
-for c = 1:nC
-    control = controls{c};
-    for k = 1:nF
-        feature = feats{k};
-        fname = build_stats_fname(dataDir, cohort, session, parcellation, simplex, feature, control);
-
-        if ~exist(fname,'file')
-            error('File not found:\n%s', fname);
-        end
-
-        L = load(fname);
-        if ~isfield(L,'stats')
-            error('Variable "stats" not found in %s', fname);
-        end
-        stats = L.stats;
-
-        rowIdx = find_coef_row(stats, coefName, fname);
-
-        est = stats.Estimate(rowIdx);
-        se  = stats.SE(rowIdx);
-        df  = stats.DF(rowIdx);
-
-        % 1-tailed CI (routine should return one infinite bound)
-        [lo, up] = fcn_stat_construct_confidence_interval(est, se, df, alpha, 1);
-
-        % Track which side was infinite (for plotting ellipses)
-        infLower(k,c) = isinf(lo);
-        infUpper(k,c) = isinf(up);
-
-        % Cap infinite bounds to a safe numeric value (we will plot with ellipses anyway)
-        if isinf(lo), lo = -bigCI; end
-        if isinf(up), up =  bigCI; end
-
-        beta(k,c)  = est;
-        lower(k,c) = lo;
-        upper(k,c) = up;
+    loaded = load(fname);
+    if ~isfield(loaded, 'stats')
+        error('Variable "stats" not found in %s', fname);
     end
+    stats = loaded.stats;
+    row_idx = find_coef_row(stats, coef_name, fname);
+
+    beta(feature_idx) = stats.Estimate(row_idx);
+    lower(feature_idx) = stats.Lower(row_idx);
+    upper(feature_idx) = stats.Upper(row_idx);
 end
 end
 
-function plot_ci_single(ax, beta, lower, upper, labels, bounds, yLim)
-% One set of error bars (single control)
+function [beta, lower, upper, inf_lower, inf_upper] = load_ci_one_tailed_single( ...
+    data_dir, parcellation, simplex, cohort, session, feats, control, alpha, big_ci)
+% Estimate and computed 1-tailed CI for a single covariate condition.
+% inf_lower / inf_upper mark which bound was +/-Inf before capping (for ellipses).
+feats = reshape(string(feats), 1, []);
+num_features = numel(feats);
 
-x = 1:numel(beta);
-errLow  = beta - lower;
-errHigh = upper - beta;
+beta = nan(num_features, 1);
+lower = nan(num_features, 1);
+upper = nan(num_features, 1);
+inf_lower = false(num_features, 1);
+inf_upper = false(num_features, 1);
 
-xlim(ax, [0.5 numel(x)+0.5]);
-ylim(ax, yLim);
+coef_name = sprintf("%s_%s_modularity", session, simplex);
 
-hold(ax,'on');
+for feature_idx = 1:num_features
+    fname = build_stats_fname(data_dir, cohort, session, parcellation, simplex, feats(feature_idx), control);
+    if ~isfile(fname)
+        error('File not found:\n%s', fname);
+    end
+    loaded = load(fname);
+    if ~isfield(loaded, 'stats')
+        error('Variable "stats" not found in %s', fname);
+    end
+    stats = loaded.stats;
+    row_idx = find_coef_row(stats, coef_name, fname);
 
-% Background shading to emphasize partitions (white -> light gray -> darker gray)
+    est = stats.Estimate(row_idx);
+    se = stats.SE(row_idx);
+    df = stats.DF(row_idx);
+
+    [lo, up] = fcn_stat_construct_confidence_interval(est, se, df, alpha, 1);
+
+    inf_lower(feature_idx) = isinf(lo);
+    inf_upper(feature_idx) = isinf(up);
+    if isinf(lo), lo = -big_ci; end
+    if isinf(up), up = big_ci; end
+
+    beta(feature_idx) = est;
+    lower(feature_idx) = lo;
+    upper(feature_idx) = up;
+end
+end
+
+function plot_ci_single(ax, beta, lower, upper, labels, bounds, y_lim, varargin)
+% Single-covariate error bars. Optional inf_lower/inf_upper (nF x 1 logical)
+% switch on one-tailed rendering: no cap on the infinite side, vertical
+% ellipsis at the axis edge instead.
+
+num_features = numel(beta);
+x = (1:num_features)';
+
+use_ellipses = false;
+inf_lower = false(num_features, 1);
+inf_upper = false(num_features, 1);
+if numel(varargin) >= 2 && ~isempty(varargin{1})
+    use_ellipses = true;
+    inf_lower = logical(varargin{1});
+    inf_upper = logical(varargin{2});
+end
+
+xlim(ax, [0.5 num_features + 0.5]);
+ylim(ax, y_lim);
+hold(ax, 'on');
+
 apply_partition_shading(ax, bounds);
 
-errorbar(ax, x, beta, errLow, errHigh, ...
-    'LineStyle','none','Marker','o', ...
-    'Color','k','MarkerFaceColor','k', ...
-    'CapSize',3,'LineWidth',1.2);
+% Ellipsis geometry (data units)
+y_min = y_lim(1);
+y_max = y_lim(2);
+y_range = y_max - y_min;
+dot_spacing = 0.015 * y_range;
+dot_margin = 0.010 * y_range;
+y_cap_upper = y_max - (dot_margin + 3 * dot_spacing);
+y_cap_lower = y_min + (dot_margin + 3 * dot_spacing);
+dot_ys_upper = y_max - dot_margin - dot_spacing * (0:2);
+dot_ys_lower = y_min + dot_margin + dot_spacing * (0:2);
+ellipsis_marker_size = 8;
 
-yline(ax, 0, 'k-', 'LineWidth',0.75);
-
-set(ax,'XTick',x,'XTickLabel',labels, ...
-    'XTickLabelRotation',45, ...
-    'TickDir','out', ...
-    'Box','off');
+lower_plot = lower;
+upper_plot = upper;
+if use_ellipses
+    upper_plot(inf_upper) = y_cap_upper;
+    lower_plot(inf_lower) = y_cap_lower;
+    cap_size = 0;   % remove caps; finite-side caps drawn manually below
+else
+    cap_size = 3;
 end
 
-function plot_ci_multi(ax, beta, lower, upper, labels, controlLabels, bounds, yLim, markers, faceColors, varargin)
-% Multiple control conditions with horizontal jitter
-% Optional:
-%   plot_ci_multi(..., infLower, infUpper) to draw ellipses for one-tailed CIs.
-%   In that one-tailed mode, we also REMOVE the end-cap right before the ellipses.
+err_low = beta - lower_plot;
+err_high = upper_plot - beta;
 
-[nF, nC] = size(beta);
-x0 = 1:nF;
-offsets = linspace(-0.25, 0.25, nC);
+errorbar(ax, x, beta, err_low, err_high, ...
+    'LineStyle', 'none', 'Marker', 'o', ...
+    'Color', 'k', 'MarkerFaceColor', 'k', ...
+    'CapSize', cap_size, 'LineWidth', 1.2);
 
-% Optional masks for infinite bounds (one-tailed)
-useEllipses = false;
-infLower = false(nF,nC);
-infUpper = false(nF,nC);
-if numel(varargin) >= 2
-    useEllipses = true;
-    infLower = varargin{1};
-    infUpper = varargin{2};
-    if isempty(infLower), infLower = false(nF,nC); end
-    if isempty(infUpper), infUpper = false(nF,nC); end
-end
-
-xlim(ax, [0.5 nF+0.5]);
-ylim(ax, yLim);
-
-hold(ax,'on');
-
-% Background shading to emphasize partitions (white -> light gray -> darker gray)
-apply_partition_shading(ax, bounds);
-
-% Ellipsis geometry (in data units), matched to your example
-yMin   = yLim(1);
-yMax   = yLim(2);
-yRange = yMax - yMin;
-
-dotSpacing = 0.015 * yRange;  % ~0.0105 when yRange=0.7
-dotMargin  = 0.010 * yRange;  % ~0.0070 when yRange=0.7
-
-% where the errorbar should STOP if it was infinite (leaves room for dots)
-yCapUpper = yMax - (dotMargin + 3*dotSpacing);
-yCapLower = yMin + (dotMargin + 3*dotSpacing);
-
-% the 3 dot y-positions (vertical ellipsis)
-dotYsUpper = yMax - dotMargin - dotSpacing*(0:2);
-dotYsLower = yMin + dotMargin + dotSpacing*(0:2);
-
-ellipsisMarkerSize = 8;
-
-% For one-tailed mode: we draw errorbars with NO caps, and then add caps
-% only on the FINITE side(s), so there is NO cap right before the ellipses.
-capSizePoints = 3;  % match the look of your 2-tailed cap size
-capHalfWidthData = NaN;
-if useEllipses
-    % Convert "capSizePoints" -> x-data units for this axes so caps look consistent.
-    fig = ancestor(ax,'figure');
-
-    oldFigUnits = fig.Units;
-    fig.Units = 'points';
-    figPosPts = fig.Position;
-    fig.Units = oldFigUnits;
-
-    oldAxUnits = ax.Units;
-    ax.Units = 'normalized';
-    axPosNorm = ax.Position;
-    ax.Units = oldAxUnits;
-
-    axisWidthPts = figPosPts(3) * axPosNorm(3);
-    xRange = diff(xlim(ax));
-
-    % CapSize is a total length in points; we use half-length for left/right.
-    capHalfWidthData = (capSizePoints/2) * (xRange / axisWidthPts);
-end
-
-for c = 1:nC
-    x = x0 + offsets(c);
-
-    % Use "plot bounds" that stop inside the axis if the true CI was infinite
-    lowerPlot = lower(:,c);
-    upperPlot = upper(:,c);
-
-    if any(infUpper(:,c))
-        upperPlot(infUpper(:,c)) = yCapUpper;
-    end
-    if any(infLower(:,c))
-        lowerPlot(infLower(:,c)) = yCapLower;
-    end
-
-    errLow  = beta(:,c) - lowerPlot;
-    errHigh = upperPlot - beta(:,c);
-
-    % Caps:
-    % - 2-tailed mode: keep normal caps via errorbar (CapSize=3)
-    % - 1-tailed mode: NO caps via errorbar (CapSize=0), then add finite-end caps manually
-    if useEllipses
-        capForErrorbar = 0;   % critical: removes the horizontal segment before the dots
-    else
-        capForErrorbar = 3;
-    end
-
-    errorbar(ax, x, beta(:,c), errLow, errHigh, ...
-        'LineStyle','none', ...
-        'Marker',markers{c}, ...
-        'Color','k', ...
-        'MarkerFaceColor',faceColors{c}, ...
-        'CapSize',capForErrorbar, ...
-        'LineWidth',1.0);
-
-    % Manual caps ONLY for finite ends (one-tailed mode)
-    if useEllipses
-        for k = 1:nF
-            % Upper cap only if the upper bound was finite
-            if ~infUpper(k,c)
-                line(ax, [x(k)-capHalfWidthData, x(k)+capHalfWidthData], ...
-                    [upperPlot(k), upperPlot(k)], ...
-                    'Color','k', 'LineWidth',1.0);
-            end
-
-            % Lower cap only if the lower bound was finite
-            if ~infLower(k,c)
-                line(ax, [x(k)-capHalfWidthData, x(k)+capHalfWidthData], ...
-                    [lowerPlot(k), lowerPlot(k)], ...
-                    'Color','k', 'LineWidth',1.0);
-            end
+if use_ellipses
+    cap_half_width = cap_half_width_data(ax, 3);
+    for k = 1:num_features
+        if ~inf_upper(k)
+            line(ax, [x(k) - cap_half_width, x(k) + cap_half_width], ...
+                [upper_plot(k), upper_plot(k)], 'Color', 'k', 'LineWidth', 1.2);
+        end
+        if ~inf_lower(k)
+            line(ax, [x(k) - cap_half_width, x(k) + cap_half_width], ...
+                [lower_plot(k), lower_plot(k)], 'Color', 'k', 'LineWidth', 1.2);
         end
     end
 
-    % Draw vertical ellipses ("...") at the infinite end(s), if provided
-    if useEllipses
-        if any(infUpper(:,c))
-            xu = x(infUpper(:,c));
-            for j = 1:numel(dotYsUpper)
-                plot(ax, xu, dotYsUpper(j)*ones(size(xu)), 'k.', ...
-                    'MarkerSize', ellipsisMarkerSize, 'LineStyle','none');
-            end
+    if any(inf_upper)
+        x_up = x(inf_upper);
+        for j = 1:numel(dot_ys_upper)
+            plot(ax, x_up, dot_ys_upper(j) * ones(size(x_up)), 'k.', ...
+                'MarkerSize', ellipsis_marker_size, 'LineStyle', 'none');
         end
-
-        if any(infLower(:,c))
-            xl = x(infLower(:,c));
-            for j = 1:numel(dotYsLower)
-                plot(ax, xl, dotYsLower(j)*ones(size(xl)), 'k.', ...
-                    'MarkerSize', ellipsisMarkerSize, 'LineStyle','none');
-            end
+    end
+    if any(inf_lower)
+        x_lo = x(inf_lower);
+        for j = 1:numel(dot_ys_lower)
+            plot(ax, x_lo, dot_ys_lower(j) * ones(size(x_lo)), 'k.', ...
+                'MarkerSize', ellipsis_marker_size, 'LineStyle', 'none');
         end
     end
 end
 
-yline(ax, 0, 'k-', 'LineWidth',0.75);
+yline(ax, 0, 'k-', 'LineWidth', 0.75);
 
-set(ax,'XTick',x0,'XTickLabel',labels, ...
-    'XTickLabelRotation',45, ...
-    'TickDir','out', ...
-    'Box','off');
+set(ax, 'XTick', x, 'XTickLabel', labels, ...
+    'XTickLabelRotation', 45, 'TickDir', 'out', 'Box', 'off');
+end
 
-% No legend here – use the separate legend figure created at top.
+function half_width = cap_half_width_data(ax, cap_size_points)
+% Convert an errorbar CapSize (points) into x-data half-width for this axes
+fig = ancestor(ax, 'figure');
+
+old_fig_units = fig.Units;
+fig.Units = 'points';
+fig_pos_pts = fig.Position;
+fig.Units = old_fig_units;
+
+old_ax_units = ax.Units;
+ax.Units = 'normalized';
+ax_pos_norm = ax.Position;
+ax.Units = old_ax_units;
+
+axis_width_pts = fig_pos_pts(3) * ax_pos_norm(3);
+x_range = diff(xlim(ax));
+half_width = (cap_size_points / 2) * (x_range / axis_width_pts);
 end
 
 function apply_partition_shading(ax, bounds)
-% Subtle background shading per partition (Nature-ish).
-% Cycles: white -> light gray -> darker gray
-
+% Subtle background shading per partition: white -> light gray -> darker gray
 yl = ylim(ax);
 
-shadeColors = [1.00 1.00 1.00;   % white
-    0.96 0.96 0.96;   % light gray
-    0.90 0.90 0.90];  % darker gray (still subtle)
+shade_colors = [1.00 1.00 1.00; 0.96 0.96 0.96; 0.90 0.90 0.90];
 
-for i = 1:(numel(bounds)-1)
+for i = 1:(numel(bounds) - 1)
     x1 = bounds(i);
-    x2 = bounds(i+1);
-
-    fc = shadeColors(mod(i-1, size(shadeColors,1)) + 1, :);
-
+    x2 = bounds(i + 1);
+    fc = shade_colors(mod(i - 1, size(shade_colors, 1)) + 1, :);
     p = patch(ax, [x1 x2 x2 x1], [yl(1) yl(1) yl(2) yl(2)], fc, ...
-        'EdgeColor','none', ...
-        'FaceAlpha',1);
-
-    % Ensure shading is behind everything
-    uistack(p,'bottom');
+        'EdgeColor', 'none', 'FaceAlpha', 1);
+    uistack(p, 'bottom');
 end
 
-% Thin vertical boundary lines at internal boundaries
-for i = 2:(numel(bounds)-1)
-    xB = bounds(i);
-    line(ax, [xB xB], yl, ...
-        'Color',[0.75 0.75 0.75], ...
-        'LineStyle','-', ...
-        'LineWidth',0.6);
+for i = 2:(numel(bounds) - 1)
+    x_boundary = bounds(i);
+    line(ax, [x_boundary x_boundary], yl, ...
+        'Color', [0.75 0.75 0.75], 'LineStyle', '-', 'LineWidth', 0.6);
 end
-end
-
-function figLeg = create_control_legend(controlLabels, markers, faceColors)
-% Separate legend-only figure for the multi-control plots
-
-figLeg = figure('Units','centimeters','Position',[2 2 7 5],'Color','w');
-axLeg = axes('Position',[0 0 1 1],'Visible','off');
-hold(axLeg,'on');
-
-legendFontSize = 10;
-
-nC = numel(controlLabels);
-hLeg = gobjects(1,nC);
-
-for c = 1:nC
-    hLeg(c) = plot(axLeg, NaN, NaN, ...
-        'LineStyle','none', ...
-        'Marker',markers{c}, ...
-        'Color','k', ...
-        'MarkerFaceColor',faceColors{c}, ...
-        'MarkerSize',6);
-end
-
-legend(axLeg, hLeg, controlLabels, ...
-    'Location','west', ...
-    'Box','off', ...
-    'FontSize',legendFontSize);
-
-set(figLeg, 'PaperPositionMode','auto');
 end
 
 function display_name = get_display_name(var_dict, category, raw_value)
-    field_name = sprintf("%s_%s", category, raw_value);
-    field_name = strrep(field_name, "-", "_");
-    
-    if isfield(var_dict, field_name)
-        display_name = var_dict.(field_name);
-    else
-        display_name = raw_value;
-    end
+field_name = sprintf("%s_%s", category, raw_value);
+field_name = strrep(field_name, "-", "_");
+if isfield(var_dict, field_name)
+    display_name = string(var_dict.(field_name));
+else
+    display_name = string(raw_value);
+end
 end
 
-function var_code = get_variable_code_from_display_name(var_dict, display_name)
-    % Reverse lookup: find variable code from display name
-    fields = fieldnames(var_dict);
-    
-    for i = 1:length(fields)
-        field = fields{i};
-        if startsWith(field, 'response_') && strcmp(var_dict.(field), display_name)
-            var_code = strrep(field, 'response_', '');
-            return;
-        end
-    end
-    
-    % If not found, return the display name (shouldn't happen)
-    var_code = display_name;
-end
-
-function var_codes = convert_display_names_to_codes(display_names, var_dict)
-    % Convert display names back to variable codes using var_dict
-    var_codes = cell(size(display_names));
-    for i = 1:length(display_names)
-        var_codes{i} = get_variable_code_from_display_name(var_dict, display_names(i));
-    end
-end
-
-function bounds = compute_partition_bounds(featCodes)
-    % Determine partition bounds based on variable types
-    % Personality (NEOFAC_*) | Psychopathology (ASR_*) | Cognitive (PMAT*)
-    
-    is_personality = cellfun(@(x) startsWith(x, 'NEOFAC'), featCodes);
-    is_psychopath = cellfun(@(x) startsWith(x, 'ASR'), featCodes);
-    
-    n_personality = sum(is_personality);
-    n_psychopath = sum(is_psychopath);
-    
-    bounds = [0.5, n_personality + 0.5, n_personality + n_psychopath + 0.5, numel(featCodes) + 0.5];
+function bounds = compute_partition_bounds(feature_codes)
+% Partition bounds by variable type: Personality (NEOFAC_*) | ASR_* | PMAT*
+feature_codes = string(feature_codes);
+num_personality = sum(startsWith(feature_codes, "NEOFAC"));
+num_psychopath = sum(startsWith(feature_codes, "ASR"));
+bounds = [0.5, num_personality + 0.5, num_personality + num_psychopath + 0.5, numel(feature_codes) + 0.5];
 end
