@@ -228,4 +228,5 @@ note_and_report/private/      # For private repos sharing with collaborators
 
 test/debug/
 data_pipeline/mapper_node_features/
+data_pipeline/brain_behavior_correlation_raw/
 test/file_tree/
