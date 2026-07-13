@@ -137,6 +137,7 @@ dist/
 .RData
 .Rapp.history
 .Rproj.user/
+*/.RDataTmp
 
 # R environment library (managed dependencies)
 renv/library/
