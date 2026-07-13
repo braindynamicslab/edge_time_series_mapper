@@ -230,3 +230,5 @@ test/debug/
 data_pipeline/mapper_node_features/
 data_pipeline/brain_behavior_correlation_raw/
 test/file_tree/
+note_and_report/siu_chunyin.*
+note_and_report/poster_TDA.*
