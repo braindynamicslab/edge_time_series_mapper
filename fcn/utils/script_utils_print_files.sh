@@ -14,9 +14,11 @@
 # DIR="/Users/siuc/Documents/GitHub/edge_time_series_mapper/config/"
 # OUTPUT_FILE="/Users/siuc/Documents/GitHub/edge_time_series_mapper/test/file_tree/config_26032501.txt"
 
-DIR="/Users/siuc/Documents/GitHub/edge_time_series_mapper/fcn/"
-OUTPUT_FILE="/Users/siuc/Documents/GitHub/edge_time_series_mapper/test/file_tree/fcn_26033001.txt"
+# DIR="/Users/siuc/Documents/GitHub/edge_time_series_mapper/fcn/"
+# OUTPUT_FILE="/Users/siuc/Documents/GitHub/edge_time_series_mapper/test/file_tree/fcn_26071001.txt"
 
+DIR="/Users/siuc/Documents/GitHub/edge_time_series_mapper/expt/"
+OUTPUT_FILE="/Users/siuc/Documents/GitHub/edge_time_series_mapper/test/file_tree/expt_26071001.txt"
 
 # ========================================================
 
