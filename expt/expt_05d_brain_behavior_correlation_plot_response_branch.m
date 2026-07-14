@@ -1,8 +1,8 @@
-%% Brain-Behavior Correlation - Confidence-Interval Plots (postreview)
-% Companion to expt_05c_brain_behavior_correlation_stat_postreview.m.
+%% Brain-Behavior Correlation - Confidence-Interval Plots (response_branch)
+% Companion to expt_05c_brain_behavior_correlation_stat_response_branch.m.
 %
 % Produces ONE plot per covariate condition (rather than overlaying covariates
-% on a single panel), because the postreview design selects a different feature
+% on a single panel), because the response_branch design selects a different feature
 % set per covariate, so the conditions no longer share an x-axis.
 %
 % Panels:
@@ -13,7 +13,7 @@
 %                "headMotion_family" and reuses the "headMotion" selection.
 %
 % Reads:
-%   - selected_features_postreview.mat  (from expt_05c postreview)
+%   - selected_features_response_branch.mat  (from expt_05c response_branch)
 %   - per-model coefficient files in brain_behavior_correlation_raw/ (from expt_05b)
 
 clear; clc; close all;
@@ -21,7 +21,7 @@ clear; clc; close all;
 %% Paths
 config = fcn_utils_get_config();
 data_dir = fullfile(config.repo_root, "data_pipeline", "brain_behavior_correlation_raw");
-output_dir = fullfile(config.repo_root, "data_pipeline", "plot_brain_behavior_correlation_postreview");
+output_dir = fullfile(config.repo_root, "data_pipeline", "plot_brain_behavior_correlation_response_branch");
 if ~isfolder(output_dir)
     mkdir(output_dir);
 end
@@ -45,9 +45,9 @@ bounds_all = compute_partition_bounds(response_codes_all);
 
 %% Load covariate-specific feature selection produced by the stat script
 selection_file = fullfile(config.repo_root, "data_pipeline", "brain_behavior_correlation", ...
-    "selected_features_postreview.mat");
+    "selected_features_response_branch.mat");
 if ~isfile(selection_file)
-    error("Feature selection not found:\n%s\nRun expt_05c (postreview) first.", selection_file);
+    error("Feature selection not found:\n%s\nRun expt_05c (response_branch) first.", selection_file);
 end
 loaded_selection = load(selection_file);
 selected_features = loaded_selection.selected_features;

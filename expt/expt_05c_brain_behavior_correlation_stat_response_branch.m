@@ -1,4 +1,4 @@
-%% Brain-Behavior Correlation Analysis - Table Generation (postreview)
+%% Brain-Behavior Correlation Analysis - Table Generation (response_branch)
 % Generates statistical tables for brain modularity predicting behavioral
 % outcomes, using per-covariate feature selection.
 %
@@ -12,13 +12,13 @@
 %      "headMotion_family" (adds a (1 | Family_ID) random intercept) while
 %      reusing the "headMotion" selection.
 %
-% Inputs are the per-model coefficient files written by expt_05b (postreview),
+% Inputs are the per-model coefficient files written by expt_05b (response_branch),
 % stored in data_pipeline/brain_behavior_correlation_raw/.
 %
 % Outputs (data_pipeline/brain_behavior_correlation/):
-%   - brain_behavior_corr_stats_postreview_cohort_one_all_features_discovery.csv
-%   - brain_behavior_corr_stats_postreview_cohort_<cohort>_select_features.csv
-%   - selected_features_postreview.mat  (feature selection consumed by expt_05f)
+%   - brain_behavior_corr_stats_response_branch_cohort_one_all_features_discovery.csv
+%   - brain_behavior_corr_stats_response_branch_cohort_<cohort>_select_features.csv
+%   - selected_features_response_branch.mat  (feature selection consumed by expt_05f)
 
 %% Setup
 config = fcn_utils_get_config();
@@ -64,7 +64,7 @@ discovery_results = build_results_table(input_directory, discovery_cohort, ...
 discovery_results = apply_fdr_correction(discovery_results);
 
 discovery_file = fullfile(output_directory, ...
-    "brain_behavior_corr_stats_postreview_cohort_one_all_features_discovery.csv");
+    "brain_behavior_corr_stats_response_branch_cohort_one_all_features_discovery.csv");
 writetable(discovery_results, discovery_file);
 fprintf("Discovery table saved to: %s (%d rows)\n\n", discovery_file, height(discovery_results));
 
@@ -86,7 +86,7 @@ for control = discovery_controls
     fprintf("  Triangle: %s\n\n", strjoin(triangle_vars, ", "));
 end
 
-selection_file = fullfile(output_directory, "selected_features_postreview.mat");
+selection_file = fullfile(output_directory, "selected_features_response_branch.mat");
 save(selection_file, "selected_features", "-v7.3");
 fprintf("Feature selection saved to: %s\n\n", selection_file);
 
@@ -113,7 +113,7 @@ for cohort = confirmation_cohorts_unique
     confirmation_results = apply_fdr_correction(confirmation_results);
 
     confirmation_file = fullfile(output_directory, ...
-        sprintf("brain_behavior_corr_stats_postreview_cohort_%s_select_features.csv", cohort));
+        sprintf("brain_behavior_corr_stats_response_branch_cohort_%s_select_features.csv", cohort));
     writetable(confirmation_results, confirmation_file);
     fprintf("Confirmation table saved to: %s (%d rows)\n", confirmation_file, height(confirmation_results));
 end
