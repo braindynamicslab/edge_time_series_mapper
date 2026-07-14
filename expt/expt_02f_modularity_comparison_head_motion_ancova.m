@@ -14,11 +14,11 @@
 % so the intercept is the difference at the average head motion.
 %
 % This script:
-%   1. Reads the same conditions as expt_02b
+%   1. Reads the same conditions as expt_02b (reported with display names)
 %   2. Joins per-session mean head motion by subject and demeans it
 %   3. For edge-node, edge-triangle, triangle-node (edge-node only on
 %      schaefer200x7), fits the ANCOVA and reports the intercept
-%   4. Applies Bonferroni correction for multiple comparisons
+%   4. Applies Bonferroni correction; non-significant results are marked "n.s."
 
 %% Setup
 clear; close all; clc;
@@ -58,11 +58,13 @@ fprintf('Total number of tests: %d\n', num_tests);
 fprintf('Bonferroni-corrected alpha: %.6f\n\n', 0.05 / num_tests);
 
 %% Preallocate results table
-results_table = table('Size', [num_tests, 13], ...
+% Internal (valid-identifier) names during assembly; the four stat columns are
+% renamed to their display headers just before saving.
+results_table = table('Size', [num_tests, 12], ...
     'VariableTypes', {'string', 'string', 'string', 'string', 'string', 'string', ...
-                      'double', 'double', 'double', 'double', 'double', 'double', 'string'}, ...
+                      'double', 'double', 'double', 'double', 'double', 'string'}, ...
     'VariableNames', {'condition', 'cohort', 'session', 'parcellation', ...
-                      'simplex_1', 'simplex_2', 'num_valid', ...
+                      'simplex_1', 'simplex_2', ...
                       'coefficient', 'standard_error', 't_statistic', ...
                       'degree_of_freedom', 'p_value', 'significance_bonferroni'});
 
@@ -70,13 +72,14 @@ results_table = table('Size', [num_tests, 13], ...
 row_idx = 1;
 
 for config_idx = 1:num_conditions
-    condition = config.condition(config_idx);
+    condition_code = config.condition(config_idx);
+    condition_display = get_condition_display_name(condition_code);
     cohort = config.cohort(config_idx);
     session = config.session(config_idx);
     parcellation = config.parcellation(config_idx);
 
     fprintf('Processing: condition=%s, cohort=%s, session=%s, parcellation=%s\n', ...
-            condition, cohort, session, parcellation);
+            condition_code, cohort, session, parcellation);
 
     % Determine comparisons for this parcellation (matches expt_02b)
     if strcmp(parcellation, "schaefer100x7")
@@ -87,22 +90,21 @@ for config_idx = 1:num_conditions
     num_comparisons = size(comparisons, 1);
 
     % Fill identifying information for all comparisons from this condition
-    results_table.condition(row_idx:row_idx+num_comparisons-1) = condition;
+    results_table.condition(row_idx:row_idx+num_comparisons-1) = condition_display;
     results_table.cohort(row_idx:row_idx+num_comparisons-1) = cohort;
     results_table.session(row_idx:row_idx+num_comparisons-1) = session;
     results_table.parcellation(row_idx:row_idx+num_comparisons-1) = parcellation;
     results_table.simplex_1(row_idx:row_idx+num_comparisons-1) = comparisons(:, 1);
     results_table.simplex_2(row_idx:row_idx+num_comparisons-1) = comparisons(:, 2);
 
-    % Construct modularity data filename
+    % Construct modularity data filename (uses the raw condition code)
     data_filename = sprintf("simplex_mapper_%s_cohort_%s_%s_%s.csv", ...
-                            condition, cohort, session, parcellation);
+                            condition_code, cohort, session, parcellation);
     data_filepath = fullfile(repo_root, "data_pipeline", "simplex_mappers", data_filename);
 
     if ~exist(data_filepath, 'file')
         warning('Modularity file not found: %s\nSkipping...', data_filepath);
         block = row_idx:row_idx+num_comparisons-1;
-        results_table.num_valid(block) = NaN;
         results_table.coefficient(block) = NaN;
         results_table.standard_error(block) = NaN;
         results_table.t_statistic(block) = NaN;
@@ -156,8 +158,6 @@ for config_idx = 1:num_conditions
         head_motion_clean = head_motion_demeaned(valid_idx);
         num_valid = sum(valid_idx);
 
-        results_table.num_valid(row_idx) = num_valid;
-
         if num_valid < 3
             warning('Insufficient valid subjects for %s vs %s (%d)', simplex_1, simplex_2, num_valid);
             results_table.coefficient(row_idx) = NaN;
@@ -182,7 +182,11 @@ for config_idx = 1:num_conditions
         t_statistic = coef_table.tStat(intercept_row);
         p_value = coef_table.pValue(intercept_row);
         df = mdl.DFE;
+
         significance = fcn_stat_get_significance_asterisks(p_value * num_tests);
+        if strcmp(significance, "0")
+            significance = "n.s.";
+        end
 
         fprintf('  %s vs %s: b0 = %.6f, SE = %.6f, t(%d) = %.4f, p = %.6f %s\n', ...
                 simplex_1, simplex_2, coefficient, standard_error, df, t_statistic, p_value, significance);
@@ -200,9 +204,34 @@ for config_idx = 1:num_conditions
     fprintf('\n');
 end
 
-%% Save results
+%% Round reported statistics to 3 significant figures (DF kept exact)
+for col = {'coefficient', 'standard_error', 't_statistic', 'p_value'}
+    results_table.(col{1}) = round(results_table.(col{1}), 3, 'significant');
+end
+
+%% Rename stat columns to display headers and save
+results_table.Properties.VariableNames = {'condition', 'cohort', 'session', 'parcellation', ...
+    'simplex_1', 'simplex_2', 'Coef', 'SE', 't-stat', 'DF', 'p_value', 'significance_bonferroni'};
+
 fprintf('Saving results to: %s\n', output_file);
 writetable(results_table, output_file);
 
 fprintf('\nAnalysis complete!\n');
 fprintf('Total rows in output: %d\n', height(results_table));
+
+%% Helper: condition code -> display name
+function name = get_condition_display_name(condition)
+    if strcmp(condition, "raw_features")
+        name = "Raw Features";
+    elseif strcmp(condition, "coherence")
+        name = "Coherence";
+    elseif startsWith(condition, "pca_variance_threshold_")
+        pct = extractAfter(condition, "pca_variance_threshold_");
+        name = sprintf("PCA (%s%% variance)", pct);
+    elseif startsWith(condition, "pca_fixed_components_")
+        num_components = extractAfter(condition, "pca_fixed_components_");
+        name = sprintf("PCA (%s comp)", num_components);
+    else
+        name = condition;
+    end
+end
