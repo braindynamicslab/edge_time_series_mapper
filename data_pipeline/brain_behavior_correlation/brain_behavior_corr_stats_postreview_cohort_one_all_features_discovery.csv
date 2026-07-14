@@ -1,0 +1,49 @@
+Simplex,Response Variable,Control Type,Estimate,Standard Error,DF,t-statistic,p-value (two-tail),Significance (two-tail),p-value (one-tail),Significance (one-tail),"p-value (two-tail, BH corrected)","Significance (two-tail, BH corrected)","p-value (one-tail, BH corrected)","Significance (one-tail, BH corrected)"
+Node,Conscientiousness,None,0.0662,0.0509,382,1.3,0.194,0,0.0969,0,0.221714285714286,0,0.110742857142857,0
+Node,Neuroticism,None,-0.074,0.0508,382,-1.46,0.146,0,0.0732,0,0.194666666666667,0,0.0976,0
+Node,Agreeableness,None,0.151,0.0504,382,2.99,0.00295,**,0.00147,**,0.0118,*,0.00588,**
+Node,Openness,None,0.0754,0.0508,382,1.48,0.139,0,0.0693,0,0.194666666666667,0,0.0976,0
+Node,Extraversion,None,0.0164,0.051,382,0.323,0.747,0,0.374,0,0.747,0,0.374,0
+Node,Externalizing,None,-0.118,0.0506,382,-2.33,0.0201,*,0.0101,*,0.0536,0,0.0269333333333333,*
+Node,Internalizing,None,-0.0848,0.0508,382,-1.67,0.0958,0,0.0479,*,0.1916,0,0.0958,0
+Node,Fluid Intelligence,None,0.156,0.0503,382,3.1,0.00211,**,0.00105,**,0.0118,*,0.00588,**
+Node,Conscientiousness,Head Motion,0.0859,0.0536,381,1.6,0.11,0,0.0549,0,0.293333333333333,0,0.1464,0
+Node,Neuroticism,Head Motion,-0.0585,0.0536,381,-1.09,0.276,0,0.138,0,0.368,0,0.184,0
+Node,Agreeableness,Head Motion,0.126,0.0531,381,2.38,0.0177,*,0.00887,**,0.1416,0,0.07096,0
+Node,Openness,Head Motion,0.0278,0.0531,381,0.523,0.601,0,0.301,0,0.65,0,0.325,0
+Node,Extraversion,Head Motion,0.0245,0.0538,381,0.455,0.65,0,0.325,0,0.65,0,0.325,0
+Node,Externalizing,Head Motion,-0.064,0.0527,381,-1.21,0.226,0,0.113,0,0.3616,0,0.1808,0
+Node,Internalizing,Head Motion,-0.0689,0.0536,381,-1.29,0.199,0,0.0995,0,0.3616,0,0.1808,0
+Node,Fluid Intelligence,Head Motion,0.0859,0.052,381,1.65,0.0994,0,0.0497,*,0.293333333333333,0,0.1464,0
+Edge,Conscientiousness,None,0.124,0.0506,382,2.45,0.0147,*,0.00737,**,0.0461333333333333,*,0.0230666666666667,*
+Edge,Neuroticism,None,-0.112,0.0507,382,-2.21,0.0274,*,0.0137,*,0.0548,0,0.0274,*
+Edge,Agreeableness,None,0.0327,0.051,382,0.643,0.521,0,0.26,0,0.595428571428571,0,0.297142857142857,0
+Edge,Openness,None,-0.0461,0.0509,382,-0.905,0.366,0,0.183,0,0.488,0,0.244,0
+Edge,Extraversion,None,-0.00725,0.051,382,-0.142,0.887,0,0.444,0,0.887,0,0.444,0
+Edge,Externalizing,None,-0.157,0.0503,382,-3.12,0.00194,**,0.000968,***,0.01552,*,0.007744,**
+Edge,Internalizing,None,-0.121,0.0506,382,-2.39,0.0173,*,0.00865,**,0.0461333333333333,*,0.0230666666666667,*
+Edge,Fluid Intelligence,None,0.106,0.0507,382,2.09,0.0375,*,0.0188,*,0.06,0,0.03008,*
+Edge,Conscientiousness,Head Motion,0.164,0.055,381,2.98,0.00307,**,0.00153,**,0.02456,*,0.01224,*
+Edge,Neuroticism,Head Motion,-0.102,0.0553,381,-1.84,0.0668,0,0.0334,*,0.12144,0,0.06064,0
+Edge,Agreeableness,Head Motion,-0.0168,0.0553,381,-0.303,0.762,0,0.381,0,0.994,0,0.497,0
+Edge,Openness,Head Motion,-0.13,0.0546,381,-2.39,0.0175,*,0.00877,**,0.07,0,0.03508,*
+Edge,Extraversion,Head Motion,-0.000453,0.0556,381,-0.00814,0.994,0,0.497,0,0.994,0,0.497,0
+Edge,Externalizing,Head Motion,-0.0969,0.0544,381,-1.78,0.0759,0,0.0379,*,0.12144,0,0.06064,0
+Edge,Internalizing,Head Motion,-0.11,0.0552,381,-1.99,0.0472,*,0.0236,*,0.12144,0,0.06064,0
+Edge,Fluid Intelligence,Head Motion,0.00865,0.0539,381,0.16,0.873,0,0.436,0,0.994,0,0.497,0
+Triangle,Conscientiousness,None,0.0632,0.051,381,1.24,0.216,0,0.108,0,0.341333333333333,0,0.170666666666667,0
+Triangle,Neuroticism,None,-0.0887,0.0508,381,-1.75,0.0818,0,0.0409,*,0.1636,0,0.0818,0
+Triangle,Agreeableness,None,0.0156,0.0509,381,0.306,0.76,0,0.38,0,0.76,0,0.38,0
+Triangle,Openness,None,0.0251,0.0511,381,0.491,0.623,0,0.312,0,0.712,0,0.356571428571429,0
+Triangle,Extraversion,None,-0.058,0.051,381,-1.14,0.256,0,0.128,0,0.341333333333333,0,0.170666666666667,0
+Triangle,Externalizing,None,-0.136,0.0506,381,-2.69,0.0074,**,0.0037,**,0.0592,0,0.0296,*
+Triangle,Internalizing,None,-0.116,0.0506,381,-2.3,0.0218,*,0.0109,*,0.0872,0,0.0436,*
+Triangle,Fluid Intelligence,None,0.0989,0.0506,381,1.95,0.0514,0,0.0257,*,0.137066666666667,0,0.0685333333333333,0
+Triangle,Conscientiousness,Head Motion,0.103,0.0579,380,1.77,0.0774,0,0.0387,*,0.3096,0,0.1548,0
+Triangle,Neuroticism,Head Motion,-0.0723,0.0579,380,-1.25,0.212,0,0.106,0,0.395428571428571,0,0.197714285714286,0
+Triangle,Agreeableness,Head Motion,-0.0543,0.0575,380,-0.943,0.346,0,0.173,0,0.395428571428571,0,0.197714285714286,0
+Triangle,Openness,Head Motion,-0.0659,0.0574,380,-1.15,0.252,0,0.126,0,0.395428571428571,0,0.197714285714286,0
+Triangle,Extraversion,Head Motion,-0.0655,0.0581,380,-1.13,0.26,0,0.13,0,0.395428571428571,0,0.197714285714286,0
+Triangle,Externalizing,Head Motion,-0.0586,0.0571,380,-1.03,0.305,0,0.153,0,0.395428571428571,0,0.197714285714286,0
+Triangle,Internalizing,Head Motion,-0.105,0.0576,380,-1.82,0.069,0,0.0345,*,0.3096,0,0.1548,0
+Triangle,Fluid Intelligence,Head Motion,-0.0231,0.0562,380,-0.411,0.681,0,0.341,0,0.681,0,0.341,0

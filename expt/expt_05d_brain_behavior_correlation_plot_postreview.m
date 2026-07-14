@@ -56,32 +56,34 @@ selected_features = loaded_selection.selected_features;
 discovery_cohort = "one";
 discovery_controls = ["none", "headMotion"];
 
-for control = discovery_controls
-    for simplex = simplices
-        [beta, lower, upper] = load_ci_two_tailed_single(...
-            data_dir, parcellation, simplex, discovery_cohort, session, response_codes_all, control);
-
-        fig = new_ci_figure();
-        ax = new_ci_axes(fig);
-        plot_ci_single(ax, beta, lower, upper, response_labels_all, bounds_all, y_lim);
-
-        ylabel(ax, sprintf("Linear Coefficient of %s Modularity", capitalize(simplex)));
-        title(ax, sprintf("%s, cohort %s (2-tailed), control: %s (ALL responses)", ...
-            simplex, discovery_cohort, get_display_name(var_dict, "control", control)), ...
-            'FontWeight', 'normal');
-
-        export_ci_figure(fig, output_dir, simplex, discovery_cohort, session, parcellation, ...
-            2, "all", control);
-    end
-end
+% for control = discovery_controls
+%     for simplex = simplices
+%         [beta, lower, upper] = load_ci_two_tailed_single(...
+%             data_dir, parcellation, simplex, discovery_cohort, session, response_codes_all, control);
+% 
+%         fig = new_ci_figure();
+%         ax = new_ci_axes(fig);
+%         plot_ci_single(ax, beta, lower, upper, response_labels_all, bounds_all, y_lim);
+% 
+%         ylabel(ax, sprintf("Linear Coefficient of %s Modularity", capitalize(simplex)));
+%         title(ax, sprintf("%s, cohort %s (2-tailed), control: %s (ALL responses)", ...
+%             simplex, discovery_cohort, get_display_name(var_dict, "control", control)), ...
+%             'FontWeight', 'normal');
+% 
+%         export_ci_figure(fig, output_dir, simplex, discovery_cohort, session, parcellation, ...
+%             2, "all", control);
+%     end
+% end
+% close all
 
 %% Confirmation panels: cohorts one/two/all, selected responses, per covariate x tail
 % Each row: cohort, fitted covariate, selection key (discovery covariate whose
 % surviving feature set is reused).
-confirmation_cohorts    = ["one", "one",        "two", "two",        "all", "all"];
-confirmation_controls   = ["none", "headMotion", "none", "headMotion", "none", "headMotion_family"];
-confirmation_selections = ["none", "headMotion", "none", "headMotion", "none", "headMotion"];
-tails = [1, 2];
+confirmation_cohorts    = ["two", "two",        "all", "all"];
+confirmation_controls   = ["none", "headMotion", "none", "headMotion_family"];
+confirmation_selections = ["none", "headMotion", "none", "headMotion"];
+% tails = [1, 2];
+tails = [2];
 
 for row = 1:numel(confirmation_cohorts)
     cohort = confirmation_cohorts(row);
@@ -124,6 +126,7 @@ for row = 1:numel(confirmation_cohorts)
                 tail, "select", control);
         end
     end
+    close all;
 end
 
 fprintf("Plots saved to: %s\n", output_dir);

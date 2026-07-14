@@ -1,0 +1,10 @@
+Simplex,Response Variable,Control Type,Estimate,Standard Error,DF,t-statistic,p-value (two-tail),Significance (two-tail),p-value (one-tail),Significance (one-tail),"p-value (two-tail, BH corrected)","Significance (two-tail, BH corrected)","p-value (one-tail, BH corrected)","Significance (one-tail, BH corrected)"
+Node,Agreeableness,None,0.0734,0.0326,935,2.25,0.0246,*,0.0123,*,0.0246,*,0.0123,*
+Node,Fluid Intelligence,None,0.108,0.0325,935,3.33,0.000895,***,0.000448,***,0.00179,**,0.000896,***
+Node,Agreeableness,Head Motion + Family,0.0421,0.0339,934,1.24,0.215,0,0.108,0,0.215,0,0.108,0
+Edge,Conscientiousness,None,0.0745,0.0326,935,2.29,0.0224,*,0.0112,*,0.0226,*,0.0113,*
+Edge,Externalizing,None,-0.124,0.0324,935,-3.82,0.000141,***,7.05e-05,***,0.000423,***,0.0002115,***
+Edge,Internalizing,None,-0.0743,0.0326,935,-2.28,0.0226,*,0.0113,*,0.0226,*,0.0113,*
+Edge,Conscientiousness,Head Motion + Family,0.0807,0.0356,934,2.26,0.0238,*,0.0119,*,0.0238,*,0.0119,*
+Triangle,Externalizing,None,-0.098,0.0326,934,-3.01,0.0027,**,0.00135,**,0.0054,**,0.0027,**
+Triangle,Internalizing,None,-0.057,0.0326,934,-1.75,0.0809,0,0.0405,*,0.0809,0,0.0405,*
